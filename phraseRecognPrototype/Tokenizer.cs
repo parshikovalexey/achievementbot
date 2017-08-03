@@ -6,7 +6,7 @@ namespace WordClassTagger
     public static class Tokenizer
     {
         const string NonAlphanumericAssertion = @"(?=(\W|$))"; // ?= is a positive lookahead
-        public const string Number = @"(?<num>-?(?:\d+)(?:[.,]\d+)*(?!-))";
+        public const string Number = @"(?<num>-?(?:\d+)(?:[.,/]\d+)*(?!-))";
         const string EndingAssertion = @"(?:(?:\r\n)*)";
 
         static readonly RegexOptions TokenREoptions = RegexOptions.Singleline | RegexOptions.IgnoreCase;

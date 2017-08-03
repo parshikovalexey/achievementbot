@@ -11,13 +11,11 @@ namespace WordClassTagger
     {
         public string Word { get; set; }
         public string Grammeme { get; set; }
-        private long OrderIndex = 0;
 
         public TaggedWordFromDic(string word, string grammeme, long orderIndex)
         {
             this.Word = word;
             this.Grammeme = grammeme;
-            this.OrderIndex = orderIndex;
         }
 
         public TaggedWordFromDic(string word)
