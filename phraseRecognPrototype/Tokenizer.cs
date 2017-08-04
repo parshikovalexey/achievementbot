@@ -48,7 +48,7 @@ namespace WordClassTagger
         /// <param name="inputText">String of text to tokenize</param>
         public static List<InputToken> GetTokensListFromInputText(string inputText)
         {
-            List<InputToken> LInputTokens = new List<InputToken>();
+            List<InputToken> inputTokens = new List<InputToken>();
             long inputTokenOrderInTextIndex = 1;
 
             int inputTokenOrderInSentenceIndex = 1;
@@ -60,11 +60,11 @@ namespace WordClassTagger
                 if (m.Groups["url"].Success || m.Groups["email"].Success || m.Groups["tag"].Success) continue;
 
                 InputToken newInputToken = new InputToken(m.Value.ToLower(), m.Value, inputTokenOrderInTextIndex, m.Groups["word"].Success);
-                LInputTokens.Add(newInputToken);
+                inputTokens.Add(newInputToken);
                 inputTokenOrderInSentenceIndex++;
                 inputTokenOrderInTextIndex++;
             }
-            return LInputTokens;
+            return inputTokens;
         }
     }
 }

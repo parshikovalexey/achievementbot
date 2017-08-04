@@ -7,20 +7,26 @@ using System.Threading.Tasks;
 
 namespace WordClassTagger
 {
-    public class TaggedWordFromDic : IComparable
+    public class TaggedWord : IComparable
     {
         public string Word { get; set; }
-        public string Grammeme { get; set; }
+        public int Tag { get; set; }
 
-        public TaggedWordFromDic(string word, string grammeme, long orderIndex)
+        public TaggedWord(string word, int tag, long orderIndex)
         {
             this.Word = word;
-            this.Grammeme = grammeme;
+            this.Tag = tag;
         }
 
-        public TaggedWordFromDic(string word)
+        public TaggedWord(string word)
         {
             this.Word = word;
+        }
+
+
+        public string GetStringTag()
+        {
+            return Tags.EnumTagToStringTag(Tag);
         }
 
         public override string ToString()

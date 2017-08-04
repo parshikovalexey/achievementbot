@@ -6,16 +6,21 @@ namespace WordClassTagger
     {
         public string Content { get; set; }
         public string ContentWithKeptCase { get; set; }
-        public string Tag { get; set; }
+        public int Tag { get; set; }
         // Whether token is a word or a number
         public bool IsWord { get; set; }
 
-        public InputToken(string content, string contentWithKeptCase, long orderInTextIndex, bool isWord, string tag = "<ЕщеНеЗадан>")
+        public InputToken(string content, string contentWithKeptCase, long orderInTextIndex, bool isWord, int tag = (int)Tags.TagsEnum.UNDEFINED)
         {
             this.Content = content;
             this.ContentWithKeptCase = contentWithKeptCase;
             this.Tag = tag;
             this.IsWord = isWord;
+        }
+
+        public string GetStringTag()
+        {
+            return Tags.EnumTagToStringTag(Tag);
         }
 
         public override string ToString()
