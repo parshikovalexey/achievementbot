@@ -17,7 +17,7 @@ namespace WordClassTagger
         public static List<string> StringTagsForConverting = new List<string>
         {
             "<A>", "<ADV>", "<ADVPRO>", "<ANUM>", "<APRO>", "<COM>", "<CONJ>",
-            "<INTJ>", "<NUM>", "<PART>", "<PR>", "<S>", "<SPRO>", "<V>", "<ЕщеНеЗадан>", "<НеРаспознан>"
+            "<INTJ>", "<NUM>", "<PART>", "<PR>", "<S>", "<SPRO>", "<V>", "<ЕщеНеЗадан>", "<НеРаспознана>"
         };
         
         public static int StringTagToEnumTag(string tag)

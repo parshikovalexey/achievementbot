@@ -25,7 +25,7 @@ namespace WordClassTagger
             // word
             @"(?<word>(\d+-)?[\p{L}]+(?:(?:'|-|’)?[\p{L}]+)*)",
 
-            Number,
+            Number
         };
 
         static Tokenizer()
@@ -49,7 +49,7 @@ namespace WordClassTagger
         public static List<InputToken> GetTokensListFromInputText(string inputText)
         {
             List<InputToken> inputTokens = new List<InputToken>();
-            long inputTokenOrderInTextIndex = 1;
+            int inputTokenOrderInTextIndex = 0;
 
             int inputTokenOrderInSentenceIndex = 1;
             for (Match m = TokenRE.Match(inputText); m.Success; m = m.NextMatch())

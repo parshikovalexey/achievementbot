@@ -4,14 +4,17 @@ namespace WordClassTagger
 {
     public class InputToken : IComparable
     {
+        // Count from 0
+        public int OrderInTextIndex { get; set; }
         public string Content { get; set; }
         public string ContentWithKeptCase { get; set; }
         public int Tag { get; set; }
         // Whether token is a word or a number
         public bool IsWord { get; set; }
 
-        public InputToken(string content, string contentWithKeptCase, long orderInTextIndex, bool isWord, int tag = (int)Tags.TagsEnum.UNDEFINED)
+        public InputToken(string content, string contentWithKeptCase, int orderInTextIndex, bool isWord, int tag = (int)Tags.TagsEnum.UNDEFINED)
         {
+            this.OrderInTextIndex = orderInTextIndex;
             this.Content = content;
             this.ContentWithKeptCase = contentWithKeptCase;
             this.Tag = tag;
