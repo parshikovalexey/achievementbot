@@ -50,7 +50,7 @@ namespace PhraseRecognPrototype
 
             // Common pattern
             string commonDatePattern = "(" + string.Join("|", datePatterns);
-            commonDatePattern += ")?" + timePattern;
+            commonDatePattern += ")?" + timePattern + "?";
             Regex dateRE = new Regex(commonDatePattern, RegexOptions.IgnoreCase);
 
             // Try to get date from input
@@ -73,8 +73,11 @@ namespace PhraseRecognPrototype
                 {
                     achievement += "Ты сделал — " + token.ContentWithKeptCase + ".\r\n";
                     conditionalIndex++;
+                    // Break the loop if there is only one word, eg. "выспался"
+                    if (InputTextManager.GetTokens().Count == 1) break;
                     // To handle "нашел клад, помог другу, сдал тест" cases
-                    if (InputTextManager.GetTokens()[token.OrderInTextIndex + 1].Tag != (int)Tags.TagsEnum.NUM)
+                    // There is checking whether there is some next words in order to take into account "стал счастливым" case
+                    if (InputTextManager.GetTokens()[token.OrderInTextIndex + 1].Tag != (int)Tags.TagsEnum.NUM && token.OrderInTextIndex < InputTextManager.GetTokens().Count)
                     {
                         // Because there is no amount in such cases
                         conditionalIndex++;
@@ -93,7 +96,7 @@ namespace PhraseRecognPrototype
                     // Get the rest of composite object (if it is composite, eg. суть ООП, тест по информатике)
                     for (int i = token.OrderInTextIndex; i < InputTextManager.GetTokens().Count; i++)
                         tempObj += " " + InputTextManager.GetTokens()[i].ContentWithKeptCase;
-                    achievement += "Чего?/Что?/Кому? — " + tempObj + ".\r\n";
+                    achievement += "Чего?/Что?/Кому?/Каким? — " + tempObj + ".\r\n";
                     break;
                 }
             }
