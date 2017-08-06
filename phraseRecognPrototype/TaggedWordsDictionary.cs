@@ -25,7 +25,7 @@ namespace WordClassTagger
             foreach (var taggedDicWord in TaggedWordsAsStrings)
             {
                 string tag = taggedDicWord.Substring(taggedDicWord.IndexOf('<'));
-                TaggedWords.Add(new TaggedWord(taggedDicWord.Substring(0, taggedDicWord.IndexOf('<')).ToLower(), Tags.StringTagToEnumTag(tag), taggedWordOrderIndex));
+                TaggedWords.Add(new TaggedWord(taggedDicWord.Substring(0, taggedDicWord.IndexOf('<')).ToLower(), TagsManager.StringTagToEnumTag(tag), taggedWordOrderIndex));
                 taggedWordOrderIndex++;
             }
             TaggedWords.Sort();

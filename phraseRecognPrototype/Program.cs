@@ -69,7 +69,7 @@ namespace PhraseRecognPrototype
             foreach (var token in InputTextManager.GetTokens())
             {
                 // Action
-                if ((token.Tag == (int)Tags.TagsEnum.V || actionRegex.IsMatch(token.Content)) && conditionalIndex == 0)
+                if ((token.Tag == (int)TagsManager.TagsEnum.V || actionRegex.IsMatch(token.Content)) && conditionalIndex == 0)
                 {
                     achievement += "Ты сделал — " + token.ContentWithKeptCase + ".\r\n";
                     conditionalIndex++;
@@ -77,14 +77,14 @@ namespace PhraseRecognPrototype
                     if (InputTextManager.GetTokens().Count == 1) break;
                     // To handle "нашел клад, помог другу, сдал тест" cases
                     // There is checking whether there is some next words in order to take into account "стал счастливым" case
-                    if (InputTextManager.GetTokens()[token.OrderInTextIndex + 1].Tag != (int)Tags.TagsEnum.NUM && token.OrderInTextIndex < InputTextManager.GetTokens().Count)
+                    if (InputTextManager.GetTokens()[token.OrderInTextIndex + 1].Tag != (int)TagsManager.TagsEnum.NUM && token.OrderInTextIndex < InputTextManager.GetTokens().Count)
                     {
                         // Because there is no amount in such cases
                         conditionalIndex++;
                     }
                 }
                 // Amount
-                else if ((token.Tag == (int)Tags.TagsEnum.NUM || amountByWords.Contains(token.Content)) && conditionalIndex == 1)
+                else if ((token.Tag == (int)TagsManager.TagsEnum.NUM || amountByWords.Contains(token.Content)) && conditionalIndex == 1)
                 {
                     achievement += "Сколько? — " + token.ContentWithKeptCase + ".\r\n";
                     conditionalIndex++;

@@ -13,13 +13,13 @@ namespace WordClassTagger
         {
             if (NumeralRE.IsMatch(token.Content) && !token.IsWord)
             {
-                token.Tag = (int)Tags.TagsEnum.NUM;
+                token.Tag = (int)TagsManager.TagsEnum.NUM;
             }
             else if (NumeralAndWord.IsMatch(token.Content))
             {
                 // Because there is no way to define yet, an idea is using separate dictionary containing parts of word after hyphen
                 // TODO Of course this condition branch maybe omitted but it needs for further scaling and adding mentioned above feature
-                token.Tag = (int)Tags.TagsEnum.UNRECOGNIZED;
+                token.Tag = (int)TagsManager.TagsEnum.UNRECOGNIZED;
             }
             else
             {
@@ -30,7 +30,7 @@ namespace WordClassTagger
                     token.Tag = TaggedWordsDictionary.GetLTaggedDicWords()[searchResult].Tag;
                 }
                 else
-                    token.Tag = (int)Tags.TagsEnum.UNRECOGNIZED;
+                    token.Tag = (int)TagsManager.TagsEnum.UNRECOGNIZED;
             }
         }
     }

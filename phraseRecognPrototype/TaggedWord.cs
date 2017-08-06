@@ -26,7 +26,7 @@ namespace WordClassTagger
 
         public string GetStringTag()
         {
-            return Tags.EnumTagToStringTag(Tag);
+            return TagsManager.EnumTagToStringTag(Tag);
         }
 
         public override string ToString()

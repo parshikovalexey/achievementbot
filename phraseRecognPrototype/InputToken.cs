@@ -12,7 +12,7 @@ namespace WordClassTagger
         // Whether token is a word or a number
         public bool IsWord { get; set; }
 
-        public InputToken(string content, string contentWithKeptCase, int orderInTextIndex, bool isWord, int tag = (int)Tags.TagsEnum.UNDEFINED)
+        public InputToken(string content, string contentWithKeptCase, int orderInTextIndex, bool isWord, int tag = (int)TagsManager.TagsEnum.UNDEFINED)
         {
             this.OrderInTextIndex = orderInTextIndex;
             this.Content = content;
@@ -23,7 +23,7 @@ namespace WordClassTagger
 
         public string GetStringTag()
         {
-            return Tags.EnumTagToStringTag(Tag);
+            return TagsManager.EnumTagToStringTag(Tag);
         }
 
         public override string ToString()

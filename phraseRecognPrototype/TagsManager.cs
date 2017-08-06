@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WordClassTagger
 {
-    public static class Tags
+    public static class TagsManager
     {
         public enum TagsEnum
         {
