@@ -53,14 +53,22 @@ namespace PhraseRecognPrototype
             commonDatePattern += ")?" + timePattern + "?";
             Regex dateRE = new Regex(commonDatePattern, RegexOptions.IgnoreCase);
 
-            // Try to get date from input
+            // Try to get date and time match from input
             Match m = dateRE.Match(inputText);
+            // Removing date and time from input message in order to make further recognition easier
+            if (m.Value != null)
+            {
+                if (m.Groups["date"].Value != null)
+                    inputText = inputText.Replace(m.Groups["date"].Value, "").Trim(new Char[] { ' ' });
+                if (m.Groups["time"].Value != null)
+                    inputText = inputText.Replace(m.Groups["time"].Value, "").Trim(new Char[] { ' ' });
+            }
 
             // 1/2, 1/10 etc. will be recognized by tagger
             List<string> amountByWords = new List<string> { "половину", "треть", "четверть", "много", "немного", "уйму", "кучу", "тучу" };
             
             // Examples: прочитал, прочитала, прочитали, подтянулся, подтянулись, подтянулась, прочитано, спасено, завершен(о/а), построил, спас, потерял/засеял/посеял, взлетел
-            Regex actionRegex = new Regex(".*(ал(а|и)?)|(лся)|(лись)|(лась)|(ано)|(ено)|(ше|ён(о|а)?)|(ил)|(спас)|(ял)|(ел)$");
+            Regex actionRegex = new Regex(".*((ал(а|и)?)|(лся)|(лись)|(лась)|(ано)|(ено)|(ше|ён(о|а)?)|(ил)|(спас)|(ял)|(ел))$");
             
             Console.WriteLine("\r\nВыходные данные:");
             // 1 value is up to ACTION, 2 value is up to AMOUNT, 3 value is up to OBJECT
