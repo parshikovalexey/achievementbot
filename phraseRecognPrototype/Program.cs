@@ -11,121 +11,145 @@ namespace PhraseRecognPrototype
         {
             Console.Write("Enter input text: ");
             string inputText = Console.ReadLine();
+            
+            // Try to get date and time match from input
+            Regex dateRE = new Regex(Tokenizer.CommonDatePattern, RegexOptions.IgnoreCase);
+            Match m = dateRE.Match(inputText);
+
+            // HACK string type is used temporarily, there will be DateTime type after implementation "string date and time" -> DateTime parsing
+            string date = m.Groups["date"].Value;
+            string time = m.Groups["time"].Value;
+            date = date.Trim(new Char[] { ' ' });
+            time = time.Trim(new Char[] { ' ' });
+            RemoveDateAndTimeFromMessage(date, time, ref inputText);
+
+            // Examples: прочитал, прочитала, прочитали, подтянулся, подтянулись, подтянулась, прочитано, спасено, завершен(о/а), построил, спас, потерял/засеял/посеял, взлетел
+            Regex actionRegex = new Regex(".*((ал(а|и)?)|(лся)|(лись)|(лась)|(ано)|(ено)|(ше|ён(о|а)?)|(ил)|(спас)|(ял)|(ел))$");
+            Regex unitsRegex = new Regex(string.Join("|", ConstantValues.Units));
 
             // Loading and preparing
             InputTextManager.LoadInput(inputText);
-            TaggedWordsDictionary.Load();
+            List<InputToken> GotTokens = InputTextManager.GetTokens();
 
-            // Tagging of input tokens and showing them for debugging
+            // Showing tokens for debugging
             Console.WriteLine("\r\nЧасти речи входных слов (отладка):");
-            foreach (var token in InputTextManager.GetTokens())
+            foreach (var token in GotTokens)
             {
-                // Execute tagging of the token
-                Tagger.DefineAndAppendTagToWord(token);
                 // Only for debugging and showing recognited parts of speech
                 Console.WriteLine(token.ContentWithKeptCase + token.GetStringTag());
             }
 
-            string monthsPattern = @"(?:(января)|(февраля)|(марта)|(апреля)|(мая)|(июня)|(июля)|(августа)|(сентября)|(октября)|(ноября)|(декабря))";
-            // examples: осенью 2012 года, летом 12 года
-            string seasonsPattern = @"(?:(летом?)|(осень)|(осенью)|(зима)|(зимой)|(весна)|(весной))";
-            // NOTE users must type time only after date, also date and time must be at the beginning or at the end of a message
-            string timePattern = @"(?<time>([ \t\b]*в[ \t\b]*\d{1,2}[:_ ]\d{1,2})|([ \t\b]*в[ \t\b]*\d{0,2}([ \t\b]*час((а)|(ов))?)?([ \t\b]*\d{1,2} м\w*.?)?)([ \t\b]*((дня)|(вечера)|(утра)|(ночи)))?)";
-
-            // older patterns for time, if it would be turned out that current pattern works incorrectly
-            // v1 string timePattern = @"(?<time>([в \t\b]*\d{1,2}[:_ ]\d{1,2})|([в \t\b]*\d{1,2}([ \t\b]*час((а)|(ов)))?([ \t\b]*((дня)|(вечера)|(утра)|(ночи)))?([ \t\b]*\d{1,2} мин)?))";
-            // v2 string timePattern = @"(?<time>([в \t\b]*\d{1,2}[:_ ]\d{1,2})|([в \t\b]*\d{1,2}([ \t\b]*час((а)|(ов)))?([ \t\b]*\d{1,2} м\w*.?)?)([ \t\b]*((дня)|(вечера)|(утра)|(ночи)))?)";
-
-            string[] datePatterns = new string[]
+            // Getting phrase AMOUNT position by means of using tokens list
+            int amountPosition = -1;
+            foreach (var token in GotTokens)
             {
-                // date as word
-                @"(?<date>((сегодня)|(вчера)|(позавчера)|(на этой неделе)|(в этом месяце)|(на днях)|(понедельник)|(вторник)|(сред(а|у))|(четверг)|(пятниц(а|у))|(суббот(а|у))|(воскресенье)))",
-
-                // dayAndMonth - some day (ex: 20, 2, 02, десятое) and some month as a word and, maybe, some year
-                @"(?<date>((((\d{1,2})|(\w+(ое)|(го)))[ \t\b]*" + monthsPattern + @")|" + seasonsPattern + @")[ \t\b]*(\d{1,4}(\s*год(а|у)?)?)?)",
-
-                // examples: 20[. /-]12, 20[. /-]12, 11[. /-]12[. /-]2012, 2[. /-]10 and maybe time
-                @"(?<date>\d{1,2}([./\- ]\d{1,4}){1,3})"
-            };
-
-            // Common pattern
-            string commonDatePattern = "(" + string.Join("|", datePatterns);
-            commonDatePattern += ")?" + timePattern + "?";
-            Regex dateRE = new Regex(commonDatePattern, RegexOptions.IgnoreCase);
-
-            // Try to get date and time match from input
-            Match m = dateRE.Match(inputText);
-            // Removing date and time from input message in order to make further recognition easier
-            if (m.Value != null)
-            {
-                if (m.Groups["date"].Value != null)
-                    inputText = inputText.Replace(m.Groups["date"].Value, "").Trim(new Char[] { ' ' });
-                if (m.Groups["time"].Value != null)
-                    inputText = inputText.Replace(m.Groups["time"].Value, "").Trim(new Char[] { ' ' });
+                if (token.Tag == TagsManager.TagsEnum.NUM)
+                    amountPosition = token.OrderInTextIndex;
             }
 
-            // 1/2, 1/10 etc. will be recognized by tagger
-            List<string> amountByWords = new List<string> { "половину", "треть", "четверть", "много", "немного", "уйму", "кучу", "тучу" };
-            
-            // Examples: прочитал, прочитала, прочитали, подтянулся, подтянулись, подтянулась, прочитано, спасено, завершен(о/а), построил, спас, потерял/засеял/посеял, взлетел
-            Regex actionRegex = new Regex(".*((ал(а|и)?)|(лся)|(лись)|(лась)|(ано)|(ено)|(ше|ён(о|а)?)|(ил)|(спас)|(ял)|(ел))$");
-            
-            Console.WriteLine("\r\nВыходные данные:");
-            // 1 value is up to ACTION, 2 value is up to AMOUNT, 3 value is up to OBJECT
-            int conditionalIndex = 0;
+            // Getting action and amount
             string achievement = "";
-            foreach (var token in InputTextManager.GetTokens())
+            string action = "";
+            string unit = "";
+            string amount = "";
+            foreach (var token in GotTokens)
             {
-                // Action
-                if ((token.Tag == (int)TagsManager.TagsEnum.V || actionRegex.IsMatch(token.Content)) && conditionalIndex == 0)
+                // Phrase ACTION retreaving
+                if ((token.Tag == TagsManager.TagsEnum.V || actionRegex.IsMatch(token.Content)))
                 {
+                    action = token.ContentWithKeptCase;
                     achievement += "Ты сделал — " + token.ContentWithKeptCase + ".\r\n";
-                    conditionalIndex++;
                     // Break the loop if there is only one word, eg. "выспался"
-                    if (InputTextManager.GetTokens().Count == 1) break;
-                    // To handle "нашел клад, помог другу, сдал тест" cases
-                    // There is checking whether there is some next words in order to take into account "стал счастливым" case
-                    if (InputTextManager.GetTokens()[token.OrderInTextIndex + 1].Tag != (int)TagsManager.TagsEnum.NUM && token.OrderInTextIndex < InputTextManager.GetTokens().Count)
-                    {
-                        // Because there is no amount in such cases
-                        conditionalIndex++;
-                    }
+                    if (GotTokens.Count == 1) break;
                 }
                 // Amount
-                else if ((token.Tag == (int)TagsManager.TagsEnum.NUM || amountByWords.Contains(token.Content)) && conditionalIndex == 1)
+                if ((token.Tag == TagsManager.TagsEnum.NUM || ConstantValues.AmountByWords.Contains(token.Content)))
                 {
-                    achievement += "Сколько? — " + token.ContentWithKeptCase + ".\r\n";
-                    conditionalIndex++;
-                }
-                // Object
-                else if (conditionalIndex == 2)
-                {
-                    string tempObj = "";
-                    // Get the rest of composite object (if it is composite, eg. суть ООП, тест по информатике)
-                    for (int i = token.OrderInTextIndex; i < InputTextManager.GetTokens().Count; i++)
-                        tempObj += " " + InputTextManager.GetTokens()[i].ContentWithKeptCase;
-                    achievement += "Чего?/Что?/Кому?/Каким? — " + tempObj + ".\r\n";
-                    break;
+                    // Try to get phrase UNIT of measure
+                    if (token.OrderInTextIndex < GotTokens.Count && unitsRegex.IsMatch(GotTokens[token.OrderInTextIndex + 1].Content))
+                    {
+                        amount = token.ContentWithKeptCase;
+                        unit = GotTokens[token.OrderInTextIndex + 1].ContentWithKeptCase;
+                        achievement += "Сколько? — " + token.ContentWithKeptCase + ".\r\nЧего? — " + unit + ".\r\n";
+                    }
+                    else
+                    {
+                        amount = token.ContentWithKeptCase;
+                        achievement += "Сколько? — " + token.ContentWithKeptCase + ".\r\n";
+                    }
                 }
             }
+
+            // Filter action, unit and amount out of phrase in order to get phrase OBJECT
+            if (action != "")
+                inputText = inputText.Replace(action, "");
+            if (unit != "")
+                inputText = inputText.Replace(unit, "");
+            if (amount != "")
+                inputText = inputText.Replace(amount, "");
+
+            inputText = inputText.Trim(new Char[] { ' ', ',' });
+            // Getting phrase OBJECT
+            if (inputText != "")
+                achievement += "Что?/Кому?/Каким? — " + inputText + ".\r\n";
+
+            // There is using of trim because I failed correct regexp for time so that it does not capture spaces and "в" letter
+            date = date.Trim(new Char[] { ' ', ',' });
+            time = time.Trim(new Char[] { ' ', ',', 'в' });
 
             if (achievement == "")
                 Console.WriteLine("Некорректный ввод либо не удалось распознать фразу.");
             else
             {
-                // There is using of trim because I failed correct regexp for time so that it does not capture spaces and "в" letter
-                if (m.Groups["date"].Value != "" && m.Groups["time"].Value.Trim(new Char[] { 'в', ' ' }) != "")
-                    achievement += String.Format("Когда? — Дата: {0}. Время: {1}.\r\n", m.Groups["date"].Value, m.Groups["time"].Value.Trim(new Char[] { 'в', ' ' }));
-                else if (m.Groups["date"].Value == "" && m.Groups["time"].Value.Trim(new Char[] { 'в', ' ' }) != "")
-                    achievement += String.Format("Когда? — Дата: не указана, будет считаться, что сегодня. Время: {0}.\r\n", m.Groups["time"].Value.Trim(new Char[] { 'в', ' ' }));
-                else if (m.Groups["date"].Value != "" && m.Groups["time"].Value.Trim(new Char[] { 'в', ' ' }) == "")
-                    achievement += String.Format("Когда? — Дата: {0}. Время: не указано, будет использовано текущее.\r\n", m.Groups["date"].Value);
+                if (date != "" && time != "")
+                    achievement += String.Format("Когда? — Дата: {0}. Время: {1}.\r\n", date, time);
+                else if (date == "" && time != "")
+                    achievement += String.Format("Когда? — Дата: не указана, будет считаться, что сегодня. Время: {0}.\r\n", time);
+                else if (date != "" && time == "")
+                    achievement += String.Format("Когда? — Дата: {0}. Время: не указано, будет использовано текущее.\r\n", date);
                 else
                     achievement += "Когда? — дата не была указана либо не была распознана, будут использованы текущие дата и время\r\n";
+                Console.WriteLine("\r\nВыходные данные:");
                 Console.WriteLine(achievement);
             }
-
+            ParseDate(date, time);
             // NOTE idea - if achievement - reading a book then bot would ask what exactly the book is in order to clarify the achievement
+        }
+
+        private static DateTime ParseDate(string date, string time)
+        {
+            DateTime parsedDateTime = DateTime.UtcNow;
+
+            switch (date)
+            {
+                case "вчера":
+                    parsedDateTime = DateTime.UtcNow;
+                    parsedDateTime = parsedDateTime.AddDays(-1);
+                    break;
+                case "позавчера":
+                    parsedDateTime = DateTime.UtcNow;
+                    parsedDateTime = parsedDateTime.AddDays(-2);
+                    break;
+                // ...
+                default:
+                    break;
+            }
+            // TODO Implement the method completely
+            return parsedDateTime;
+        }
+
+        /// <summary>
+        /// Method for removing date and time from input message in order to make further recognition easier
+        /// </summary>
+        private static void RemoveDateAndTimeFromMessage(string date, string time, ref string inputText)
+        {
+            if (date != "" || time != "")
+            {
+                if (date != "")
+                    inputText = inputText.Replace(date, " ").Trim(new Char[] { ' ' });
+                if (time != "")
+                    inputText = inputText.Replace(time, " ").Trim(new Char[] { ' ' });
+            }
         }
     }
 }

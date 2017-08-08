@@ -10,9 +10,9 @@ namespace WordClassTagger
     public class TaggedWord : IComparable
     {
         public string Word { get; set; }
-        public int Tag { get; set; }
+        public TagsManager.TagsEnum Tag { get; set; }
 
-        public TaggedWord(string word, int tag, long orderIndex)
+        public TaggedWord(string word, TagsManager.TagsEnum tag)
         {
             this.Word = word;
             this.Tag = tag;
@@ -36,6 +36,12 @@ namespace WordClassTagger
 
         public override bool Equals(object other)
         {
+            // When comparing with null it must always return false
+            if (other == null)
+                return false;
+            // If comparing objects have different type then equality is not correct
+            if (other.GetType() != this.GetType())
+                return false;
             if (this.Word == other.ToString()) return true;
             else return false;
         }

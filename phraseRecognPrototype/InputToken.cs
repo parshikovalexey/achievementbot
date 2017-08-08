@@ -8,11 +8,11 @@ namespace WordClassTagger
         public int OrderInTextIndex { get; set; }
         public string Content { get; set; }
         public string ContentWithKeptCase { get; set; }
-        public int Tag { get; set; }
+        public TagsManager.TagsEnum Tag { get; set; }
         // Whether token is a word or a number
         public bool IsWord { get; set; }
 
-        public InputToken(string content, string contentWithKeptCase, int orderInTextIndex, bool isWord, int tag = (int)TagsManager.TagsEnum.UNDEFINED)
+        public InputToken(string content, string contentWithKeptCase, int orderInTextIndex, bool isWord, TagsManager.TagsEnum tag = TagsManager.TagsEnum.UNDEFINED)
         {
             this.OrderInTextIndex = orderInTextIndex;
             this.Content = content;

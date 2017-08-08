@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConstantValues.cs" />
     <Compile Include="TaggedWordsDictionary.cs" />
     <Compile Include="InputToken.cs" />
     <Compile Include="InputTextManager.cs" />

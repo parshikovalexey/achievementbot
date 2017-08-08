@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WordClassTagger
 {
@@ -12,26 +8,8 @@ namespace WordClassTagger
         {
             A, ADV, ADVPRO, ANUM, APRO, COM, CONJ, INTJ, NUM, PART, PR, S, SPRO, V, UNDEFINED, UNRECOGNIZED
         }
-
-        // Converting from int of enum to string
-        public static List<string> StringTagsForConverting = new List<string>
-        {
-            "<A>", "<ADV>", "<ADVPRO>", "<ANUM>", "<APRO>", "<COM>", "<CONJ>",
-            "<INTJ>", "<NUM>", "<PART>", "<PR>", "<S>", "<SPRO>", "<V>", "<ЕщеНеЗадан>", "<НеРаспознана>"
-        };
         
-        public static int StringTagToEnumTag(string tag)
-        {
-            return StringTagsForConverting.FindIndex((element) => element == tag);
-        }
-
-        public static string EnumTagToStringTag(int tag)
-        {
-            return StringTagsForConverting[tag];
-        }
-
-        /*
-         * A - ПРИЛАГАТЕЛЬНОЕ
+        /* A - ПРИЛАГАТЕЛЬНОЕ
          * ADV - НАРЕЧИЕ
          * ADVPRO - МЕСТОИМЕННОЕ НАРЕЧИЕ (ГДЕ-ТО, ДОСЕЛЕ, ЗАЧЕМ-ТО, КОЕ-КАК)
          * ANUM - ЧИСЛИТЕЛЬНОЕ-ПРИЛАГАТЕЛЬНОЕ (ВОСЬМАЯ, ВТОРАЯ)
@@ -44,7 +22,17 @@ namespace WordClassTagger
          * PR - ПРЕДЛОГ
          * S - СУЩЕСТВИТЕЛЬНОЕ
          * SPRO - МЕСТОИМЕНИЕ-СУЩЕСТВИТЕЛЬНОЕ
-         * V - ГЛАГОЛ
-         */
+         * V - ГЛАГОЛ */
+
+        public static TagsEnum StringTagToEnumTag(string tag)
+        {
+            Enum.TryParse<TagsEnum>(tag.Substring(1, tag.Length - 2), out var res);
+            return res;
+        }
+
+        public static string EnumTagToStringTag(TagsManager.TagsEnum tag)
+        {
+            return "<" + Enum.GetName(typeof(TagsEnum), tag) + ">";
+        }
     }
 }

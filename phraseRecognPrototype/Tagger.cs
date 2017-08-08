@@ -13,24 +13,22 @@ namespace WordClassTagger
         {
             if (NumeralRE.IsMatch(token.Content) && !token.IsWord)
             {
-                token.Tag = (int)TagsManager.TagsEnum.NUM;
+                token.Tag = TagsManager.TagsEnum.NUM;
             }
             else if (NumeralAndWord.IsMatch(token.Content))
             {
                 // Because there is no way to define yet, an idea is using separate dictionary containing parts of word after hyphen
-                // TODO Of course this condition branch maybe omitted but it needs for further scaling and adding mentioned above feature
-                token.Tag = (int)TagsManager.TagsEnum.UNRECOGNIZED;
+                // NOTE Of course this condition branch maybe omitted but it needs for further scaling and adding mentioned above feature
+                token.Tag = TagsManager.TagsEnum.UNRECOGNIZED;
             }
             else
             {
                 // Recognition by tagged words dictionary
                 int searchResult = TaggedWordsDictionary.GetLTaggedDicWords().BinarySearch(new TaggedWord(token.Content));
                 if (searchResult >= 0)
-                {
                     token.Tag = TaggedWordsDictionary.GetLTaggedDicWords()[searchResult].Tag;
-                }
                 else
-                    token.Tag = (int)TagsManager.TagsEnum.UNRECOGNIZED;
+                    token.Tag = TagsManager.TagsEnum.UNRECOGNIZED;
             }
         }
     }
