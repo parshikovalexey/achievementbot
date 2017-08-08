@@ -13,19 +13,19 @@ namespace WordClassTagger
 
         public static void LoadInput(string inputText)
         {
-            // In order to prevent multiple range adding
+            // In order to prevent multiple range adding.
             if (InputTokens == null)
             {
-                // Dictionary preparing
+                // Dictionary preparing.
                 TaggedWordsDictionary.Load();
 
                 InputTokens = new List<InputToken>();
                 InputTokens.AddRange(Tokenizer.GetTokensListFromInputText(inputText));
 
-                // Tagging execution
+                // Tagging execution.
                 foreach (var token in InputTokens)
                 {
-                    // Execute tagging of the token
+                    // Execute tagging of the token.
                     Tagger.DefineAndAppendTagToWord(token);
                 }
             }

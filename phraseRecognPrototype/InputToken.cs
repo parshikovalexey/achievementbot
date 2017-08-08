@@ -4,12 +4,12 @@ namespace WordClassTagger
 {
     public class InputToken : IComparable
     {
-        // Count from 0
+        // Count starts from 0.
         public int OrderInTextIndex { get; set; }
         public string Content { get; set; }
         public string ContentWithKeptCase { get; set; }
         public TagsManager.TagsEnum Tag { get; set; }
-        // Whether token is a word or a number
+        // Whether token is a word or a number.
         public bool IsWord { get; set; }
 
         public InputToken(string content, string contentWithKeptCase, int orderInTextIndex, bool isWord, TagsManager.TagsEnum tag = TagsManager.TagsEnum.UNDEFINED)
@@ -43,10 +43,10 @@ namespace WordClassTagger
 
         public override bool Equals(object other)
         {
-            // When comparing with null it must always return false
+            // When comparing with null it must always return false.
             if (other == null)
                 return false;
-            // If comparing objects have different type then equality is not correct
+            // If comparing objects have different type then equality is not correct.
             if (other.GetType() != this.GetType())
                 return false;
             if (Content == other.ToString()) return true;

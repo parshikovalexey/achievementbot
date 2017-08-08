@@ -36,10 +36,10 @@ namespace WordClassTagger
 
         public override bool Equals(object other)
         {
-            // When comparing with null it must always return false
+            // When comparing with null it must always return false.
             if (other == null)
                 return false;
-            // If comparing objects have different type then equality is not correct
+            // If comparing objects have different type then equality is not correct.
             if (other.GetType() != this.GetType())
                 return false;
             if (this.Word == other.ToString()) return true;
