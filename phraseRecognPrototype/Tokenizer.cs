@@ -13,31 +13,32 @@ namespace WordClassTagger
         static readonly RegexOptions TokenREoptions = RegexOptions.Singleline | RegexOptions.IgnoreCase;
         static readonly Regex TokenRE;
 
-        private static readonly string monthsPattern = @"(?:(" + string.Join("|", ConstantValues.Months) + "))";
-        private static readonly string seasonsPattern = @"(?:(" + string.Join("|", ConstantValues.Seasons) + "))";
+        private static readonly string MonthsPattern = @"(?:(" + string.Join("|", ConstantValues.Months) + "))";
+        private static readonly string SeasonsPattern = @"(?:(" + string.Join("|", ConstantValues.Seasons) + "))";
         // NOTE Users must type time only after date, also date and time must be at the beginning or at the end of a message.
         // Matching time examples (half-regular sintax for code minimization): в 2 часа (10 минут)? ночи|дня|утра|вечера, в 10[:_ ]00, ночью|днем|утром|вечером.
-        private static readonly string timePattern = @"(?<time>((([ \t\b]*в[ \t\b]*\d{1,2}[:_ ]\d{1,2})|((?=[ \t\b]*)в [ \t\b]*\d{0,2}([ \t\b]*час((а)|(ов))?)?([ \t\b]*\d{1,2} ?м\p{L}*\.?)?))([ \t\b]*((дня)|(вечера)|(утра)|(ночи)))?)|((ночью)|(днем)|(утром)|(вечером)|(под утро)|(под вечер)))";
+        private static readonly string TimePattern = @"(?<time>((((в[ \t\b]*)?\d{1,2}[:_ ]\d{1,2})|((?=[ \t\b]*)в\s+[ \t\b]*\d{0,2}([ \t\b]*час((а)|(ов))?)?([ \t\b]*\d{1,2} ?м\p{L}*\.?)?))([ \t\b]*((дня)|(вечера)|(утра)|(ночи)))?)|((ночью)|(днем)|(утром)|(вечером)|(под утро)|(под вечер)))";
         // Older patterns for time, if it would be turned out that current pattern works incorrectly.
-        // v1 string timePattern = @"(?<time>([в \t\b]*\d{1,2}[:_ ]\d{1,2})|([в \t\b]*\d{1,2}([ \t\b]*час((а)|(ов)))?([ \t\b]*((дня)|(вечера)|(утра)|(ночи)))?([ \t\b]*\d{1,2} мин)?))";
-        // v2 string timePattern = @"(?<time>([в \t\b]*\d{1,2}[:_ ]\d{1,2})|([в \t\b]*\d{1,2}([ \t\b]*час((а)|(ов)))?([ \t\b]*\d{1,2} м\w*.?)?)([ \t\b]*((дня)|(вечера)|(утра)|(ночи)))?)";
-        // v3 string timePattern = @"(?<time>((([ \t\b]*в[ \t\b]*\d{1,2}[:_ ]\d{1,2})|([ \t\b]*в[ \t\b]*\d{0,2}([ \t\b]*час((а)|(ов))?)?([ \t\b]*\d{1,2} ?м\p{L}*\.?)?))([ \t\b]*((дня)|(вечера)|(утра)|(ночи)))?)|(ночью)|(днем)|(утром)|(вечером))";
-        private static readonly string[] datePatterns = new string[]
+        // v1 @"(?<time>([в \t\b]*\d{1,2}[:_ ]\d{1,2})|([в \t\b]*\d{1,2}([ \t\b]*час((а)|(ов)))?([ \t\b]*((дня)|(вечера)|(утра)|(ночи)))?([ \t\b]*\d{1,2} мин)?))";
+        // v2 @"(?<time>([в \t\b]*\d{1,2}[:_ ]\d{1,2})|([в \t\b]*\d{1,2}([ \t\b]*час((а)|(ов)))?([ \t\b]*\d{1,2} м\w*.?)?)([ \t\b]*((дня)|(вечера)|(утра)|(ночи)))?)";
+        // v3 @"(?<time>((([ \t\b]*в[ \t\b]*\d{1,2}[:_ ]\d{1,2})|([ \t\b]*в[ \t\b]*\d{0,2}([ \t\b]*час((а)|(ов))?)?([ \t\b]*\d{1,2} ?м\p{L}*\.?)?))([ \t\b]*((дня)|(вечера)|(утра)|(ночи)))?)|(ночью)|(днем)|(утром)|(вечером))";
+        // v4 @"(?<time>((([ \t\b]*в?[ \t\b]*\d{1,2}[:_ ]\d{1,2})|((?=[ \t\b]*)в\s+[ \t\b]*\d{0,2}([ \t\b]*час((а)|(ов))?)?([ \t\b]*\d{1,2} ?м\p{L}*\.?)?))([ \t\b]*((дня)|(вечера)|(утра)|(ночи)))?)|((ночью)|(днем)|(утром)|(вечером)|(под утро)|(под вечер)))";
+        private static readonly string[] DatePatterns = new string[]
         {
             // Alphabetic dates.
-            @"((" + string.Join("|", ConstantValues.AlphabeticDates) + "))",
+            @"((?=[ \t\b]*)(во?)?[ \t\b,]*(" + string.Join("|", ConstantValues.AlphabeticDates) + "))",
 
             // Some day (ex: 20, 2, 02, десятое) and some month as a word and, maybe, some year.
-            @"(((((\d{1,2})|(\p{L}+(ое)|(го)))[ \t\b]*" + monthsPattern + @")|" + seasonsPattern + @")[ \t\b]*(\d{1,4}(\s*год(а|у)?)?)?)",
+            @"(((((\d{1,2})|(\p{L}+(ое)|(го)))[ \t\b]*" + MonthsPattern + @")|" + SeasonsPattern + @")[ \t\b]*(\d{1,4}(\s*год(а|у)?)?)?)",
 
             // Examples: 20[. /-]12, 20[. /-]12, 11[. /-]12[. /-]2012, 2[. /-]10 and maybe time.
             @"(\d{1,2}([./\- ]\d{1,4}){1,3})"
         };
         // Combinated pattern.
         // Presence of some words between date and time is allowed.
-        public static string CommonDatePattern = "(?<date>" + string.Join("|", datePatterns) + ")|" + timePattern;
+        public static string CommonDatePattern = "(?<date>" + string.Join("|", DatePatterns) + ")|" + TimePattern;
 
-        static readonly string[] tokenPatterns = new string[]
+        static readonly string[] TokenPatterns = new string[]
         {
             // URLs.
             @"(?<url>((?:https?|ftp)://)(?:www\.)?(?:\p{L}+\.)+\p{L}{2,3}(?:/\S+)*" + NonAlphanumericAssertion + ")" + EndingAssertion,
@@ -58,7 +59,7 @@ namespace WordClassTagger
         {
             if (TokenRE == null)
             {
-                var s = string.Join("|", tokenPatterns);
+                var s = string.Join("|", TokenPatterns);
                 TokenRE = new Regex(s, TokenREoptions | RegexOptions.Compiled);
             }
         }
