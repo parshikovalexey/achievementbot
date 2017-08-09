@@ -17,15 +17,15 @@ namespace PhraseRecognPrototype
             string time = "";
             // Try to get date and time match from input.
             ParseDateAndTime(inputText, ref date, ref time);
-            RemoveDateAndTimeFromMessage(ref inputText, date, time);
+            inputText = RemoveDateAndTimeFromMessage(inputText, date, time);
 
             // Loading and preparing of tokens.
             InputTextManager.LoadInput(inputText);
-            List<InputToken> GotTokens = InputTextManager.GetTokens();
+            List<InputToken> tokens = InputTextManager.GetTokens();
 
             // Showing tokens for debugging.
             Console.WriteLine("\r\nЧасти речи входных слов (отладка):");
-            foreach (var token in GotTokens)
+            foreach (var token in tokens)
             {
                 // Only for debugging and showing recognited parts of speech
                 Console.WriteLine(token.ContentWithKeptCase + token.GetStringTag());
@@ -33,7 +33,7 @@ namespace PhraseRecognPrototype
 
             // Getting phrase AMOUNT position by means of using tokens list.
             int amountPosition = -1;
-            foreach (var token in GotTokens)
+            foreach (var token in tokens)
             {
                 if (token.Tag == TagsManager.TagsEnum.NUM)
                     amountPosition = token.OrderInTextIndex;
@@ -47,7 +47,7 @@ namespace PhraseRecognPrototype
             string action = "";
             string unit = "";
             string amount = "";
-            foreach (var token in GotTokens)
+            foreach (var token in tokens)
             {
                 // Phrase ACTION retreaving.
                 if ((token.Tag == TagsManager.TagsEnum.V || actionRegex.IsMatch(token.Content)))
@@ -55,33 +55,26 @@ namespace PhraseRecognPrototype
                     action = token.ContentWithKeptCase;
                     achievement += "Ты сделал — " + token.ContentWithKeptCase + ".\r\n";
                     // Break the loop if there is only one word, eg. "выспался".
-                    if (GotTokens.Count == 1) break;
+                    if (tokens.Count == 1) break;
                 }
                 // Amount.
                 if ((token.Tag == TagsManager.TagsEnum.NUM || ConstantValues.AmountByWords.Contains(token.Content)))
                 {
+                    amount = token.ContentWithKeptCase;
+                    achievement += "Сколько? — " + token.ContentWithKeptCase + ".\r\n";
                     // Try to get phrase UNIT of measure.
-                    if (token.OrderInTextIndex < GotTokens.Count && unitsRegex.IsMatch(GotTokens[token.OrderInTextIndex + 1].Content))
+                    if (token.OrderInTextIndex < tokens.Count && unitsRegex.IsMatch(tokens[token.OrderInTextIndex + 1].Content))
                     {
-                        amount = token.ContentWithKeptCase;
-                        unit = GotTokens[token.OrderInTextIndex + 1].ContentWithKeptCase;
-                        achievement += "Сколько? — " + token.ContentWithKeptCase + ".\r\nЧего? — " + unit + ".\r\n";
-                    }
-                    else
-                    {
-                        amount = token.ContentWithKeptCase;
-                        achievement += "Сколько? — " + token.ContentWithKeptCase + ".\r\n";
+                        unit = tokens[token.OrderInTextIndex + 1].ContentWithKeptCase;
+                        achievement += "Чего? — " + unit + ".\r\n";
                     }
                 }
             }
 
             // Filter action, unit and amount out of phrase in order to get phrase OBJECT.
-            if (action != "")
-                inputText = inputText.Replace(action, "");
-            if (unit != "")
-                inputText = inputText.Replace(unit, "");
-            if (amount != "")
-                inputText = inputText.Replace(amount, "");
+            inputText = inputText.Replace(action, "");
+            inputText = inputText.Replace(unit, "");
+            inputText = inputText.Replace(amount, "");
 
             inputText = inputText.Trim(new Char[] { ' ', ',' });
             // Getting phrase OBJECT.
@@ -127,7 +120,7 @@ namespace PhraseRecognPrototype
         /// <summary>
         /// Method for removing date and time from input message in order to make further recognition easier.
         /// </summary>
-        private static void RemoveDateAndTimeFromMessage(ref string inputText, string date, string time)
+        private static string RemoveDateAndTimeFromMessage(string inputText, string date, string time)
         {
             if (date != "" || time != "")
             {
@@ -136,6 +129,7 @@ namespace PhraseRecognPrototype
                 if (time != "")
                     inputText = inputText.Replace(time, " ");
             }
+            return inputText;
         }
 
         /// <summary>
@@ -147,16 +141,13 @@ namespace PhraseRecognPrototype
             switch (date)
             {
                 case "вчера":
-                    parsedDateTime = DateTime.UtcNow;
                     parsedDateTime = parsedDateTime.AddDays(-1);
                     break;
                 case "позавчера":
-                    parsedDateTime = DateTime.UtcNow;
                     parsedDateTime = parsedDateTime.AddDays(-2);
                     break;
                 case "на этой неделе":
                     // Trying to evaluate how much time need to subtract to get Monday's date.
-                    parsedDateTime = DateTime.UtcNow;
                     DayOfWeek dw = parsedDateTime.DayOfWeek;
                     break;
                 // ...
