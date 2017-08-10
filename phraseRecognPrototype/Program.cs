@@ -109,7 +109,7 @@ namespace PhraseRecognPrototype
                 Console.WriteLine("\r\nВыходные данные:");
                 Console.WriteLine(achievement);
             }
-            GetDateTimeFromString(date, time);
+            Console.ReadLine();
             // NOTE idea - if achievement - reading a book then bot would ask what exactly the book is in order to clarify the achievement.
         }
 
@@ -177,37 +177,42 @@ namespace PhraseRecognPrototype
             else if (date == "позавчера")
                 parsedDateTime = parsedDateTime.AddDays(-2);
 
-            // Taking into account weeks
-            if (earlier1RE.IsMatch(date) && dateUnit == ConstantValues.DateUnits.WEEKS)
-                parsedDateTime = parsedDateTime.AddDays(-7);
-            if (earlier2RE.IsMatch(date) && dateUnit == ConstantValues.DateUnits.WEEKS)
-                parsedDateTime = parsedDateTime.AddDays(-14);
+            if (earlier1RE.IsMatch(date)) {
+                switch (dateUnit) {
+                    // Taking into account weeks
+                    case ConstantValues.DateUnits.WEEKS: parsedDateTime = parsedDateTime.AddDays(-7); break;
+                    // Taking into account months
+                    case ConstantValues.DateUnits.MONTHS: parsedDateTime = parsedDateTime.AddMonths(-1); break;
+                    // Taking into account years
+                    case ConstantValues.DateUnits.YEARS: parsedDateTime = parsedDateTime.AddYears(-1); break;
+                }
+            }
+            if (earlier2RE.IsMatch(date)) {
+                switch (dateUnit) {
+                    // Taking into account weeks
+                    case ConstantValues.DateUnits.WEEKS: parsedDateTime = parsedDateTime.AddDays(-14); break;
+                    // Taking into account months
+                    case ConstantValues.DateUnits.MONTHS: parsedDateTime = parsedDateTime.AddMonths(-2); break;
+                    // Taking into account years
+                    case ConstantValues.DateUnits.YEARS: parsedDateTime = parsedDateTime.AddYears(-2); break;
+                }
+            }
 
-            // Taking into account months
-            if (earlier1RE.IsMatch(date) && dateUnit == ConstantValues.DateUnits.MONTHS)
-                parsedDateTime = parsedDateTime.AddMonths(-1);
-            if (earlier2RE.IsMatch(date) && dateUnit == ConstantValues.DateUnits.MONTHS)
-                parsedDateTime = parsedDateTime.AddMonths(-2);
-
-            // Taking into account years
-            if (earlier1RE.IsMatch(date) && dateUnit == ConstantValues.DateUnits.YEARS)
-                parsedDateTime = parsedDateTime.AddYears(-1);
-            if (earlier2RE.IsMatch(date) && dateUnit == ConstantValues.DateUnits.YEARS)
-                parsedDateTime = parsedDateTime.AddYears(-2);
-
-            // NOTE There is no implementation for "на прошлой неделе в воскресенье" cases, days of the week are considered only as days of current week! Exactly by the reason there is no condition for sunday
-            if (date.Contains("понедельник") && (int)parsedDateTime.DayOfWeek > 1)
-                parsedDateTime = parsedDateTime.AddDays((double)parsedDateTime.DayOfWeek * (-1.0) + 1);
-            if (date.Contains("вторник") && (int)parsedDateTime.DayOfWeek > 2)
-                parsedDateTime = parsedDateTime.AddDays((double)parsedDateTime.DayOfWeek * (-1.0));
-            if (date.Contains("сред") && (int)parsedDateTime.DayOfWeek > 3)
-                parsedDateTime = parsedDateTime.AddDays((double)parsedDateTime.DayOfWeek * (-1.0) - 1);
-            if (date.Contains("четверг") && (int)parsedDateTime.DayOfWeek > 4)
-                parsedDateTime = parsedDateTime.AddDays((double)parsedDateTime.DayOfWeek * (-1.0) - 2);
-            if (date.Contains("пятниц") && (int)parsedDateTime.DayOfWeek > 5)
-                parsedDateTime = parsedDateTime.AddDays((double)parsedDateTime.DayOfWeek * (-1.0) - 3);
-            if (date.Contains("суббот") && (int)parsedDateTime.DayOfWeek > 6)
-                parsedDateTime = parsedDateTime.AddDays((double)parsedDateTime.DayOfWeek * (-1.0) - 4);
+            var daysOfWeek = new List<string> { "понедельник", "вторник", "сред", "четверг", "пятниц", "суббот", "воскресен" };
+            int i = 0;
+            foreach (var day in daysOfWeek) {
+                if (date.Contains(day)) {
+                    var subDays = ((int) parsedDateTime.DayOfWeek - 1) % 7;
+                    //Mod for negative numbers return negaitve number here: because it we increase it to 7 manually to switch days numeration from Monday as start.
+                    if (subDays < 0) subDays += 7;
+                    //Make a day to start of week
+                    parsedDateTime = parsedDateTime.AddDays((double) -subDays);
+                    //Add necessary days
+                    parsedDateTime = parsedDateTime.AddDays((double) i);
+                    break;
+                }
+                i++;
+            }
 
             // TODO Implement the method completely, including time parsing.
             return parsedDateTime;
