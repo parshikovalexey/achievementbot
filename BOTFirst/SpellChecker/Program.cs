@@ -10,10 +10,11 @@ namespace Spell_checker
         static void Main(string[] args)
         {
             DemonstrateAsync();
+            //DemonstrateNonAsync();
             Console.ReadKey();
         }
 
-        static void DemonstrateNonAsync()
+        static void DemonstrateNonAsync() // метод для демонстрации синхронных методов
         {
             spellchkr = new SpellCheckerLT();
             string text = "Сешь ещё этх мягких француских булок, да выпей же чаю.";
@@ -34,18 +35,18 @@ namespace Spell_checker
             }
         }
 
-        static void DemonstrateAsync()
+        static void DemonstrateAsync() // метод для демонстрации асинхронных методов
         {
             spellchkr = new SpellCheckerLT();
-            spellchkr.GetAvailableLanguagesAsync();
-            spellchkr.OnAvailableLanguagesGetComplete += LanguagesDownloaded;
+            spellchkr.GetAvailableLanguagesAsync(); // получаем список языков(вернее только посылаем запрос)
+            spellchkr.OnAvailableLanguagesGetComplete += LanguagesDownloaded; //подписываемся на событие о получении списка языков
             for (int i = 0; i < 100; i++) // цикл для демонстрации асинхронности
             {
-                System.Threading.Thread.Sleep(200);
+                System.Threading.Thread.Sleep(200); // итерация цикла раз в 200 миллисекунд
                 Console.WriteLine(i);
             }
         }
-        static void LanguagesDownloaded()
+        static void LanguagesDownloaded() // обработчик события загрузки доступных языков
         {
             if (spellchkr.Error == null)
             {
@@ -53,17 +54,18 @@ namespace Spell_checker
                 {
                     Console.WriteLine("Название: " + lang.Key + " Код:" + lang.Value);
                 }
-                System.Threading.Thread.Sleep(1000);
-                spellchkr.OnCheckComplete += MistakesDownloaded;
-                string text = "Сешь ещё этх мягких француских булок, да выпей же чаю.";
-                spellchkr.CheckAsync(spellchkr.Languages["Russian"], text);
+                System.Threading.Thread.Sleep(1000); // ждем немного
+                spellchkr.OnCheckComplete += MistakesDownloaded; // подписываемся на событие полученя результатов проверки 
+                string text = "Сешь ещё этх мягких француских булок, да выпей же чаю."; // проверяемый текст
+                spellchkr.CheckAsync(spellchkr.Languages["Russian"], text); // посылаем запрос на проверку текста
             }
             else
             {
-                Console.WriteLine(spellchkr.Error.Message);
+                Console.WriteLine(spellchkr.Error.Message); // выведем сообщение об ошибке, если она возникла
+
             }
         }
-        static void MistakesDownloaded()
+        static void MistakesDownloaded() // обработчик события получения результатов проверки
         {
             if (spellchkr.Error == null)
             {

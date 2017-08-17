@@ -46,7 +46,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\SpellCheckerLT.cs" />
-    <Compile Include="Interfaces\IMistake.cs" />
+    <Compile Include="Classes\Mistake.cs" />
+    <Compile Include="Classes\Utilities.cs" />
     <Compile Include="Interfaces\ISpellChecker.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -8,166 +8,240 @@ using Newtonsoft.Json.Linq;
 namespace BOTFirst.Spellchecker
 {
 
-
     public class SpellCheckerLT : ISpellChecker
     {
-        private List<IMistake> _mistakes;
-        private Dictionary<string, string> _languages;
-        private string _checkUrl;
-        private string _getLanguagesUrl;
-        private string _checkResult;
-        private string _languagesresult;
-
-        private void GetAvailableLanguagesHandler(object sender, DownloadStringCompletedEventArgs e)
+        #region Приватные поля
+        private List<Mistake> mistakes; // дублирующее поле содержащее список ошибок в проверенном тексте
+        private Dictionary<string, string> languages; // словарь доступных для проверки языков где ключ-название языка(на английском), значение - код языка
+        private string checkUrl; // URL для проверки текста
+        private string getLanguagesUrl; // URL для получения списка доступных языков
+        private string checkResult; // строка(JSON) полученная от LanguageTool API при проверке текста
+        private string languagesresult; // строка(JSON) полученная от LanguageTool API при получении списка доступных языков
+        private Exception error; // дублирующее поле для хранения ошибки полученной при выполнении методов, любое исключение полученное в ходе выполнения метода окажется здесь
+        #endregion
+        #region Приватные методы
+        private void GetAvailableLanguagesHandler(object sender, DownloadStringCompletedEventArgs e) // данный метод вызывается при срабатывании события асинхронной загрузки строки(DownloadStringCompleted)
         {
-            if (e.Error == null)
+            if (e.Error == null) 
             {
-                _languages = new Dictionary<string, string>();
-                JToken parsedJSON = JToken.Parse(e.Result);
-                foreach (var lang in parsedJSON)
-                {
-                    _languages.Add(lang["name"].Value<string>(), lang["longCode"].Value<string>());
-                }
-
-                OnAvailableLanguagesGetComplete();
+                languagesresult = e.Result;
+                ParseLanguages(); 
             }
             else
             {
-                Error = e.Error;
-                OnAvailableLanguagesGetComplete();
+                error = e.Error; // при возникновении ошибки помещаем ее в специально выделенное поле
             }
+            OnAvailableLanguagesGetComplete(); // активируем событие завершения асинхронной загрузки языков
         }
-        private void CheckHandler(object sender, UploadStringCompletedEventArgs e)
+
+        private void CheckHandler(object sender, UploadStringCompletedEventArgs e) // данный метод вызывается при срабатывании события асинхронной загрузки строки(UploadStringCompleted) 
         {
             if (e.Error == null)
             {
-                JToken parsedJSON = JToken.Parse(e.Result);
-                JToken matches = parsedJSON["matches"];
-                _mistakes = new List<IMistake>();
+                checkResult = e.Result;
+                ParseCheck();
+            }
+            else
+            {
+                error = e.Error;
+            }
+            OnCheckComplete(); // активируем событие завершения асинхронной проверки текста
+
+        }
+
+        private void ParseCheck() // метод предназначен для парсинга реультата проверки текста
+        {
+            try
+            {
+                JToken parsedJSON = JToken.Parse(checkResult);
+                JToken matches = Utilities.JSON.GetObjectByKey(parsedJSON, "matches", ref error); // В LT ошибки лежат в объекте matches
+                mistakes = new List<Mistake>();
                 if (matches.HasValues)
                 {
                     foreach (var match in matches)
                     {
                         MistakeLT curMistake = new MistakeLT(match);
-                        _mistakes.Add(curMistake);
+                        if (curMistake.Error == null)
+                        {
+                            mistakes.Add(curMistake);
+                        }
+                        else
+                        {
+                            error = curMistake.Error;
+                        }
                     }
-                }
-                OnCheckComplete();
-            }
-            else
-            {
-                Error = e.Error;
-                OnCheckComplete();
-            }
-            
-        }
-
-
-        public Exception Error;
-        public List<IMistake> Mistakes { get { return _mistakes; } }
-        public Dictionary<string, string> Languages { get { return _languages; } }
-
-        public SpellCheckerLT()
-        {
-            _checkUrl = "https://languagetool.org/api/v2/check";
-            _getLanguagesUrl = "https://languagetool.org/api/v2/languages";
-        }
-        public List<IMistake> Check(string language, string checkedText)
-        {
-            try
-            {
-                using (WebClient wc = new WebClient()) // обращаемся к API методом POST
-                {
-                    wc.Encoding = Encoding.UTF8;
-                    _checkResult = wc.UploadString(_checkUrl, "text=" + checkedText + "&language=" + language);
                 }
             }
             catch (Exception ex)
             {
-                Error = ex;
+                error = ex;
             }
-
-            JToken parsedJSON = JToken.Parse(_checkResult);
-            JToken matches = parsedJSON["matches"];
-            _mistakes = new List<IMistake>();
-            if (matches.HasValues)
-            {
-                foreach (var match in matches)
-                {
-                    MistakeLT curMistake = new MistakeLT(match);
-                    _mistakes.Add(curMistake);
-                }
-            }
-            return _mistakes;
         }
 
+        private void ParseLanguages() // метод предназначен для парсинга реультата получения доступных языков
+        {
+            languages = new Dictionary<string, string>();
+            try
+            {
+                JToken parsedJSON = JToken.Parse(languagesresult);
+                foreach (var lang in parsedJSON)
+                {
+                    languages.Add(Utilities.JSON.GetValueByKey<string>(lang, "name", ref error),
+                        Utilities.JSON.GetValueByKey<string>(lang, "longCode", ref error));
+                }
+            }
+            catch (Exception ex)
+            {
+                error = ex;
+            }
+        }
+        #endregion
+        #region Свойства
+        /// <summary> 
+        /// Свойство возвращает любое исключение выброшенное при выполнении методов:
+        /// <para><see cref="GetAvailableLanguages"/></para>  
+        /// <para><see cref="GetAvailableLanguagesAsync"/> </para>
+        /// <para><see cref="Check(string, string)"/> </para>
+        /// <para><see cref="CheckAsync(string, string)"/> </para>
+        /// <para><see cref="CorrectMistakes"/> </para>
+        /// </summary>
+        public Exception Error { get { return error; } }
+        /// <summary>
+        /// Возвращает ошибки в тексте после выполнения метода <see cref="Check(string, string)"/> 
+        /// или <see cref="CheckAsync(string, string)"/>
+        /// </summary>
+        public List<Mistake> Mistakes { get { return mistakes; } }
+        /// <summary>
+        /// Языки доступные для проверки с помощью LT доступен после выполнения метода <see cref="GetAvailableLanguages"/> 
+        /// или <see cref="GetAvailableLanguagesAsync"/>
+        /// </summary>
+        public Dictionary<string, string> Languages { get { return languages; } }
+        #endregion
+        #region Конструкторы
+        public SpellCheckerLT()
+        {
+            checkUrl = "https://languagetool.org/api/v2/check";
+            getLanguagesUrl = "https://languagetool.org/api/v2/languages";
+
+        }
+        #endregion
+        #region Публичные методы
+        /// <summary>
+        /// Метод проверяет текст на наличие ошибок. 
+        /// Код выполняется синхронно, поэтому текущий поток остановится на время выполнения этого метода.
+        /// </summary>
+        /// <param name="language">Код языка для проверки(коды языков можно получить, выполнив методы:
+        /// <see cref="GetAvailableLanguages"/> или <see cref="GetAvailableLanguagesAsync"/>)</param>
+        /// <param name="checkedText">Проверяемый текст</param>
+        public List<Mistake> Check(string language, string checkedText)
+        {
+            try
+            {
+                using (WebClient wc = new WebClient()) 
+                {
+                    wc.Encoding = Encoding.UTF8;
+                    checkResult = wc.UploadString(checkUrl, "text=" + checkedText + "&language=" + language); // обращаемся к API методом POST и получаем результат
+                }
+            }
+            catch (Exception ex)
+            {
+                error = ex;
+            }
+
+            ParseCheck(); // парсим результат
+            return mistakes;
+        }
+        /// <summary>
+        /// Метод для получения списка доступных для проверки языков вместе с их кодами.
+        /// Метод выполняется синхронно, поэтому текущий поток остановится на время выполнения этого метода.
+        /// </summary>
         public Dictionary<string, string> GetAvailableLanguages()
         {
             try
             {
                 using (WebClient wc = new WebClient())
                 {
-                    _languagesresult = wc.DownloadString(_getLanguagesUrl);
+                    languagesresult = wc.DownloadString(getLanguagesUrl); // обращаемся к API методом GET и получаем результат
                 }
             }
             catch (Exception ex)
             {
-                Error = ex;
+                error = ex;
             }
-
-            JToken parsedJSON = JToken.Parse(_languagesresult);
-            foreach (var lang in parsedJSON)
-            {
-                _languages.Add(lang["name"].Value<string>(), lang["longCode"].Value<string>());
-            }
-            return _languages;
+            ParseLanguages(); // парсим результат запроса
+            return languages;
         }
-
-        public async void CheckAsync(string language, string checkedText)
+        public string CorrectMistakes()
         {
-            using (WebClient wc = new WebClient()) // обращаемся к API методом POST
+            return ""; // не реализован
+        }
+        /// <summary>
+        /// Метод проверяет текст на наличие ошибок. 
+        /// Код выполняется асинхронно, поэтому текущий поток не останавливается на время выполнения этого метода.
+        /// <para>Результаты проверки можно узнать после активации события <see cref="OnCheckComplete"/> с помощью свойства <see cref="Mistakes"/></para>
+        /// </summary>
+        /// <param name="language">Код языка для проверки(коды языков можно получить, выполнив методы:
+        /// <see cref="GetAvailableLanguages"/> или <see cref="GetAvailableLanguagesAsync"/>)</param>
+        /// <param name="checkedText">Проверяемый текст</param>
+        public void CheckAsync(string language, string checkedText)
+        {
+            using (WebClient wc = new WebClient()) 
             {
                 wc.Encoding = Encoding.UTF8;
-                wc.UploadStringCompleted += CheckHandler;
-                wc.UploadStringAsync(new Uri(_checkUrl), "text=" + checkedText + "&language=" + language);
+                wc.UploadStringCompleted += CheckHandler; // добавляем обработчик события выполнения http запроса(подписываемся на событие)
+                wc.UploadStringAsync(new Uri(checkUrl), "text=" + checkedText + "&language=" + language); // обращаемся к API методом POST
             }
         }
+        /// <summary>
+        /// Метод для получения списка доступных для проверки языков вместе с их кодами.
+        /// Метод выполняется асинхронно, поэтому текущий поток не остановится.
+        /// </summary>
         public void GetAvailableLanguagesAsync()
         {
             using (WebClient wc = new WebClient())
             {
-                wc.DownloadStringCompleted += GetAvailableLanguagesHandler;
-                wc.DownloadStringAsync(new Uri(_getLanguagesUrl));
+                wc.DownloadStringCompleted += GetAvailableLanguagesHandler; // подписывемся на событие
+                wc.DownloadStringAsync(new Uri(getLanguagesUrl)); // обращаемся к API методом GET
             }
 
         }
-
+        #endregion
+        #region События
+        /// <summary>
+        /// Событие получения списка доступных языков
+        /// </summary>
         public event GetAvailableLanguagesAsyncEventHandler OnAvailableLanguagesGetComplete;
+        /// <summary>
+        /// Событие получения результатов проверки
+        /// </summary>
         public event CheckAsyncContainerEventHandler OnCheckComplete;
+        #endregion
     }
-
-    struct MistakeLT : IMistake
+    
+    public class MistakeLT : Mistake
     {
-        public string Original { get; set; }
-        public Position Position { get; set; }
-        public List<string> Replacements { get; set; }
-        public string Type { get; set; }
-        public MistakeLT(JToken match)
+        private Exception error;
+        /// <summary>
+        /// Исключение которое может возникнуть при создании ошибки 
+        /// </summary>
+        public Exception Error { get { return error; } }
+        /// <summary>
+        /// Создает объект ошибки на основе переданного в конструктор JSON
+        /// </summary>
+        /// <param name="match"></param>
+        public MistakeLT(JToken match) // парсим JSON ошибки прямо при ее создании 
         {
-            JToken context = match["context"];
-            JToken replacements = match["replacements"];
-            int offset = context["offset"].Value<int>();
-            int length = context["length"].Value<int>();
-            string text = context["text"].Value<string>();
-            string short_message = match["shortMessage"].Value<string>();
-            Original = text.Substring(offset, length);
+            JToken context = Utilities.JSON.GetObjectByKey(match, "context", ref error);
+            JToken replacements = Utilities.JSON.GetObjectByKey(match, "replacements",ref error);
+            int offset = Utilities.JSON.GetValueByKey<int>(context,"offset",ref error);
+            int length = Utilities.JSON.GetValueByKey<int>(context, "length", ref error); 
+            string text = Utilities.JSON.GetValueByKey<string>(context, "text", ref error);
+            string short_message = Utilities.JSON.GetValueByKey<string>(match, "shortMessage", ref error);
             Position = new Position(offset, length);
             Replacements = replacements.Values<string>("value").ToList();
-            Type = short_message;
-
-
+            Original = !String.IsNullOrEmpty(text) ? text.Substring(offset, length) : "";
         }
     }
-
+    
 }
 

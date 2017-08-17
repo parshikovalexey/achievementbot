@@ -3,13 +3,14 @@
 
 namespace BOTFirst.Spellchecker
 {
-    public interface IMistake
+    public abstract class Mistake
     {
-        string Original { get; set; }
-        Position Position { get; set; }
-        List<string> Replacements { get; set; }
+        public string Original { get; set; }
+        public Position Position { get; set; }
+        public List<string> Replacements { get; set; }
         
     }
+
     public struct Position
     {
         public int Begin;
