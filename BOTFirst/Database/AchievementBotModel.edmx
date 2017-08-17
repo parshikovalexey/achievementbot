@@ -18,9 +18,9 @@
       <End Role="Action" EntitySet="Actions" />
       <End Role="Phrase" EntitySet="Phrases" />
     </AssociationSet>
-    <AssociationSet Name="PhraseCanHaveAdditionalInfo" Association="AchievementBotModel.Store.PhraseCanHaveAdditionalInfo">
+    <AssociationSet Name="PhraseCanHaveAdditionalInfo" Association="AchievementBotModel.Store.PhraseCanHaveAdditionalText">
       <End Role="Phrase" EntitySet="Phrases" />
-      <End Role="ObjectOrHumanState" EntitySet="AdditionalTexts" />
+      <End Role="AdditionalText" EntitySet="AdditionalTexts" />
     </AssociationSet>
   </EntityContainer>
   <EntityType Name="Phrases">
@@ -35,8 +35,8 @@
     <Property Name="MeasureUnitFId" Type="int" Nullable="true" />
     <Property Name="ActionFId" Type="int" Nullable="true" />
     <Property Name="AdditionalTextFId" Type="int" Nullable="true" />
-    <Property Name="Date" Type="nvarchar(max)" Nullable="true" />
-    <Property Name="Time" Type="nvarchar(max)" Nullable="true" />
+    <Property Name="Date" Type="nchar" Nullable="true" MaxLength="18" />
+    <Property Name="Time" Type="nchar" Nullable="true" MaxLength="25" />
   </EntityType>
   <EntityType Name="MeasureUnits">
     <Key>
@@ -83,11 +83,11 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="PhraseCanHaveAdditionalInfo">
+  <Association Name="PhraseCanHaveAdditionalText">
     <End Role="Phrase" Type="AchievementBotModel.Store.Phrases" Multiplicity="*" />
-    <End Role="ObjectOrHumanState" Type="AchievementBotModel.Store.AdditionalTexts" Multiplicity="0..1" />
+    <End Role="AdditionalText" Type="AchievementBotModel.Store.AdditionalTexts" Multiplicity="0..1" />
     <ReferentialConstraint>
-      <Principal Role="ObjectOrHumanState">
+      <Principal Role="AdditionalText">
         <PropertyRef Name="AdditionalTextId" />
       </Principal>
       <Dependent Role="Phrase">
@@ -112,9 +112,9 @@
             <End Role="Phrase" EntitySet="Phrases" />
           </AssociationSet>
           <EntitySet Name="AdditionalTexts" EntityType="AchievementBotModel.AdditionalText" />
-          <AssociationSet Name="PhraseCanHaveAdditionalInfo" Association="AchievementBotModel.PhraseCanHaveAdditionalInfo">
+          <AssociationSet Name="PhraseCanHaveAdditionalInfo" Association="AchievementBotModel.PhraseCanHaveAdditionalText">
             <End Role="Phrase" EntitySet="Phrases" />
-            <End Role="ObjectOrHumanState" EntitySet="AdditionalTexts" />
+            <End Role="AdditionalText" EntitySet="AdditionalTexts" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Phrase">
@@ -130,7 +130,7 @@
           <Property Name="MeasureUnitFId" Type="Int32" Nullable="true" />
           <NavigationProperty Name="Action" Relationship="AchievementBotModel.PhraseCanHaveAction" FromRole="Phrase" ToRole="Action" />
           <Property Name="ActionFId" Type="Int32" Nullable="true" />
-          <NavigationProperty Name="ObjectOrHumanState" Relationship="AchievementBotModel.PhraseCanHaveAdditionalInfo" FromRole="Phrase" ToRole="ObjectOrHumanState" />
+          <NavigationProperty Name="AdditionalText" Relationship="AchievementBotModel.PhraseCanHaveAdditionalText" FromRole="Phrase" ToRole="AdditionalText" />
           <Property Name="AdditionalTextFId" Type="Int32" Nullable="true" />
           <Property Name="Date" Type="String" Nullable="true" FixedLength="true" MaxLength="18" />
           <Property Name="Time" Type="String" Nullable="true" FixedLength="true" MaxLength="25" />
@@ -180,14 +180,14 @@
             <PropertyRef Name="AdditionalTextId" />
           </Key>
           <Property Name="AdditionalTextId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <NavigationProperty Name="Phrase" Relationship="AchievementBotModel.PhraseCanHaveAdditionalInfo" FromRole="ObjectOrHumanState" ToRole="Phrase" />
+          <NavigationProperty Name="Phrase" Relationship="AchievementBotModel.PhraseCanHaveAdditionalText" FromRole="AdditionalText" ToRole="Phrase" />
           <Property Name="Text" Type="String" Nullable="false" />
         </EntityType>
-        <Association Name="PhraseCanHaveAdditionalInfo">
+        <Association Name="PhraseCanHaveAdditionalText">
           <End Type="AchievementBotModel.Phrase" Role="Phrase" Multiplicity="*" />
-          <End Type="AchievementBotModel.AdditionalText" Role="ObjectOrHumanState" Multiplicity="0..1" />
+          <End Type="AchievementBotModel.AdditionalText" Role="AdditionalText" Multiplicity="0..1" />
           <ReferentialConstraint>
-            <Principal Role="ObjectOrHumanState">
+            <Principal Role="AdditionalText">
               <PropertyRef Name="AdditionalTextId" />
             </Principal>
             <Dependent Role="Phrase">

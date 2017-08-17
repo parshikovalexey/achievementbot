@@ -4,14 +4,14 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="bbdbef36bc8c4462a9f82df9fcd9db75" Name="MainDiagram" ZoomLevel="86" >
-        <EntityTypeShape EntityType="AchievementBotModel.Phrase" Width="1.875" PointX="2.625" PointY="0.5" />
-        <EntityTypeShape EntityType="AchievementBotModel.MeasureUnit" Width="1.5" PointX="0.5" PointY="0.5" />
+      <Diagram DiagramId="bbdbef36bc8c4462a9f82df9fcd9db75" Name="MainDiagram" ZoomLevel="93" >
+        <EntityTypeShape EntityType="AchievementBotModel.Phrase" Width="1.875" PointX="3" PointY="1.25" />
+        <EntityTypeShape EntityType="AchievementBotModel.MeasureUnit" Width="1.5" PointX="5.625" PointY="1" />
         <AssociationConnector Association="AchievementBotModel.PhraseCanHaveMeasureUnit" />
-        <EntityTypeShape EntityType="AchievementBotModel.Action" Width="1.5" PointX="0.5" PointY="2.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="AchievementBotModel.Action" Width="1.5" PointX="0.75" PointY="2.25" IsExpanded="true" />
         <AssociationConnector Association="AchievementBotModel.PhraseCanHaveAction" />
-        <EntityTypeShape EntityType="AchievementBotModel.ObjectOrHumanState" Width="2.125" PointX="0.5" PointY="4" />
-        <AssociationConnector Association="AchievementBotModel.PhraseCanHaveObjectOrHS" />
+        <EntityTypeShape EntityType="AchievementBotModel.AdditionalText" Width="2.125" PointX="5.625" PointY="3.375" />
+        <AssociationConnector Association="AchievementBotModel.PhraseCanHaveAdditionalText" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
