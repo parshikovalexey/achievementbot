@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="bbdbef36bc8c4462a9f82df9fcd9db75" Name="MainDiagram" ZoomLevel="86" >
+        <EntityTypeShape EntityType="AchievementBotModel.Phrase" Width="1.875" PointX="2.625" PointY="0.5" />
+        <EntityTypeShape EntityType="AchievementBotModel.MeasureUnit" Width="1.5" PointX="0.5" PointY="0.5" />
+        <AssociationConnector Association="AchievementBotModel.PhraseCanHaveMeasureUnit" />
+        <EntityTypeShape EntityType="AchievementBotModel.Action" Width="1.5" PointX="0.5" PointY="2.25" IsExpanded="true" />
+        <AssociationConnector Association="AchievementBotModel.PhraseCanHaveAction" />
+        <EntityTypeShape EntityType="AchievementBotModel.ObjectOrHumanState" Width="2.125" PointX="0.5" PointY="4" />
+        <AssociationConnector Association="AchievementBotModel.PhraseCanHaveObjectOrHS" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
