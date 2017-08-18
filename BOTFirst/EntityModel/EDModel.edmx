@@ -4,21 +4,21 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="AchievementBotModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-  <EntityContainer Name="AchievementBotModelStoreContainer">
-    <EntitySet Name="Phrases" EntityType="AchievementBotModel.Store.Phrases" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="MeasureUnits" EntityType="AchievementBotModel.Store.MeasureUnits" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="Actions" EntityType="AchievementBotModel.Store.Actions" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="AdditionalTexts" EntityType="AchievementBotModel.Store.AdditionalTexts" store:Type="Tables" Schema="dbo" />
-    <AssociationSet Name="PhraseCanHaveMeasureUnit" Association="AchievementBotModel.Store.PhraseCanHaveMeasureUnit">
+    <Schema Namespace="EDModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="EDModelStoreContainer">
+    <EntitySet Name="Phrases" EntityType="EDModel.Store.Phrases" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="MeasureUnits" EntityType="EDModel.Store.MeasureUnits" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Actions" EntityType="EDModel.Store.Actions" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="AdditionalTexts" EntityType="EDModel.Store.AdditionalTexts" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="PhraseCanHaveMeasureUnit" Association="EDModel.Store.PhraseCanHaveMeasureUnit">
       <End Role="Phrase" EntitySet="Phrases" />
       <End Role="MeasureUnit" EntitySet="MeasureUnits" />
     </AssociationSet>
-    <AssociationSet Name="PhraseCanHaveAction" Association="AchievementBotModel.Store.PhraseCanHaveAction">
+    <AssociationSet Name="PhraseCanHaveAction" Association="EDModel.Store.PhraseCanHaveAction">
       <End Role="Action" EntitySet="Actions" />
       <End Role="Phrase" EntitySet="Phrases" />
     </AssociationSet>
-    <AssociationSet Name="PhraseCanHaveAdditionalInfo" Association="AchievementBotModel.Store.PhraseCanHaveAdditionalText">
+    <AssociationSet Name="PhraseCanHaveAdditionalInfo" Association="EDModel.Store.PhraseCanHaveAdditionalText">
       <End Role="Phrase" EntitySet="Phrases" />
       <End Role="AdditionalText" EntitySet="AdditionalTexts" />
     </AssociationSet>
@@ -43,25 +43,25 @@
       <PropertyRef Name="MeasureUnitId" />
     </Key>
     <Property Name="MeasureUnitId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Text" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Text" Type="nchar" Nullable="false" MaxLength="25" />
   </EntityType>
   <EntityType Name="Actions">
     <Key>
       <PropertyRef Name="ActionId" />
     </Key>
     <Property Name="ActionId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Text" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Text" Type="nchar" Nullable="false" MaxLength="30" />
   </EntityType>
   <EntityType Name="AdditionalTexts">
     <Key>
       <PropertyRef Name="AdditionalTextId" />
     </Key>
     <Property Name="AdditionalTextId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Text" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Text" Type="nchar" Nullable="false" MaxLength="50" />
   </EntityType>
   <Association Name="PhraseCanHaveMeasureUnit">
-    <End Role="Phrase" Type="AchievementBotModel.Store.Phrases" Multiplicity="*" />
-    <End Role="MeasureUnit" Type="AchievementBotModel.Store.MeasureUnits" Multiplicity="0..1" />
+    <End Role="Phrase" Type="EDModel.Store.Phrases" Multiplicity="*" />
+    <End Role="MeasureUnit" Type="EDModel.Store.MeasureUnits" Multiplicity="0..1" />
     <ReferentialConstraint>
       <Principal Role="MeasureUnit">
         <PropertyRef Name="MeasureUnitId" />
@@ -72,8 +72,8 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="PhraseCanHaveAction">
-    <End Role="Action" Type="AchievementBotModel.Store.Actions" Multiplicity="0..1" />
-    <End Role="Phrase" Type="AchievementBotModel.Store.Phrases" Multiplicity="*" />
+    <End Role="Action" Type="EDModel.Store.Actions" Multiplicity="0..1" />
+    <End Role="Phrase" Type="EDModel.Store.Phrases" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Action">
         <PropertyRef Name="ActionId" />
@@ -84,8 +84,8 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="PhraseCanHaveAdditionalText">
-    <End Role="Phrase" Type="AchievementBotModel.Store.Phrases" Multiplicity="*" />
-    <End Role="AdditionalText" Type="AchievementBotModel.Store.AdditionalTexts" Multiplicity="0..1" />
+    <End Role="Phrase" Type="EDModel.Store.Phrases" Multiplicity="*" />
+    <End Role="AdditionalText" Type="EDModel.Store.AdditionalTexts" Multiplicity="0..1" />
     <ReferentialConstraint>
       <Principal Role="AdditionalText">
         <PropertyRef Name="AdditionalTextId" />
@@ -98,21 +98,21 @@
 </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="AchievementBotModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
-        <EntityContainer Name="AchievementBotModelContainer" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Phrases" EntityType="AchievementBotModel.Phrase" />
-          <EntitySet Name="MeasureUnits" EntityType="AchievementBotModel.MeasureUnit" />
-          <AssociationSet Name="PhraseCanHaveMeasureUnit" Association="AchievementBotModel.PhraseCanHaveMeasureUnit">
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="EDModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="EDModelContainer" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Phrases" EntityType="EDModel.Phrase" />
+          <EntitySet Name="MeasureUnits" EntityType="EDModel.MeasureUnit" />
+          <AssociationSet Name="PhraseCanHaveMeasureUnit" Association="EDModel.PhraseCanHaveMeasureUnit">
             <End Role="Phrase" EntitySet="Phrases" />
             <End Role="MeasureUnit" EntitySet="MeasureUnits" />
           </AssociationSet>
-          <EntitySet Name="Actions" EntityType="AchievementBotModel.Action" />
-          <AssociationSet Name="PhraseCanHaveAction" Association="AchievementBotModel.PhraseCanHaveAction">
+          <EntitySet Name="Actions" EntityType="EDModel.Action" />
+          <AssociationSet Name="PhraseCanHaveAction" Association="EDModel.PhraseCanHaveAction">
             <End Role="Action" EntitySet="Actions" />
             <End Role="Phrase" EntitySet="Phrases" />
           </AssociationSet>
-          <EntitySet Name="AdditionalTexts" EntityType="AchievementBotModel.AdditionalText" />
-          <AssociationSet Name="PhraseCanHaveAdditionalInfo" Association="AchievementBotModel.PhraseCanHaveAdditionalText">
+          <EntitySet Name="AdditionalTexts" EntityType="EDModel.AdditionalText" />
+          <AssociationSet Name="PhraseCanHaveAdditionalInfo" Association="EDModel.PhraseCanHaveAdditionalText">
             <End Role="Phrase" EntitySet="Phrases" />
             <End Role="AdditionalText" EntitySet="AdditionalTexts" />
           </AssociationSet>
@@ -126,11 +126,11 @@
           <Property Name="CorrectedMessage" Type="String" Nullable="true" />
           <Property Name="Amount" Type="Decimal" Nullable="true" />
           <Property Name="WasRecognized" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="MeasureUnit" Relationship="AchievementBotModel.PhraseCanHaveMeasureUnit" FromRole="Phrase" ToRole="MeasureUnit" />
+          <NavigationProperty Name="MeasureUnit" Relationship="EDModel.PhraseCanHaveMeasureUnit" FromRole="Phrase" ToRole="MeasureUnit" />
           <Property Name="MeasureUnitFId" Type="Int32" Nullable="true" />
-          <NavigationProperty Name="Action" Relationship="AchievementBotModel.PhraseCanHaveAction" FromRole="Phrase" ToRole="Action" />
+          <NavigationProperty Name="Action" Relationship="EDModel.PhraseCanHaveAction" FromRole="Phrase" ToRole="Action" />
           <Property Name="ActionFId" Type="Int32" Nullable="true" />
-          <NavigationProperty Name="AdditionalText" Relationship="AchievementBotModel.PhraseCanHaveAdditionalText" FromRole="Phrase" ToRole="AdditionalText" />
+          <NavigationProperty Name="AdditionalText" Relationship="EDModel.PhraseCanHaveAdditionalText" FromRole="Phrase" ToRole="AdditionalText" />
           <Property Name="AdditionalTextFId" Type="Int32" Nullable="true" />
           <Property Name="Date" Type="String" Nullable="true" FixedLength="true" MaxLength="18" />
           <Property Name="Time" Type="String" Nullable="true" FixedLength="true" MaxLength="25" />
@@ -140,12 +140,12 @@
             <PropertyRef Name="MeasureUnitId" />
           </Key>
           <Property Name="MeasureUnitId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Text" Type="String" Nullable="false" />
-          <NavigationProperty Name="Phrase" Relationship="AchievementBotModel.PhraseCanHaveMeasureUnit" FromRole="MeasureUnit" ToRole="Phrase" />
+          <Property Name="Text" Type="String" Nullable="false" FixedLength="true" MaxLength="25" />
+          <NavigationProperty Name="Phrase" Relationship="EDModel.PhraseCanHaveMeasureUnit" FromRole="MeasureUnit" ToRole="Phrase" />
         </EntityType>
         <Association Name="PhraseCanHaveMeasureUnit">
-          <End Type="AchievementBotModel.Phrase" Role="Phrase" Multiplicity="*" />
-          <End Type="AchievementBotModel.MeasureUnit" Role="MeasureUnit" Multiplicity="0..1" />
+          <End Type="EDModel.Phrase" Role="Phrase" Multiplicity="*" />
+          <End Type="EDModel.MeasureUnit" Role="MeasureUnit" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="MeasureUnit">
               <PropertyRef Name="MeasureUnitId" />
@@ -160,12 +160,12 @@
             <PropertyRef Name="ActionId" />
           </Key>
           <Property Name="ActionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Text" Type="String" Nullable="false" />
-          <NavigationProperty Name="Phrase" Relationship="AchievementBotModel.PhraseCanHaveAction" FromRole="Action" ToRole="Phrase" />
+          <Property Name="Text" Type="String" Nullable="false" FixedLength="true" MaxLength="30" />
+          <NavigationProperty Name="Phrase" Relationship="EDModel.PhraseCanHaveAction" FromRole="Action" ToRole="Phrase" />
         </EntityType>
         <Association Name="PhraseCanHaveAction">
-          <End Type="AchievementBotModel.Action" Role="Action" Multiplicity="0..1" />
-          <End Type="AchievementBotModel.Phrase" Role="Phrase" Multiplicity="*" />
+          <End Type="EDModel.Action" Role="Action" Multiplicity="0..1" />
+          <End Type="EDModel.Phrase" Role="Phrase" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Action">
               <PropertyRef Name="ActionId" />
@@ -180,12 +180,12 @@
             <PropertyRef Name="AdditionalTextId" />
           </Key>
           <Property Name="AdditionalTextId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <NavigationProperty Name="Phrase" Relationship="AchievementBotModel.PhraseCanHaveAdditionalText" FromRole="AdditionalText" ToRole="Phrase" />
-          <Property Name="Text" Type="String" Nullable="false" />
+          <NavigationProperty Name="Phrase" Relationship="EDModel.PhraseCanHaveAdditionalText" FromRole="AdditionalText" ToRole="Phrase" />
+          <Property Name="Text" Type="String" Nullable="false" FixedLength="true" MaxLength="50" />
         </EntityType>
         <Association Name="PhraseCanHaveAdditionalText">
-          <End Type="AchievementBotModel.Phrase" Role="Phrase" Multiplicity="*" />
-          <End Type="AchievementBotModel.AdditionalText" Role="AdditionalText" Multiplicity="0..1" />
+          <End Type="EDModel.Phrase" Role="Phrase" Multiplicity="*" />
+          <End Type="EDModel.AdditionalText" Role="AdditionalText" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="AdditionalText">
               <PropertyRef Name="AdditionalTextId" />
@@ -200,9 +200,9 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
     <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-  <EntityContainerMapping StorageEntityContainer="AchievementBotModelStoreContainer" CdmEntityContainer="AchievementBotModelContainer">
+  <EntityContainerMapping StorageEntityContainer="EDModelStoreContainer" CdmEntityContainer="EDModelContainer">
     <EntitySetMapping Name="Phrases">
-      <EntityTypeMapping TypeName="IsTypeOf(AchievementBotModel.Phrase)">
+      <EntityTypeMapping TypeName="IsTypeOf(EDModel.Phrase)">
         <MappingFragment StoreEntitySet="Phrases">
           <ScalarProperty Name="PhraseId" ColumnName="PhraseId" />
           <ScalarProperty Name="OriginalMessage" ColumnName="OriginalMessage" />
@@ -218,7 +218,7 @@
       </EntityTypeMapping>
     </EntitySetMapping>
     <EntitySetMapping Name="MeasureUnits">
-      <EntityTypeMapping TypeName="IsTypeOf(AchievementBotModel.MeasureUnit)">
+      <EntityTypeMapping TypeName="IsTypeOf(EDModel.MeasureUnit)">
         <MappingFragment StoreEntitySet="MeasureUnits">
           <ScalarProperty Name="MeasureUnitId" ColumnName="MeasureUnitId" />
           <ScalarProperty Name="Text" ColumnName="Text" />
@@ -226,7 +226,7 @@
       </EntityTypeMapping>
     </EntitySetMapping>
     <EntitySetMapping Name="Actions">
-      <EntityTypeMapping TypeName="IsTypeOf(AchievementBotModel.Action)">
+      <EntityTypeMapping TypeName="IsTypeOf(EDModel.Action)">
         <MappingFragment StoreEntitySet="Actions">
           <ScalarProperty Name="ActionId" ColumnName="ActionId" />
           <ScalarProperty Name="Text" ColumnName="Text" />
@@ -234,7 +234,7 @@
       </EntityTypeMapping>
     </EntitySetMapping>
     <EntitySetMapping Name="AdditionalTexts">
-      <EntityTypeMapping TypeName="IsTypeOf(AchievementBotModel.AdditionalText)">
+      <EntityTypeMapping TypeName="IsTypeOf(EDModel.AdditionalText)">
         <MappingFragment StoreEntitySet="AdditionalTexts">
           <ScalarProperty Name="AdditionalTextId" ColumnName="AdditionalTextId" />
           <ScalarProperty Name="Text" ColumnName="Text" />

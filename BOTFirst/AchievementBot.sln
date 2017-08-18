@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotEngine", "BOTFirst\BotEngine.csproj", "{B56C2FF1-B516-4062-A695-A36EC47B6D58}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Database", "Database\Database.sqlproj", "{F539E0E6-86C0-43B6-88B7-56C14E56BB78}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityModel", "EntityModel\EntityModel.csproj", "{B358DD38-6126-4BCD-AE0C-7C8CC37C64B8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,12 +17,10 @@ Global
 		{B56C2FF1-B516-4062-A695-A36EC47B6D58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B56C2FF1-B516-4062-A695-A36EC47B6D58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B56C2FF1-B516-4062-A695-A36EC47B6D58}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F539E0E6-86C0-43B6-88B7-56C14E56BB78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F539E0E6-86C0-43B6-88B7-56C14E56BB78}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F539E0E6-86C0-43B6-88B7-56C14E56BB78}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{F539E0E6-86C0-43B6-88B7-56C14E56BB78}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F539E0E6-86C0-43B6-88B7-56C14E56BB78}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F539E0E6-86C0-43B6-88B7-56C14E56BB78}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{B358DD38-6126-4BCD-AE0C-7C8CC37C64B8}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{B358DD38-6126-4BCD-AE0C-7C8CC37C64B8}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{B358DD38-6126-4BCD-AE0C-7C8CC37C64B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B358DD38-6126-4BCD-AE0C-7C8CC37C64B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
