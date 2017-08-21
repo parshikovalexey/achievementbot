@@ -20,7 +20,7 @@ namespace EntityModel
             this.Phrase = new HashSet<Phrase>();
         }
     
-        public int AdditionalTextId { get; set; }
+        public int Id { get; set; }
         public string Text { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

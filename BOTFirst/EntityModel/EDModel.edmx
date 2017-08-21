@@ -25,9 +25,9 @@
   </EntityContainer>
   <EntityType Name="Phrases">
     <Key>
-      <PropertyRef Name="PhraseId" />
+      <PropertyRef Name="Id" />
     </Key>
-    <Property Name="PhraseId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="OriginalMessage" Type="nvarchar(max)" Nullable="false" />
     <Property Name="CorrectedMessage" Type="nvarchar(max)" Nullable="true" />
     <Property Name="Amount" Type="decimal" Nullable="true" />
@@ -40,23 +40,23 @@
   </EntityType>
   <EntityType Name="MeasureUnits">
     <Key>
-      <PropertyRef Name="MeasureUnitId" />
+      <PropertyRef Name="Id" />
     </Key>
-    <Property Name="MeasureUnitId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Text" Type="nchar" Nullable="false" MaxLength="25" />
   </EntityType>
   <EntityType Name="Actions">
     <Key>
-      <PropertyRef Name="ActionId" />
+      <PropertyRef Name="Id" />
     </Key>
-    <Property Name="ActionId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Text" Type="nchar" Nullable="false" MaxLength="30" />
   </EntityType>
   <EntityType Name="AdditionalTexts">
     <Key>
-      <PropertyRef Name="AdditionalTextId" />
+      <PropertyRef Name="Id" />
     </Key>
-    <Property Name="AdditionalTextId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Text" Type="nchar" Nullable="false" MaxLength="50" />
   </EntityType>
   <Association Name="PhraseCanHaveMeasureUnit">
@@ -64,7 +64,7 @@
     <End Role="MeasureUnit" Type="EDModel.Store.MeasureUnits" Multiplicity="0..1" />
     <ReferentialConstraint>
       <Principal Role="MeasureUnit">
-        <PropertyRef Name="MeasureUnitId" />
+        <PropertyRef Name="Id" />
       </Principal>
       <Dependent Role="Phrase">
         <PropertyRef Name="MeasureUnitFId" />
@@ -76,7 +76,7 @@
     <End Role="Phrase" Type="EDModel.Store.Phrases" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Action">
-        <PropertyRef Name="ActionId" />
+        <PropertyRef Name="Id" />
       </Principal>
       <Dependent Role="Phrase">
         <PropertyRef Name="ActionFId" />
@@ -88,7 +88,7 @@
     <End Role="AdditionalText" Type="EDModel.Store.AdditionalTexts" Multiplicity="0..1" />
     <ReferentialConstraint>
       <Principal Role="AdditionalText">
-        <PropertyRef Name="AdditionalTextId" />
+        <PropertyRef Name="Id" />
       </Principal>
       <Dependent Role="Phrase">
         <PropertyRef Name="AdditionalTextFId" />
@@ -119,9 +119,9 @@
         </EntityContainer>
         <EntityType Name="Phrase">
           <Key>
-            <PropertyRef Name="PhraseId" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="PhraseId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="OriginalMessage" Type="String" Nullable="false" />
           <Property Name="CorrectedMessage" Type="String" Nullable="true" />
           <Property Name="Amount" Type="Decimal" Nullable="true" />
@@ -137,9 +137,9 @@
         </EntityType>
         <EntityType Name="MeasureUnit">
           <Key>
-            <PropertyRef Name="MeasureUnitId" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="MeasureUnitId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Text" Type="String" Nullable="false" FixedLength="true" MaxLength="25" />
           <NavigationProperty Name="Phrase" Relationship="EDModel.PhraseCanHaveMeasureUnit" FromRole="MeasureUnit" ToRole="Phrase" />
         </EntityType>
@@ -148,7 +148,7 @@
           <End Type="EDModel.MeasureUnit" Role="MeasureUnit" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="MeasureUnit">
-              <PropertyRef Name="MeasureUnitId" />
+              <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Phrase">
               <PropertyRef Name="MeasureUnitFId" />
@@ -157,9 +157,9 @@
         </Association>
         <EntityType Name="Action">
           <Key>
-            <PropertyRef Name="ActionId" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="ActionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Text" Type="String" Nullable="false" FixedLength="true" MaxLength="30" />
           <NavigationProperty Name="Phrase" Relationship="EDModel.PhraseCanHaveAction" FromRole="Action" ToRole="Phrase" />
         </EntityType>
@@ -168,7 +168,7 @@
           <End Type="EDModel.Phrase" Role="Phrase" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Action">
-              <PropertyRef Name="ActionId" />
+              <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Phrase">
               <PropertyRef Name="ActionFId" />
@@ -177,9 +177,9 @@
         </Association>
         <EntityType Name="AdditionalText">
           <Key>
-            <PropertyRef Name="AdditionalTextId" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="AdditionalTextId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <NavigationProperty Name="Phrase" Relationship="EDModel.PhraseCanHaveAdditionalText" FromRole="AdditionalText" ToRole="Phrase" />
           <Property Name="Text" Type="String" Nullable="false" FixedLength="true" MaxLength="50" />
         </EntityType>
@@ -188,7 +188,7 @@
           <End Type="EDModel.AdditionalText" Role="AdditionalText" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="AdditionalText">
-              <PropertyRef Name="AdditionalTextId" />
+              <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Phrase">
               <PropertyRef Name="AdditionalTextFId" />
@@ -204,7 +204,7 @@
     <EntitySetMapping Name="Phrases">
       <EntityTypeMapping TypeName="IsTypeOf(EDModel.Phrase)">
         <MappingFragment StoreEntitySet="Phrases">
-          <ScalarProperty Name="PhraseId" ColumnName="PhraseId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="OriginalMessage" ColumnName="OriginalMessage" />
           <ScalarProperty Name="CorrectedMessage" ColumnName="CorrectedMessage" />
           <ScalarProperty Name="Amount" ColumnName="Amount" />
@@ -220,7 +220,7 @@
     <EntitySetMapping Name="MeasureUnits">
       <EntityTypeMapping TypeName="IsTypeOf(EDModel.MeasureUnit)">
         <MappingFragment StoreEntitySet="MeasureUnits">
-          <ScalarProperty Name="MeasureUnitId" ColumnName="MeasureUnitId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Text" ColumnName="Text" />
         </MappingFragment>
       </EntityTypeMapping>
@@ -228,7 +228,7 @@
     <EntitySetMapping Name="Actions">
       <EntityTypeMapping TypeName="IsTypeOf(EDModel.Action)">
         <MappingFragment StoreEntitySet="Actions">
-          <ScalarProperty Name="ActionId" ColumnName="ActionId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Text" ColumnName="Text" />
         </MappingFragment>
       </EntityTypeMapping>
@@ -236,7 +236,7 @@
     <EntitySetMapping Name="AdditionalTexts">
       <EntityTypeMapping TypeName="IsTypeOf(EDModel.AdditionalText)">
         <MappingFragment StoreEntitySet="AdditionalTexts">
-          <ScalarProperty Name="AdditionalTextId" ColumnName="AdditionalTextId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Text" ColumnName="Text" />
         </MappingFragment>
       </EntityTypeMapping>

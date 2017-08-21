@@ -14,7 +14,7 @@ namespace EntityModel
     
     public partial class Phrase
     {
-        public int PhraseId { get; set; }
+        public int Id { get; set; }
         public string OriginalMessage { get; set; }
         public string CorrectedMessage { get; set; }
         public Nullable<decimal> Amount { get; set; }
