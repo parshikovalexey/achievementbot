@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Net;
 using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
 namespace BOTFirst.Spellchecker
 {
@@ -11,57 +12,24 @@ namespace BOTFirst.Spellchecker
     public class SpellCheckerLT : ISpellChecker
     {
         #region Приватные поля
-        private List<Mistake> mistakes; // дублирующее поле содержащее список ошибок в проверенном тексте
-        private Dictionary<string, string> languages; // словарь доступных для проверки языков где ключ-название языка(на английском), значение - код языка
         private string checkUrl; // URL для проверки текста
         private string getLanguagesUrl; // URL для получения списка доступных языков
-        private string checkResult; // строка(JSON) полученная от LanguageTool API при проверке текста
-        private string languagesresult; // строка(JSON) полученная от LanguageTool API при получении списка доступных языков
         private Exception error; // дублирующее поле для хранения ошибки полученной при выполнении методов, любое исключение полученное в ходе выполнения метода окажется здесь
         #endregion
         #region Приватные методы
-        private void GetAvailableLanguagesHandler(object sender, DownloadStringCompletedEventArgs e) // данный метод вызывается при срабатывании события асинхронной загрузки строки(DownloadStringCompleted)
+        private List<Mistake> ParseCheckResult(string checkResult) // метод предназначен для парсинга реультата проверки текста
         {
-            if (e.Error == null) 
-            {
-                languagesresult = e.Result;
-                ParseLanguages(); 
-            }
-            else
-            {
-                error = e.Error; // при возникновении ошибки помещаем ее в специально выделенное поле
-            }
-            OnAvailableLanguagesGetComplete(); // активируем событие завершения асинхронной загрузки языков
-        }
-
-        private void CheckHandler(object sender, UploadStringCompletedEventArgs e) // данный метод вызывается при срабатывании события асинхронной загрузки строки(UploadStringCompleted) 
-        {
-            if (e.Error == null)
-            {
-                checkResult = e.Result;
-                ParseCheck();
-            }
-            else
-            {
-                error = e.Error;
-            }
-            OnCheckComplete(); // активируем событие завершения асинхронной проверки текста
-
-        }
-
-        private void ParseCheck() // метод предназначен для парсинга реультата проверки текста
-        {
+            var mistakes = new List<Mistake>();
             try
             {
                 JToken parsedJSON = JToken.Parse(checkResult);
                 JToken matches = Utilities.JSON.GetObjectByKey(parsedJSON, "matches", ref error); // В LT ошибки лежат в объекте matches
-                mistakes = new List<Mistake>();
                 if (matches.HasValues)
                 {
                     foreach (var match in matches)
                     {
                         MistakeLT curMistake = new MistakeLT(match);
-                        if (curMistake.Error == null)
+                        if (!curMistake.HasErrors())
                         {
                             mistakes.Add(curMistake);
                         }
@@ -76,14 +44,15 @@ namespace BOTFirst.Spellchecker
             {
                 error = ex;
             }
+            return mistakes;
         }
 
-        private void ParseLanguages() // метод предназначен для парсинга реультата получения доступных языков
+        private Dictionary<string, string> ParseLanguages(string languagesResult) // метод предназначен для парсинга реультата получения доступных языков
         {
-            languages = new Dictionary<string, string>();
+            var languages = new Dictionary<string, string>();
             try
             {
-                JToken parsedJSON = JToken.Parse(languagesresult);
+                JToken parsedJSON = JToken.Parse(languagesResult);
                 foreach (var lang in parsedJSON)
                 {
                     languages.Add(Utilities.JSON.GetValueByKey<string>(lang, "name", ref error),
@@ -94,6 +63,7 @@ namespace BOTFirst.Spellchecker
             {
                 error = ex;
             }
+            return languages;
         }
         #endregion
         #region Свойства
@@ -101,21 +71,11 @@ namespace BOTFirst.Spellchecker
         /// Свойство возвращает любое исключение выброшенное при выполнении методов:
         /// <para><see cref="GetAvailableLanguages"/></para>  
         /// <para><see cref="GetAvailableLanguagesAsync"/> </para>
-        /// <para><see cref="Check(string, string)"/> </para>
+        /// <para><see cref="CheckText(string, string)"/> </para>
         /// <para><see cref="CheckAsync(string, string)"/> </para>
         /// <para><see cref="CorrectMistakes"/> </para>
         /// </summary>
         public Exception Error { get { return error; } }
-        /// <summary>
-        /// Возвращает ошибки в тексте после выполнения метода <see cref="Check(string, string)"/> 
-        /// или <see cref="CheckAsync(string, string)"/>
-        /// </summary>
-        public List<Mistake> Mistakes { get { return mistakes; } }
-        /// <summary>
-        /// Языки доступные для проверки с помощью LT доступен после выполнения метода <see cref="GetAvailableLanguages"/> 
-        /// или <see cref="GetAvailableLanguagesAsync"/>
-        /// </summary>
-        public Dictionary<string, string> Languages { get { return languages; } }
         #endregion
         #region Конструкторы
         public SpellCheckerLT()
@@ -132,23 +92,24 @@ namespace BOTFirst.Spellchecker
         /// </summary>
         /// <param name="language">Код языка для проверки(коды языков можно получить, выполнив методы:
         /// <see cref="GetAvailableLanguages"/> или <see cref="GetAvailableLanguagesAsync"/>)</param>
-        /// <param name="checkedText">Проверяемый текст</param>
-        public List<Mistake> Check(string language, string checkedText)
+        /// <param name="text">Проверяемый текст</param>
+        public List<Mistake> CheckText(string language, string text)
         {
+            var mistakes = new List<Mistake>();
             try
             {
                 using (WebClient wc = new WebClient()) 
                 {
                     wc.Encoding = Encoding.UTF8;
-                    checkResult = wc.UploadString(checkUrl, "text=" + checkedText + "&language=" + language); // обращаемся к API методом POST и получаем результат
+                    // обращаемся к API методом POST и получаем результат
+                    var checkResult = wc.UploadString(checkUrl, "text=" + text + "&language=" + language);
+                    mistakes = ParseCheckResult(checkResult);
                 }
             }
             catch (Exception ex)
             {
                 error = ex;
             }
-
-            ParseCheck(); // парсим результат
             return mistakes;
         }
         /// <summary>
@@ -157,22 +118,22 @@ namespace BOTFirst.Spellchecker
         /// </summary>
         public Dictionary<string, string> GetAvailableLanguages()
         {
+            var languages = new Dictionary<string, string>();
             try
             {
                 using (WebClient wc = new WebClient())
                 {
-                    languagesresult = wc.DownloadString(getLanguagesUrl); // обращаемся к API методом GET и получаем результат
+                    var languagesResult = wc.DownloadString(getLanguagesUrl); // обращаемся к API методом GET и получаем результат
+                    languages = ParseLanguages(languagesResult);
                 }
             }
             catch (Exception ex)
             {
                 error = ex;
             }
-            ParseLanguages(); // парсим результат запроса
             return languages;
         }
-        public string CorrectMistakes()
-        {
+        public string CorrectMistakes(string originalText, List<Mistake> mistakes) {
             return ""; // не реализован
         }
         /// <summary>
@@ -183,44 +144,34 @@ namespace BOTFirst.Spellchecker
         /// <param name="language">Код языка для проверки(коды языков можно получить, выполнив методы:
         /// <see cref="GetAvailableLanguages"/> или <see cref="GetAvailableLanguagesAsync"/>)</param>
         /// <param name="checkedText">Проверяемый текст</param>
-        public void CheckAsync(string language, string checkedText)
-        {
-            using (WebClient wc = new WebClient()) 
-            {
+        public async Task<List<Mistake>> CheckTextAsync(string language, string text) {
+            using (WebClient wc = new WebClient()) {
                 wc.Encoding = Encoding.UTF8;
-                wc.UploadStringCompleted += CheckHandler; // добавляем обработчик события выполнения http запроса(подписываемся на событие)
-                wc.UploadStringAsync(new Uri(checkUrl), "text=" + checkedText + "&language=" + language); // обращаемся к API методом POST
+                var checkResult = wc.UploadStringTaskAsync(new Uri(checkUrl), "text=" + text + "&language=" + language);
+                return await Task.FromResult(ParseCheckResult(checkResult.Result));
             }
         }
         /// <summary>
         /// Метод для получения списка доступных для проверки языков вместе с их кодами.
         /// Метод выполняется асинхронно, поэтому текущий поток не остановится.
         /// </summary>
-        public void GetAvailableLanguagesAsync()
-        {
-            using (WebClient wc = new WebClient())
-            {
-                wc.DownloadStringCompleted += GetAvailableLanguagesHandler; // подписывемся на событие
-                wc.DownloadStringAsync(new Uri(getLanguagesUrl)); // обращаемся к API методом GET
+        public async Task<Dictionary<string, string>> GetAvailableLanguagesAsync() {
+            using (WebClient wc = new WebClient()) {
+                var languagesResult = wc.DownloadStringTaskAsync(new Uri(getLanguagesUrl));
+                return await Task.FromResult(ParseLanguages(languagesResult.Result));
             }
 
         }
-        #endregion
-        #region События
-        /// <summary>
-        /// Событие получения списка доступных языков
-        /// </summary>
-        public event GetAvailableLanguagesAsyncEventHandler OnAvailableLanguagesGetComplete;
-        /// <summary>
-        /// Событие получения результатов проверки
-        /// </summary>
-        public event CheckAsyncContainerEventHandler OnCheckComplete;
         #endregion
     }
     
     public class MistakeLT : Mistake
     {
         private Exception error;
+        public bool HasErrors() {
+            return error != null;
+        }
+
         /// <summary>
         /// Исключение которое может возникнуть при создании ошибки 
         /// </summary>

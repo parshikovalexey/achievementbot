@@ -1,6 +1,8 @@
 ﻿using System;
 using BOTFirst.Spellchecker;
 using System.Net;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Spell_checker
 {
@@ -19,7 +21,7 @@ namespace Spell_checker
             spellchkr = new SpellCheckerLT();
             string text = "Сешь ещё этх мягких француских булок, да выпей же чаю.";
             var languages = spellchkr.GetAvailableLanguages();
-            var mistakes = spellchkr.Check(languages["Russian"], text);
+            var mistakes = spellchkr.CheckText(languages["Russian"], text);
             Console.WriteLine(text);
             Console.WriteLine("------------Ошибки---------------");
             foreach (var mistake in mistakes)
@@ -38,51 +40,77 @@ namespace Spell_checker
         static void DemonstrateAsync() // метод для демонстрации асинхронных методов
         {
             spellchkr = new SpellCheckerLT();
-            spellchkr.GetAvailableLanguagesAsync(); // получаем список языков(вернее только посылаем запрос)
-            spellchkr.OnAvailableLanguagesGetComplete += LanguagesDownloaded; //подписываемся на событие о получении списка языков
-            for (int i = 0; i < 100; i++) // цикл для демонстрации асинхронности
-            {
-                System.Threading.Thread.Sleep(200); // итерация цикла раз в 200 миллисекунд
-                Console.WriteLine(i);
-            }
+            ExecLanguages();
+            while (true)
+                PrintLanguageCounter();
         }
-        static void LanguagesDownloaded() // обработчик события загрузки доступных языков
+
+        static private int languageCounter = 0;
+        static private int disableLanguageCounterLimit = int.MaxValue;
+
+        static void PrintLanguageCounter() {
+            languageCounter++;
+            if (languageCounter < disableLanguageCounterLimit)
+                Console.WriteLine("Language " + languageCounter.ToString());
+        }
+
+        static void DemonstratePhraseAsync(string language, string text) // метод для демонстрации асинхронных методов
         {
-            if (spellchkr.Error == null)
-            {
-                foreach (var lang in spellchkr.Languages)
-                {
+            ExecMistakes(language, text);
+            while (true)
+                PrintMistakeCounter();
+        }
+
+        static private int mistakeCounter = 0;
+        static private int disableMistakeCounterLimit = int.MaxValue;
+
+        static void PrintMistakeCounter() {
+            mistakeCounter++;
+            if (mistakeCounter < disableMistakeCounterLimit)
+                Console.WriteLine("Mistake " + mistakeCounter.ToString());
+        }
+
+        static async Task ExecLanguages() {
+            await Task.Run(() => {
+                var task = spellchkr.GetAvailableLanguagesAsync();
+                LanguagesDownloaded(task.Result);
+            });
+        }
+
+        static void LanguagesDownloaded(Dictionary<string, string> languages) // обработчик события загрузки доступных языков
+        {
+            disableLanguageCounterLimit = languageCounter + 10;
+            if (spellchkr.Error == null) {
+                foreach (var lang in languages) {
                     Console.WriteLine("Название: " + lang.Key + " Код:" + lang.Value);
                 }
-                System.Threading.Thread.Sleep(1000); // ждем немного
-                spellchkr.OnCheckComplete += MistakesDownloaded; // подписываемся на событие полученя результатов проверки 
                 string text = "Сешь ещё этх мягких француских булок, да выпей же чаю."; // проверяемый текст
-                spellchkr.CheckAsync(spellchkr.Languages["Russian"], text); // посылаем запрос на проверку текста
-            }
-            else
-            {
+                DemonstratePhraseAsync(languages["Russian"], text); // посылаем запрос на проверку текста
+            } else {
                 Console.WriteLine(spellchkr.Error.Message); // выведем сообщение об ошибке, если она возникла
-
             }
         }
-        static void MistakesDownloaded() // обработчик события получения результатов проверки
+
+        static async Task ExecMistakes(string language, string text) {
+            await Task.Run(() => {
+                var task = spellchkr.CheckTextAsync(language, text);
+                MistakesDownloaded(task.Result);
+            });
+        }
+        static void MistakesDownloaded(List<Mistake> mistakes) // обработчик события получения результатов проверки
         {
-            if (spellchkr.Error == null)
-            {
+            disableMistakeCounterLimit = mistakeCounter + 10;
+            if (spellchkr.Error == null) {
                 Console.WriteLine("---------------ОШИБКИ--------------------");
-                foreach (var mistake in spellchkr.Mistakes)
-                {
+                foreach (var mistake in mistakes) {
                     Console.WriteLine("Ошибка в слове " + mistake.Original);
                     Console.WriteLine("Номер начального символа: " + mistake.Position.Begin + " Длина: " + mistake.Position.Length);
-                    foreach (var replace in mistake.Replacements)
-                    {
+                    foreach (var replace in mistake.Replacements) {
                         Console.WriteLine("                  " + replace);
                     }
                     Console.WriteLine("-----------------------------------");
                 }
-            }
-            else
-            {
+            } else {
                 Console.WriteLine(spellchkr.Error.Message);
             }
         }

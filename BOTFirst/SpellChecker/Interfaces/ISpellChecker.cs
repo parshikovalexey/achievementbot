@@ -1,23 +1,19 @@
-﻿using System.Collections.Generic;
-
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BOTFirst.Spellchecker
 {
-    public delegate void GetAvailableLanguagesAsyncEventHandler(); // делегаты созданные для событий асинхронных методов
-    public delegate void CheckAsyncContainerEventHandler();
     interface ISpellChecker
     {
         // синхронные методы
-        List<Mistake> Check(string language, string checkedText); // метод проверки текста
+        List<Mistake> CheckText(string language, string text); // метод проверки текста
         Dictionary<string, string> GetAvailableLanguages(); // метод для полуучения списка доступных языков
-        string CorrectMistakes(); // метод исправляющий ошибки
+        string CorrectMistakes(string originalText, List<Mistake> mistakes); // метод исправляющий ошибки
         // асинхронные методы
-        void CheckAsync(string language, string checkedText); // асинхронные версии методов
-        void GetAvailableLanguagesAsync();
+        Task<Dictionary<string, string>> GetAvailableLanguagesAsync();
+        Task<List<Mistake>> CheckTextAsync(string language, string text);
 
-        //события для асинхронных методов
-        event GetAvailableLanguagesAsyncEventHandler OnAvailableLanguagesGetComplete;
-        event CheckAsyncContainerEventHandler OnCheckComplete;
     }
     
 
