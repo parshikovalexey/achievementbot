@@ -12,18 +12,18 @@
         <AssociationConnector Association="EDModel.PhraseCanHaveAction" />
         <EntityTypeShape EntityType="EDModel.AdditionalText" Width="2.125" PointX="5.625" PointY="3.375" />
         <AssociationConnector Association="EDModel.PhraseCanHaveAdditionalText" />
-        <EntityTypeShape EntityType="EDModel.User" Width="1.5" PointX="7.625" PointY="1" FillColor="SeaGreen" />
-        <EntityTypeShape EntityType="EDModel.Messenger" Width="1.5" PointX="12.75" PointY="1.25" FillColor="SeaGreen" />
+        <EntityTypeShape EntityType="EDModel.User" Width="1.875" PointX="7.625" PointY="1" FillColor="SeaGreen" />
+        <EntityTypeShape EntityType="EDModel.Messenger" Width="2" PointX="12.5" PointY="1.25" FillColor="SeaGreen" />
         <EntityTypeShape EntityType="EDModel.MessengerAndUserInfo" Width="2" PointX="10" PointY="1" FillColor="SeaGreen" />
         <AssociationConnector Association="EDModel.OneUserIdentifierCanCorrespondOneMessenger" />
         <AssociationConnector Association="EDModel.UserCanHaveOneOrManyMessangers" />
         <EntityTypeShape EntityType="EDModel.UserAchievement" Width="1.75" PointX="8.125" PointY="3.375" FillColor="DarkMagenta" />
         <AssociationConnector Association="EDModel.AchievementContainsOnePhrase" />
-        <AssociationConnector Association="EDModel.AchievementBelongsToUser" />
         <EntityTypeShape EntityType="EDModel.FullAchievement" Width="2" PointX="10.625" PointY="3.125" FillColor="DarkMagenta" />
         <EntityTypeShape EntityType="EDModel.ShortAchievement" Width="2" PointX="10.625" PointY="4.875" FillColor="DarkMagenta" />
         <AssociationConnector Association="EDModel.AchievementCanHaveFullName" />
         <AssociationConnector Association="EDModel.AchievementCanHaveShortName" />
+        <AssociationConnector Association="EDModel.AchievementBelongsToUser" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -34,6 +34,6 @@ namespace EntityModel
         public virtual DbSet<MessengerAndUserInfo> MessengerAndUserInfo { get; set; }
         public virtual DbSet<UserAchievement> UserAchievements { get; set; }
         public virtual DbSet<FullAchievement> FullAchievements { get; set; }
-        public virtual DbSet<ShortAchievement> ShortAchievementSet { get; set; }
+        public virtual DbSet<ShortAchievement> ShortAchievements { get; set; }
     }
 }

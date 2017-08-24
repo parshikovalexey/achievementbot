@@ -16,7 +16,7 @@ namespace EntityModel
     {
         public int Id { get; set; }
         public string UserIdentifier { get; set; }
-        public int UserIdFK { get; set; }
+        public int UserId { get; set; }
     
         public virtual Messenger Messenger { get; set; }
         public virtual User User { get; set; }

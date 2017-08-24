@@ -18,7 +18,7 @@ namespace EntityModel
         public User()
         {
             this.MessengerAndUserInfo = new HashSet<MessengerAndUserInfo>();
-            this.Achievement = new HashSet<UserAchievement>();
+            this.UserAchievement = new HashSet<UserAchievement>();
         }
     
         public int Id { get; set; }
@@ -28,6 +28,6 @@ namespace EntityModel
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MessengerAndUserInfo> MessengerAndUserInfo { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserAchievement> Achievement { get; set; }
+        public virtual ICollection<UserAchievement> UserAchievement { get; set; }
     }
 }

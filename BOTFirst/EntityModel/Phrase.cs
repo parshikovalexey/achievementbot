@@ -27,9 +27,9 @@ namespace EntityModel
         public bool WasRecognized { get; set; }
         public string Date { get; set; }
         public string Time { get; set; }
-        public Nullable<int> MeasureUnitFId { get; set; }
-        public Nullable<int> ActionFId { get; set; }
-        public Nullable<int> AdditionalTextFId { get; set; }
+        public Nullable<int> MeasureUnitId { get; set; }
+        public Nullable<int> ActionId { get; set; }
+        public Nullable<int> AdditionalTextId { get; set; }
     
         public virtual MeasureUnit MeasureUnit { get; set; }
         public virtual Action Action { get; set; }
