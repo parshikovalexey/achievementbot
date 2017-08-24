@@ -26,7 +26,7 @@ namespace BOTFirst
                 switch (activity.GetActivityType())
                 {
                     case ActivityTypes.Message:
-                        await Conversation.SendAsync(activity, () => new Dialogs.RootDialog());
+                        await Conversation.SendAsync(activity, () => new Dialogs.PhraseDialog());
                         break;
                     case ActivityTypes.ConversationUpdate:
                         IConversationUpdateActivity update = activity;
