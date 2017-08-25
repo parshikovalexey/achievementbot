@@ -12,17 +12,20 @@ namespace EntityModel
     using System;
     using System.Collections.Generic;
     
-    public partial class ShortAchievement
+    public partial class Achievement
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public ShortAchievement()
+        public Achievement()
         {
+            this.AchievementForm = new HashSet<AchievementForm>();
             this.UserAchievement = new HashSet<UserAchievement>();
         }
     
         public int Id { get; set; }
         public string Name { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AchievementForm> AchievementForm { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserAchievement> UserAchievement { get; set; }
     }

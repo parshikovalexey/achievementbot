@@ -17,13 +17,11 @@ namespace EntityModel
         public int Id { get; set; }
         public string DateTime { get; set; }
         public int PhraseId { get; set; }
-        public int FullAchievementId { get; set; }
-        public Nullable<int> ShortAchievementId { get; set; }
         public int UserId { get; set; }
+        public int AchievementId { get; set; }
     
         public virtual Phrase Phrase { get; set; }
-        public virtual FullAchievement FullAchievement { get; set; }
-        public virtual ShortAchievement ShortAchievement { get; set; }
         public virtual User User { get; set; }
+        public virtual Achievement Achievement { get; set; }
     }
 }

@@ -14,9 +14,16 @@ namespace EntityModel
     
     public partial class Messenger
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Messenger()
+        {
+            this.UserMessenger = new HashSet<UserMessenger>();
+        }
+    
         public int Id { get; set; }
         public string Name { get; set; }
     
-        public virtual MessengerAndUserInfo MessengerAndUserInfo { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserMessenger> UserMessenger { get; set; }
     }
 }

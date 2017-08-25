@@ -17,8 +17,8 @@ namespace EntityModel
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public User()
         {
-            this.MessengerAndUserInfo = new HashSet<MessengerAndUserInfo>();
             this.UserAchievement = new HashSet<UserAchievement>();
+            this.UserMessenger = new HashSet<UserMessenger>();
         }
     
         public int Id { get; set; }
@@ -26,8 +26,8 @@ namespace EntityModel
         public string Name { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<MessengerAndUserInfo> MessengerAndUserInfo { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserAchievement> UserAchievement { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserMessenger> UserMessenger { get; set; }
     }
 }

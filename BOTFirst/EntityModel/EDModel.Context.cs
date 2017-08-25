@@ -31,9 +31,9 @@ namespace EntityModel
         public virtual DbSet<AdditionalText> AdditionalTexts { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Messenger> Messangers { get; set; }
-        public virtual DbSet<MessengerAndUserInfo> MessengerAndUserInfo { get; set; }
+        public virtual DbSet<UserMessenger> UserMessengers { get; set; }
         public virtual DbSet<UserAchievement> UserAchievements { get; set; }
-        public virtual DbSet<FullAchievement> FullAchievements { get; set; }
-        public virtual DbSet<ShortAchievement> ShortAchievements { get; set; }
+        public virtual DbSet<Achievement> Achievements { get; set; }
+        public virtual DbSet<AchievementForm> AchievementForms { get; set; }
     }
 }

@@ -12,13 +12,12 @@ namespace EntityModel
     using System;
     using System.Collections.Generic;
     
-    public partial class MessengerAndUserInfo
+    public partial class AchievementForm
     {
         public int Id { get; set; }
-        public string UserIdentifier { get; set; }
-        public int UserId { get; set; }
+        public string Form { get; set; }
+        public int AchievementId { get; set; }
     
-        public virtual Messenger Messenger { get; set; }
-        public virtual User User { get; set; }
+        public virtual Achievement Achievement { get; set; }
     }
 }
