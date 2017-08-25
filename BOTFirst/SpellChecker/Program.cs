@@ -49,6 +49,7 @@ namespace Spell_checker
         static private int disableLanguageCounterLimit = int.MaxValue;
 
         static void PrintLanguageCounter() {
+            System.Threading.Thread.Sleep(1000);
             languageCounter++;
             if (languageCounter < disableLanguageCounterLimit)
                 Console.WriteLine("Language " + languageCounter.ToString());

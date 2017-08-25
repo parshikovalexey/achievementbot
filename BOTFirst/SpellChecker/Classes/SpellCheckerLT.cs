@@ -12,30 +12,34 @@ namespace BOTFirst.Spellchecker
     public class SpellCheckerLT : ISpellChecker
     {
         #region Приватные поля
-        private string checkUrl; // URL для проверки текста
-        private string getLanguagesUrl; // URL для получения списка доступных языков
+        private readonly string checkUrl; // URL для проверки текста
+        private readonly string getLanguagesUrl; // URL для получения списка доступных языков
         private Exception error; // дублирующее поле для хранения ошибки полученной при выполнении методов, любое исключение полученное в ходе выполнения метода окажется здесь
         #endregion
         #region Приватные методы
-        private List<Mistake> ParseCheckResult(string checkResult) // метод предназначен для парсинга реультата проверки текста
+        /// <summary>
+        /// Метод предназначен для парсинга реультата проверки текста
+        /// </summary>
+        /// <param name="checkResult">Результат полученный от API</param>
+        private List<Mistake> ParseCheckResult(string checkResult) 
         {
             var mistakes = new List<Mistake>();
             try
             {
-                JToken parsedJSON = JToken.Parse(checkResult);
-                JToken matches = Utilities.JSON.GetObjectByKey(parsedJSON, "matches", ref error); // В LT ошибки лежат в объекте matches
+                var parsedJSON = JToken.Parse(checkResult);
+                var matches = Utilities.JSON.GetObjectByKey(parsedJSON, "matches", ref error); // В LT ошибки лежат в объекте matches
                 if (matches.HasValues)
                 {
                     foreach (var match in matches)
                     {
-                        MistakeLT curMistake = new MistakeLT(match);
-                        if (!curMistake.HasErrors())
+                        var currentMistake = new MistakeLT(match);
+                        if (!currentMistake.HasErrors())
                         {
-                            mistakes.Add(curMistake);
+                            mistakes.Add(currentMistake);
                         }
                         else
                         {
-                            error = curMistake.Error;
+                            error = currentMistake.Error;
                         }
                     }
                 }
@@ -46,13 +50,16 @@ namespace BOTFirst.Spellchecker
             }
             return mistakes;
         }
-
-        private Dictionary<string, string> ParseLanguages(string languagesResult) // метод предназначен для парсинга реультата получения доступных языков
+        /// <summary>
+        /// Метод предназначен для парсинга реультата получения доступных языков
+        /// </summary>
+        /// <param name="languagesResult">Результат полученный от API</param>
+        private Dictionary<string, string> ParseLanguages(string languagesResult)  
         {
             var languages = new Dictionary<string, string>();
             try
             {
-                JToken parsedJSON = JToken.Parse(languagesResult);
+                var parsedJSON = JToken.Parse(languagesResult);
                 foreach (var lang in parsedJSON)
                 {
                     languages.Add(Utilities.JSON.GetValueByKey<string>(lang, "name", ref error),
@@ -157,7 +164,7 @@ namespace BOTFirst.Spellchecker
         /// </summary>
         public async Task<Dictionary<string, string>> GetAvailableLanguagesAsync() {
             using (WebClient wc = new WebClient()) {
-                var languagesResult = wc.DownloadStringTaskAsync(new Uri(getLanguagesUrl));
+                var languagesResult =  wc.DownloadStringTaskAsync(new Uri(getLanguagesUrl));
                 return await Task.FromResult(ParseLanguages(languagesResult.Result));
             }
 
@@ -179,18 +186,18 @@ namespace BOTFirst.Spellchecker
         /// <summary>
         /// Создает объект ошибки на основе переданного в конструктор JSON
         /// </summary>
-        /// <param name="match"></param>
+        /// <param name="match">Описание ошибки в JSON</param>
         public MistakeLT(JToken match) // парсим JSON ошибки прямо при ее создании 
         {
-            JToken context = Utilities.JSON.GetObjectByKey(match, "context", ref error);
-            JToken replacements = Utilities.JSON.GetObjectByKey(match, "replacements",ref error);
-            int offset = Utilities.JSON.GetValueByKey<int>(context,"offset",ref error);
-            int length = Utilities.JSON.GetValueByKey<int>(context, "length", ref error); 
-            string text = Utilities.JSON.GetValueByKey<string>(context, "text", ref error);
-            string short_message = Utilities.JSON.GetValueByKey<string>(match, "shortMessage", ref error);
-            Position = new Position(offset, length);
-            Replacements = replacements.Values<string>("value").ToList();
-            Original = !String.IsNullOrEmpty(text) ? text.Substring(offset, length) : "";
+            var context = Utilities.JSON.GetObjectByKey(match, "context", ref error);
+            var replacements = Utilities.JSON.GetObjectByKey(match, "replacements",ref error);
+            var offset = Utilities.JSON.GetValueByKey<int>(context,"offset",ref error);
+            var length = Utilities.JSON.GetValueByKey<int>(context, "length", ref error); 
+            var text = Utilities.JSON.GetValueByKey<string>(context, "text", ref error);
+            var short_message = Utilities.JSON.GetValueByKey<string>(match, "shortMessage", ref error);
+            this.Position = new Position(offset, length);
+            this.Replacements = replacements.Values<string>("value").ToList();
+            this.Original = String.IsNullOrEmpty(text) ? "" : text.Substring(offset, length);
         }
     }
     

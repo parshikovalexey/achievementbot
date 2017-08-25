@@ -17,8 +17,8 @@ namespace BOTFirst.Spellchecker
         public int Length;
         public Position (int begin, int len)
         {
-            Begin = begin;
-            Length = len;
+            this.Begin = begin;
+            this.Length = len;
         }
     }
 }
