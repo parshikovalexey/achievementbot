@@ -12,29 +12,18 @@ namespace EntityModel
     using System;
     using System.Collections.Generic;
     
-    public partial class Phrase
+    public partial class Messenger
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Phrase()
+        public Messenger()
         {
-            this.Achievement = new HashSet<UserAchievement>();
+            this.UserMessenger = new HashSet<UserMessenger>();
         }
     
         public int Id { get; set; }
-        public string OriginalMessage { get; set; }
-        public string CorrectedMessage { get; set; }
-        public Nullable<decimal> Amount { get; set; }
-        public bool WasRecognized { get; set; }
-        public string Date { get; set; }
-        public string Time { get; set; }
-        public Nullable<int> MeasureUnitId { get; set; }
-        public Nullable<int> ActionId { get; set; }
-        public Nullable<int> AdditionalTextId { get; set; }
+        public string Name { get; set; }
     
-        public virtual MeasureUnit MeasureUnit { get; set; }
-        public virtual Action Action { get; set; }
-        public virtual AdditionalText AdditionalText { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserAchievement> Achievement { get; set; }
+        public virtual ICollection<UserMessenger> UserMessenger { get; set; }
     }
 }
