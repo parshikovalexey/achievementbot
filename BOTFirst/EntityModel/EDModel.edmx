@@ -1,0 +1,635 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="EDModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="EDModelStoreContainer">
+    <EntitySet Name="Phrases" EntityType="EDModel.Store.Phrases" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="MeasureUnits" EntityType="EDModel.Store.MeasureUnits" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Actions" EntityType="EDModel.Store.Actions" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="AdditionalTexts" EntityType="EDModel.Store.AdditionalTexts" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Users" EntityType="EDModel.Store.Users" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Messangers" EntityType="EDModel.Store.Messangers" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="UserMessengers" EntityType="EDModel.Store.UserMessengers" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="UserAchievements" EntityType="EDModel.Store.UserAchievements" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Achievements" EntityType="EDModel.Store.Achievements" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="AchievementForms" EntityType="EDModel.Store.AchievementForms" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="PhraseCanHaveMeasureUnit" Association="EDModel.Store.PhraseCanHaveMeasureUnit">
+      <End Role="Phrase" EntitySet="Phrases" />
+      <End Role="MeasureUnit" EntitySet="MeasureUnits" />
+    </AssociationSet>
+    <AssociationSet Name="PhraseCanHaveAction" Association="EDModel.Store.PhraseCanHaveAction">
+      <End Role="Action" EntitySet="Actions" />
+      <End Role="Phrase" EntitySet="Phrases" />
+    </AssociationSet>
+    <AssociationSet Name="PhraseCanHaveAdditionalInfo" Association="EDModel.Store.PhraseCanHaveAdditionalText">
+      <End Role="Phrase" EntitySet="Phrases" />
+      <End Role="AdditionalText" EntitySet="AdditionalTexts" />
+    </AssociationSet>
+    <AssociationSet Name="AchievementContainsOnePhrase" Association="EDModel.Store.AchievementContainsOnePhrase">
+      <End Role="Phrase" EntitySet="Phrases" />
+      <End Role="Achievement" EntitySet="UserAchievements" />
+    </AssociationSet>
+    <AssociationSet Name="AchievementBelongsToUser" Association="EDModel.Store.AchievementBelongsToUser">
+      <End Role="User" EntitySet="Users" />
+      <End Role="UserAchievement" EntitySet="UserAchievements" />
+    </AssociationSet>
+    <AssociationSet Name="UserCanHaveOneOrManyMessangers" Association="EDModel.Store.UserCanHaveOneOrManyMessangers">
+      <End Role="User" EntitySet="Users" />
+      <End Role="UserMessenger" EntitySet="UserMessengers" />
+    </AssociationSet>
+    <AssociationSet Name="AchievementCanHaveForms" Association="EDModel.Store.AchievementCanHaveForms">
+      <End Role="Achievement" EntitySet="Achievements" />
+      <End Role="AchievementForm" EntitySet="AchievementForms" />
+    </AssociationSet>
+    <AssociationSet Name="UserAchievementContainsAchievement" Association="EDModel.Store.UserAchievementContainsAchievement">
+      <End Role="Achievement" EntitySet="Achievements" />
+      <End Role="UserAchievement" EntitySet="UserAchievements" />
+    </AssociationSet>
+    <AssociationSet Name="OneMessengerCanMatchManyUserMessengers" Association="EDModel.Store.OneMessengerCanMatchManyUserMessengers">
+      <End Role="Messenger" EntitySet="Messangers" />
+      <End Role="UserMessenger" EntitySet="UserMessengers" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Phrases">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="OriginalMessage" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="CorrectedMessage" Type="nvarchar(max)" Nullable="true" />
+    <Property Name="Amount" Type="decimal" Nullable="true" />
+    <Property Name="WasRecognized" Type="bit" Nullable="false" />
+    <Property Name="Date" Type="nchar" Nullable="true" MaxLength="18" />
+    <Property Name="Time" Type="nchar" Nullable="true" MaxLength="25" />
+    <Property Name="MeasureUnitId" Type="int" Nullable="true" />
+    <Property Name="ActionId" Type="int" Nullable="true" />
+    <Property Name="AdditionalTextId" Type="int" Nullable="true" />
+  </EntityType>
+  <EntityType Name="MeasureUnits">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Text" Type="nchar" Nullable="false" MaxLength="25" />
+  </EntityType>
+  <EntityType Name="Actions">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Text" Type="nchar" Nullable="false" MaxLength="30" />
+  </EntityType>
+  <EntityType Name="AdditionalTexts">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Text" Type="nchar" Nullable="false" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="Users">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="PhoneNumber" Type="nchar" Nullable="false" MaxLength="11" />
+    <Property Name="Name" Type="nchar" Nullable="false" MaxLength="40" />
+  </EntityType>
+  <EntityType Name="Messangers">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nchar" Nullable="false" MaxLength="15" />
+  </EntityType>
+  <EntityType Name="UserMessengers">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="MessengerUserIdentifier" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="UserId" Type="int" Nullable="false" />
+    <Property Name="MessengerId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="UserAchievements">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="DateTime" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="PhraseId" Type="int" Nullable="false" />
+    <Property Name="UserId" Type="int" Nullable="false" />
+    <Property Name="AchievementId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Achievements">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nchar" Nullable="false" MaxLength="120" />
+  </EntityType>
+  <EntityType Name="AchievementForms">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Form" Type="nchar" Nullable="false" MaxLength="60" />
+    <Property Name="AchievementId" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="PhraseCanHaveMeasureUnit">
+    <End Role="Phrase" Type="EDModel.Store.Phrases" Multiplicity="*" />
+    <End Role="MeasureUnit" Type="EDModel.Store.MeasureUnits" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="MeasureUnit">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Phrase">
+        <PropertyRef Name="MeasureUnitId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="PhraseCanHaveAction">
+    <End Role="Action" Type="EDModel.Store.Actions" Multiplicity="0..1" />
+    <End Role="Phrase" Type="EDModel.Store.Phrases" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Action">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Phrase">
+        <PropertyRef Name="ActionId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="PhraseCanHaveAdditionalText">
+    <End Role="Phrase" Type="EDModel.Store.Phrases" Multiplicity="*" />
+    <End Role="AdditionalText" Type="EDModel.Store.AdditionalTexts" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="AdditionalText">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Phrase">
+        <PropertyRef Name="AdditionalTextId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="AchievementContainsOnePhrase">
+    <End Role="Phrase" Type="EDModel.Store.Phrases" Multiplicity="1" />
+    <End Role="Achievement" Type="EDModel.Store.UserAchievements" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Phrase">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Achievement">
+        <PropertyRef Name="PhraseId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="AchievementBelongsToUser">
+    <End Role="User" Type="EDModel.Store.Users" Multiplicity="1" />
+    <End Role="UserAchievement" Type="EDModel.Store.UserAchievements" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UserAchievement">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="UserCanHaveOneOrManyMessangers">
+    <End Role="User" Type="EDModel.Store.Users" Multiplicity="1" />
+    <End Role="UserMessenger" Type="EDModel.Store.UserMessengers" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UserMessenger">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="AchievementCanHaveForms">
+    <End Role="Achievement" Type="EDModel.Store.Achievements" Multiplicity="1" />
+    <End Role="AchievementForm" Type="EDModel.Store.AchievementForms" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Achievement">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="AchievementForm">
+        <PropertyRef Name="AchievementId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="UserAchievementContainsAchievement">
+    <End Role="Achievement" Type="EDModel.Store.Achievements" Multiplicity="1" />
+    <End Role="UserAchievement" Type="EDModel.Store.UserAchievements" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Achievement">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UserAchievement">
+        <PropertyRef Name="AchievementId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="OneMessengerCanMatchManyUserMessengers">
+    <End Role="Messenger" Type="EDModel.Store.Messangers" Multiplicity="1" />
+    <End Role="UserMessenger" Type="EDModel.Store.UserMessengers" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Messenger">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UserMessenger">
+        <PropertyRef Name="MessengerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="EDModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="EDModelContainer" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Phrases" EntityType="EDModel.Phrase" />
+          <EntitySet Name="MeasureUnits" EntityType="EDModel.MeasureUnit" />
+          <AssociationSet Name="PhraseCanHaveMeasureUnit" Association="EDModel.PhraseCanHaveMeasureUnit">
+            <End Role="Phrase" EntitySet="Phrases" />
+            <End Role="MeasureUnit" EntitySet="MeasureUnits" />
+          </AssociationSet>
+          <EntitySet Name="Actions" EntityType="EDModel.Action" />
+          <AssociationSet Name="PhraseCanHaveAction" Association="EDModel.PhraseCanHaveAction">
+            <End Role="Action" EntitySet="Actions" />
+            <End Role="Phrase" EntitySet="Phrases" />
+          </AssociationSet>
+          <EntitySet Name="AdditionalTexts" EntityType="EDModel.AdditionalText" />
+          <AssociationSet Name="PhraseCanHaveAdditionalInfo" Association="EDModel.PhraseCanHaveAdditionalText">
+            <End Role="Phrase" EntitySet="Phrases" />
+            <End Role="AdditionalText" EntitySet="AdditionalTexts" />
+          </AssociationSet>
+          <EntitySet Name="Users" EntityType="EDModel.User" />
+          <EntitySet Name="Messangers" EntityType="EDModel.Messenger" />
+          <EntitySet Name="UserMessengers" EntityType="EDModel.UserMessenger" />
+          <EntitySet Name="UserAchievements" EntityType="EDModel.UserAchievement" />
+          <AssociationSet Name="AchievementContainsOnePhrase" Association="EDModel.AchievementContainsOnePhrase">
+            <End Role="Phrase" EntitySet="Phrases" />
+            <End Role="Achievement" EntitySet="UserAchievements" />
+          </AssociationSet>
+          <EntitySet Name="Achievements" EntityType="EDModel.Achievement" />
+          <EntitySet Name="AchievementForms" EntityType="EDModel.AchievementForm" />
+          <AssociationSet Name="AchievementBelongsToUser" Association="EDModel.AchievementBelongsToUser">
+            <End Role="User" EntitySet="Users" />
+            <End Role="UserAchievement" EntitySet="UserAchievements" />
+          </AssociationSet>
+          <AssociationSet Name="UserCanHaveOneOrManyMessangers" Association="EDModel.UserCanHaveOneOrManyMessangers">
+            <End Role="User" EntitySet="Users" />
+            <End Role="UserMessenger" EntitySet="UserMessengers" />
+          </AssociationSet>
+          <AssociationSet Name="AchievementCanHaveForms" Association="EDModel.AchievementCanHaveForms">
+            <End Role="Achievement" EntitySet="Achievements" />
+            <End Role="AchievementForm" EntitySet="AchievementForms" />
+          </AssociationSet>
+          <AssociationSet Name="UserAchievementContainsAchievement" Association="EDModel.UserAchievementContainsAchievement">
+            <End Role="Achievement" EntitySet="Achievements" />
+            <End Role="UserAchievement" EntitySet="UserAchievements" />
+          </AssociationSet>
+          <AssociationSet Name="OneMessengerCanMatchManyUserMessengers" Association="EDModel.OneMessengerCanMatchManyUserMessengers">
+            <End Role="Messenger" EntitySet="Messangers" />
+            <End Role="UserMessenger" EntitySet="UserMessengers" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Phrase">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OriginalMessage" Type="String" Nullable="false" />
+          <Property Name="CorrectedMessage" Type="String" Nullable="true" />
+          <Property Name="Amount" Type="Decimal" Nullable="true" />
+          <Property Name="WasRecognized" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="MeasureUnit" Relationship="EDModel.PhraseCanHaveMeasureUnit" FromRole="Phrase" ToRole="MeasureUnit" />
+          <NavigationProperty Name="Action" Relationship="EDModel.PhraseCanHaveAction" FromRole="Phrase" ToRole="Action" />
+          <NavigationProperty Name="AdditionalText" Relationship="EDModel.PhraseCanHaveAdditionalText" FromRole="Phrase" ToRole="AdditionalText" />
+          <Property Name="Date" Type="String" Nullable="true" FixedLength="true" MaxLength="18" />
+          <Property Name="Time" Type="String" Nullable="true" FixedLength="true" MaxLength="25" />
+          <Property Name="MeasureUnitId" Type="Int32" Nullable="true" />
+          <Property Name="ActionId" Type="Int32" Nullable="true" />
+          <Property Name="AdditionalTextId" Type="Int32" Nullable="true" />
+          <NavigationProperty Name="Achievement" Relationship="EDModel.AchievementContainsOnePhrase" FromRole="Phrase" ToRole="Achievement" />
+        </EntityType>
+        <EntityType Name="MeasureUnit">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Text" Type="String" Nullable="false" FixedLength="true" MaxLength="25" />
+          <NavigationProperty Name="Phrase" Relationship="EDModel.PhraseCanHaveMeasureUnit" FromRole="MeasureUnit" ToRole="Phrase" />
+        </EntityType>
+        <Association Name="PhraseCanHaveMeasureUnit">
+          <End Type="EDModel.Phrase" Role="Phrase" Multiplicity="*" />
+          <End Type="EDModel.MeasureUnit" Role="MeasureUnit" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="MeasureUnit">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Phrase">
+              <PropertyRef Name="MeasureUnitId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Action">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Text" Type="String" Nullable="false" FixedLength="true" MaxLength="30" />
+          <NavigationProperty Name="Phrase" Relationship="EDModel.PhraseCanHaveAction" FromRole="Action" ToRole="Phrase" />
+        </EntityType>
+        <Association Name="PhraseCanHaveAction">
+          <End Type="EDModel.Action" Role="Action" Multiplicity="0..1" />
+          <End Type="EDModel.Phrase" Role="Phrase" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Action">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Phrase">
+              <PropertyRef Name="ActionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="AdditionalText">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="Phrase" Relationship="EDModel.PhraseCanHaveAdditionalText" FromRole="AdditionalText" ToRole="Phrase" />
+          <Property Name="Text" Type="String" Nullable="false" FixedLength="true" MaxLength="50" />
+        </EntityType>
+        <Association Name="PhraseCanHaveAdditionalText">
+          <End Type="EDModel.Phrase" Role="Phrase" Multiplicity="*" />
+          <End Type="EDModel.AdditionalText" Role="AdditionalText" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="AdditionalText">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Phrase">
+              <PropertyRef Name="AdditionalTextId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PhoneNumber" Type="String" Nullable="false" MaxLength="11" FixedLength="true" />
+          <Property Name="Name" Type="String" Nullable="false" FixedLength="true" MaxLength="40" />
+          <NavigationProperty Name="UserAchievement" Relationship="EDModel.AchievementBelongsToUser" FromRole="User" ToRole="UserAchievement" />
+          <NavigationProperty Name="UserMessenger" Relationship="EDModel.UserCanHaveOneOrManyMessangers" FromRole="User" ToRole="UserMessenger" />
+        </EntityType>
+        <EntityType Name="Messenger">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" FixedLength="true" MaxLength="15" />
+          <NavigationProperty Name="UserMessenger" Relationship="EDModel.OneMessengerCanMatchManyUserMessengers" FromRole="Messenger" ToRole="UserMessenger" />
+        </EntityType>
+        <EntityType Name="UserMessenger">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MessengerUserIdentifier" Type="String" Nullable="false" />
+          <NavigationProperty Name="User" Relationship="EDModel.UserCanHaveOneOrManyMessangers" FromRole="UserMessenger" ToRole="User" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Messenger" Relationship="EDModel.OneMessengerCanMatchManyUserMessengers" FromRole="UserMessenger" ToRole="Messenger" />
+          <Property Name="MessengerId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserAchievement">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="Phrase" Relationship="EDModel.AchievementContainsOnePhrase" FromRole="Achievement" ToRole="Phrase" />
+          <Property Name="DateTime" Type="String" Nullable="false" />
+          <Property Name="PhraseId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="User" Relationship="EDModel.AchievementBelongsToUser" FromRole="UserAchievement" ToRole="User" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Achievement" Relationship="EDModel.UserAchievementContainsAchievement" FromRole="UserAchievement" ToRole="Achievement" />
+          <Property Name="AchievementId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <Association Name="AchievementContainsOnePhrase">
+          <End Type="EDModel.Phrase" Role="Phrase" Multiplicity="1" />
+          <End Type="EDModel.UserAchievement" Role="Achievement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Phrase">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Achievement">
+              <PropertyRef Name="PhraseId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Achievement">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" FixedLength="true" MaxLength="120" />
+          <NavigationProperty Name="AchievementForm" Relationship="EDModel.AchievementCanHaveForms" FromRole="Achievement" ToRole="AchievementForm" />
+          <NavigationProperty Name="UserAchievement" Relationship="EDModel.UserAchievementContainsAchievement" FromRole="Achievement" ToRole="UserAchievement" />
+        </EntityType>
+        <EntityType Name="AchievementForm">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Form" Type="String" Nullable="false" FixedLength="true" MaxLength="60" />
+          <NavigationProperty Name="Achievement" Relationship="EDModel.AchievementCanHaveForms" FromRole="AchievementForm" ToRole="Achievement" />
+          <Property Name="AchievementId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <Association Name="AchievementBelongsToUser">
+          <End Type="EDModel.User" Role="User" Multiplicity="1" />
+          <End Type="EDModel.UserAchievement" Role="UserAchievement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserAchievement">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserCanHaveOneOrManyMessangers">
+          <End Type="EDModel.User" Role="User" Multiplicity="1" />
+          <End Type="EDModel.UserMessenger" Role="UserMessenger" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserMessenger">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="AchievementCanHaveForms">
+          <End Type="EDModel.Achievement" Role="Achievement" Multiplicity="1" />
+          <End Type="EDModel.AchievementForm" Role="AchievementForm" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Achievement">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AchievementForm">
+              <PropertyRef Name="AchievementId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserAchievementContainsAchievement">
+          <End Type="EDModel.Achievement" Role="Achievement" Multiplicity="1" />
+          <End Type="EDModel.UserAchievement" Role="UserAchievement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Achievement">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserAchievement">
+              <PropertyRef Name="AchievementId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="OneMessengerCanMatchManyUserMessengers">
+          <End Type="EDModel.Messenger" Role="Messenger" Multiplicity="1" />
+          <End Type="EDModel.UserMessenger" Role="UserMessenger" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Messenger">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserMessenger">
+              <PropertyRef Name="MessengerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="EDModelStoreContainer" CdmEntityContainer="EDModelContainer">
+    <EntitySetMapping Name="Phrases">
+      <EntityTypeMapping TypeName="IsTypeOf(EDModel.Phrase)">
+        <MappingFragment StoreEntitySet="Phrases">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="OriginalMessage" ColumnName="OriginalMessage" />
+          <ScalarProperty Name="CorrectedMessage" ColumnName="CorrectedMessage" />
+          <ScalarProperty Name="Amount" ColumnName="Amount" />
+          <ScalarProperty Name="WasRecognized" ColumnName="WasRecognized" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="Time" ColumnName="Time" />
+          <ScalarProperty Name="MeasureUnitId" ColumnName="MeasureUnitId" />
+          <ScalarProperty Name="ActionId" ColumnName="ActionId" />
+          <ScalarProperty Name="AdditionalTextId" ColumnName="AdditionalTextId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="MeasureUnits">
+      <EntityTypeMapping TypeName="IsTypeOf(EDModel.MeasureUnit)">
+        <MappingFragment StoreEntitySet="MeasureUnits">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Text" ColumnName="Text" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Actions">
+      <EntityTypeMapping TypeName="IsTypeOf(EDModel.Action)">
+        <MappingFragment StoreEntitySet="Actions">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Text" ColumnName="Text" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="AdditionalTexts">
+      <EntityTypeMapping TypeName="IsTypeOf(EDModel.AdditionalText)">
+        <MappingFragment StoreEntitySet="AdditionalTexts">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Text" ColumnName="Text" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Users">
+      <EntityTypeMapping TypeName="IsTypeOf(EDModel.User)">
+        <MappingFragment StoreEntitySet="Users">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Messangers">
+      <EntityTypeMapping TypeName="IsTypeOf(EDModel.Messenger)">
+        <MappingFragment StoreEntitySet="Messangers">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserMessengers">
+      <EntityTypeMapping TypeName="IsTypeOf(EDModel.UserMessenger)">
+        <MappingFragment StoreEntitySet="UserMessengers">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="MessengerUserIdentifier" ColumnName="MessengerUserIdentifier" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="MessengerId" ColumnName="MessengerId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserAchievements">
+      <EntityTypeMapping TypeName="IsTypeOf(EDModel.UserAchievement)">
+        <MappingFragment StoreEntitySet="UserAchievements">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="DateTime" ColumnName="DateTime" />
+          <ScalarProperty Name="PhraseId" ColumnName="PhraseId" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="AchievementId" ColumnName="AchievementId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Achievements">
+      <EntityTypeMapping TypeName="IsTypeOf(EDModel.Achievement)">
+        <MappingFragment StoreEntitySet="Achievements">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="AchievementForms">
+      <EntityTypeMapping TypeName="IsTypeOf(EDModel.AchievementForm)">
+        <MappingFragment StoreEntitySet="AchievementForms">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Form" ColumnName="Form" />
+          <ScalarProperty Name="AchievementId" ColumnName="AchievementId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+        <DesignerProperty Name="UseLegacyProvider" Value="False" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

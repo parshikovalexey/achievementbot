@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="bbdbef36bc8c4462a9f82df9fcd9db75" Name="MainDiagram" ZoomLevel="78" >
+        <EntityTypeShape EntityType="EDModel.Phrase" Width="1.875" PointX="3" PointY="1.25" />
+        <EntityTypeShape EntityType="EDModel.MeasureUnit" Width="1.5" PointX="5.5" PointY="1" />
+        <AssociationConnector Association="EDModel.PhraseCanHaveMeasureUnit" />
+        <EntityTypeShape EntityType="EDModel.Action" Width="1.5" PointX="1" PointY="2.25" IsExpanded="true" />
+        <AssociationConnector Association="EDModel.PhraseCanHaveAction" />
+        <EntityTypeShape EntityType="EDModel.AdditionalText" Width="2.125" PointX="5.5" PointY="3.375" />
+        <AssociationConnector Association="EDModel.PhraseCanHaveAdditionalText" />
+        <EntityTypeShape EntityType="EDModel.User" Width="1.875" PointX="8" PointY="1" FillColor="SeaGreen" />
+        <EntityTypeShape EntityType="EDModel.Messenger" Width="2" PointX="12.625" PointY="1.25" FillColor="SeaGreen" />
+        <EntityTypeShape EntityType="EDModel.UserMessenger" Width="2" PointX="10.25" PointY="1" FillColor="SeaGreen" />
+        <EntityTypeShape EntityType="EDModel.UserAchievement" Width="1.75" PointX="8.125" PointY="3.375" FillColor="DarkMagenta" />
+        <AssociationConnector Association="EDModel.AchievementContainsOnePhrase" />
+        <EntityTypeShape EntityType="EDModel.Achievement" Width="2" PointX="10.25" PointY="3.375" FillColor="DarkMagenta" />
+        <EntityTypeShape EntityType="EDModel.AchievementForm" Width="2" PointX="12.625" PointY="3.375" FillColor="DarkMagenta" />
+        <AssociationConnector Association="EDModel.AchievementBelongsToUser" />
+        <AssociationConnector Association="EDModel.UserCanHaveOneOrManyMessangers" />
+        <AssociationConnector Association="EDModel.AchievementCanHaveForms" />
+        <AssociationConnector Association="EDModel.UserAchievementContainsAchievement" />
+        <AssociationConnector Association="EDModel.OneMessengerCanMatchManyUserMessengers" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
