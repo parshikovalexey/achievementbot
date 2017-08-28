@@ -6,14 +6,18 @@ namespace BOTFirst.Spellchecker
 {
     interface ISpellChecker
     {
-        // синхронные методы
-        List<Mistake> CheckText(string language, string text); // метод проверки текста
-        Dictionary<string, string> GetAvailableLanguages(); // метод для полуучения списка доступных языков
-        string CorrectMistakes(string originalText, List<Mistake> mistakes); // метод исправляющий ошибки
-        // асинхронные методы
+        #region Синхронные методы
+        // Метод проверки текста.
+        List<Mistake> CheckText(string language, string text);
+        // Метод для полуучения списка доступных языков.
+        Dictionary<string, string> GetAvailableLanguages();
+        // Метод исправляющий ошибки.
+        string CorrectMistakes(string originalText, List<Mistake> mistakes); 
+        #endregion
+        #region Асинхронные методы
         Task<Dictionary<string, string>> GetAvailableLanguagesAsync();
         Task<List<Mistake>> CheckTextAsync(string language, string text);
-
+        #endregion
     }
     
 

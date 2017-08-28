@@ -39,11 +39,13 @@ namespace BOTFirst.Spellchecker
                 JToken takenObject = GetObjectByKey(token, key, ref error);
                 if (takenObject != null)
                 {
-                    return takenObject.Value<T>(); // возвращаем значение
+                    // Возвращаем значение.
+                    return takenObject.Value<T>();
                 }
                 else
                 {
-                    return default(T); // или дефолтное значение выбранного типа
+                    // Или дефолтное значение выбранного типа.
+                    return default(T); 
                 }
             }
         }

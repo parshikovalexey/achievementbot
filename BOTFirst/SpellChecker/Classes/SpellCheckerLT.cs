@@ -12,9 +12,12 @@ namespace BOTFirst.Spellchecker
     public class SpellCheckerLT : ISpellChecker
     {
         #region Приватные поля
-        private readonly string checkUrl; // URL для проверки текста
-        private readonly string getLanguagesUrl; // URL для получения списка доступных языков
-        private Exception error; // дублирующее поле для хранения ошибки полученной при выполнении методов, любое исключение полученное в ходе выполнения метода окажется здесь
+        // URL для проверки текста.
+        private readonly string checkUrl;
+        // URL для получения списка доступных языков.
+        private readonly string getLanguagesUrl;
+        // Дублирующее поле для хранения ошибки полученной при выполнении методов, любое исключение полученное в ходе выполнения метода окажется здесь.
+        private Exception error; 
         #endregion
         #region Приватные методы
         /// <summary>
@@ -108,7 +111,7 @@ namespace BOTFirst.Spellchecker
                 using (WebClient wc = new WebClient()) 
                 {
                     wc.Encoding = Encoding.UTF8;
-                    // обращаемся к API методом POST и получаем результат
+                    // Обращаемся к API методом POST и получаем результат.
                     var checkResult = wc.UploadString(checkUrl, "text=" + text + "&language=" + language);
                     mistakes = ParseCheckResult(checkResult);
                 }
@@ -130,7 +133,8 @@ namespace BOTFirst.Spellchecker
             {
                 using (WebClient wc = new WebClient())
                 {
-                    var languagesResult = wc.DownloadString(getLanguagesUrl); // обращаемся к API методом GET и получаем результат
+                    // Обращаемся к API методом GET и получаем результат.
+                    var languagesResult = wc.DownloadString(getLanguagesUrl); 
                     languages = ParseLanguages(languagesResult);
                 }
             }
@@ -141,7 +145,8 @@ namespace BOTFirst.Spellchecker
             return languages;
         }
         public string CorrectMistakes(string originalText, List<Mistake> mistakes) {
-            return ""; // не реализован
+            // TODO: Реализовать после слияния прототипа распонавания с проектом. 
+            return ""; 
         }
         /// <summary>
         /// Метод проверяет текст на наличие ошибок. 
@@ -187,8 +192,9 @@ namespace BOTFirst.Spellchecker
         /// Создает объект ошибки на основе переданного в конструктор JSON
         /// </summary>
         /// <param name="match">Описание ошибки в JSON</param>
-        public MistakeLT(JToken match) // парсим JSON ошибки прямо при ее создании 
+        public MistakeLT(JToken match) 
         {
+            // Парсим JSON ошибки прямо при ее создании. 
             var context = Utilities.JSON.GetObjectByKey(match, "context", ref error);
             var replacements = Utilities.JSON.GetObjectByKey(match, "replacements",ref error);
             var offset = Utilities.JSON.GetValueByKey<int>(context,"offset",ref error);
