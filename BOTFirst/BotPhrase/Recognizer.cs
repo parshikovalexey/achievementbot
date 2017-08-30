@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using WordClassTagger;
+using EntityModel;
+
 
 
 namespace BotPhrase
@@ -9,7 +11,7 @@ namespace BotPhrase
  public class Recognizer
     {
        
-       public static string GetPhraseFromMessage(string inputText)
+       public static EntityModel.Phrase GetModelPhraseFromMessage(string inputText)
         {
             // Объект из BotEngine для получени и выводя информации пользователю.
             // Comment out these lines for activating user input.
@@ -75,7 +77,7 @@ namespace BotPhrase
                     if (token.OrderInTextIndex < tokens.Count && unitsRegex.IsMatch(tokens[token.OrderInTextIndex + 1].Content))
                     {
                         unit = tokens[token.OrderInTextIndex + 1].ContentWithKeptCase;
-                        phrase.What += "Чего? — " + unit + ".\r\n";
+                        phrase.Units += "Чего? — " + unit + ".\r\n";
                     }
                 }
             }
@@ -100,20 +102,42 @@ namespace BotPhrase
             date = date.Trim(new Char[] { ' ', ',' });
             time = time.Trim(new Char[] { ' ', ',' });
 
-            if (phrase.YouDid == null && phrase.What == null && phrase.WhatWhere == null)
-                return  "Некорректный ввод либо не удалось распознать фразу.";
+            if (phrase.YouDid == null && phrase.Units == null && phrase.WhatWhere == null)
+                //
+                return  new EntityModel.Phrase
+                {
+                    OriginalMessage = inputText,
+                    WasRecognized = false,
+                    Date = date,
+                    Time = time,
+                    Amount =decimal.Parse(amount),
+                    MeasureUnit =new EntityModel.MeasureUnit() { Text = unit},
+                    CorrectedMessage = "Коррекция правописания еще не реализована"                  
+                };
             else
             {
+                DateTime dateTime = GetDateTimeFromString(date, time);
                 // In case of time it needs to remove "в" when checking of presence, because the letter might be left alone.
                 if (date != "" && time.Trim(new Char[] { 'в' }) != "")
-                    phrase.Data += String.Format("Когда? — Дата: {0}. Время: {1}. DateTime: {2}\r\n", date, time, GetDateTimeFromString(date, time));
+                    phrase.Date += String.Format("Когда? — Дата: {0}. Время: {1}. DateTime: {2}\r\n", date, time, dateTime);
                 else if (date == "" && time.Trim(new Char[] { 'в' }) != "")
-                    phrase.Data += String.Format("Когда? — Дата: не указана, будет считаться, что сегодня. Время: {0}. DateTime: {1}\r\n", time, GetDateTimeFromString(date, time));
+                    phrase.Date += String.Format("Когда? — Дата: не указана, будет считаться, что сегодня. Время: {0}. DateTime: {1}\r\n", time, dateTime);
                 else if (date != "" && time.Trim(new Char[] { 'в' }) == "")
-                    phrase.Data += String.Format("Когда? — Дата: {0}. Время: не указано, будет использовано текущее. DateTime: {1}\r\n", date, GetDateTimeFromString(date, time));
+                    phrase.Date += String.Format("Когда? — Дата: {0}. Время: не указано, будет использовано текущее. DateTime: {1}\r\n", date, dateTime);
                 else
-                    phrase.Data += "Когда? — дата не была указана либо не была распознана, будут использованы текущие дата и время. DateTime: " + GetDateTimeFromString(date, time) + "\r\n";
-                return  phrase.ToString();
+                    phrase.Date += "Когда? — дата не была указана либо не была распознана, будут использованы текущие дата и время. DateTime: " + dateTime + "\r\n";
+                return new EntityModel.Phrase
+                {
+                    Action = new EntityModel.Action() { Text = action },
+                    OriginalMessage = inputText,
+                    WasRecognized = true,
+                    Date = date,
+                    Time = time,
+                    Amount = decimal.Parse(amount),
+                    MeasureUnit = new EntityModel.MeasureUnit() { Text = unit },
+                    CorrectedMessage = "Коррекция правописания еще не реализована",
+                    AdditionalText = new EntityModel.AdditionalText() { Text = phraseObject }
+                };
             }
             //Console.ReadLine();
             // NOTE idea - if achievement - reading a book then bot would ask what exactly the book is in order to clarify the achievement.

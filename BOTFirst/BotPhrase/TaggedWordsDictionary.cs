@@ -18,7 +18,9 @@ namespace WordClassTagger
         public static void Load()
         {
             // Preparation.
-            TaggedWordsAsStrings = File.ReadAllText(ConstantValues.TaggedWordsDicFilePath).Split(new Char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var dictionaryFileStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("BotPhrase.TaggedWordsDictionary.txt");
+            TextReader tReader = new StreamReader(dictionaryFileStream);
+            TaggedWordsAsStrings = tReader.ReadToEnd().Split(new Char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
             TaggedWordsAsStrings.Sort();
             foreach (var taggedDicWord in TaggedWordsAsStrings)
             {

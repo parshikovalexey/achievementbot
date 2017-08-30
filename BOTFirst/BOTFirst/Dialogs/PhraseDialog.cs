@@ -20,9 +20,9 @@ namespace BOTFirst.Dialogs
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var activity = await result;
-            
-            await context.PostAsync(Recognizer.GetPhraseFromMessage(activity.Text));
-
+            var modelPhrase = Recognizer.GetModelPhraseFromMessage(activity.Text);
+            var phrase = PhrasesConverter.ModelPhraseToPhrase(modelPhrase);
+            await context.PostAsync(phrase.ToString());
             await context.PostAsync("Есть еще какие-либо новые достижения?");
             context.Wait(MessageReceivedAsync);
         }

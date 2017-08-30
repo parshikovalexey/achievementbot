@@ -14,19 +14,24 @@ namespace BotPhrase
         //Сколько
         public string HowMuch { get; set; }
         //Чего
-        public string What { get; set; }
+        public string Units { get; set; }
         //Что?/Кому?/Каким?/Куда?
         public string WhatWhere { get; set; }
         //Когда
-        public string Data { get; set; }
+        public string Date { get; set; }
+
+        public string Time { get; set; }
+
+        DateTime phraseDateTime { get; set; }
 
         public override string ToString()
         {
-            var messsag = new StringBuilder();
-            messsag.AppendLine(YouDid + " " + HowMuch + " " + What);
-            messsag.AppendLine(WhatWhere);
-            messsag.AppendLine(Data);
-            return messsag.ToString();
+            var messsage = new StringBuilder();
+            messsage.AppendLine(YouDid + " " + HowMuch + " " + Units);
+            messsage.AppendLine(WhatWhere);
+            messsage.AppendLine(Date);
+            messsage.AppendLine(Time);
+            return messsage.ToString();
            
         }
 

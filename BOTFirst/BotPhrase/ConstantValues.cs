@@ -9,7 +9,7 @@ namespace WordClassTagger
 {
     public static class ConstantValues
     {
-        public const string TaggedWordsDicFilePath = @"D:\TaggedWordsDictionary.txt";
+        
         public enum DateUnits
         {
             DAYS, WEEKS, MONTHS, YEARS
