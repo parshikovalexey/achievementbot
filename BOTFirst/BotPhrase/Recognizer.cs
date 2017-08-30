@@ -1,30 +1,21 @@
 ﻿using System;
-using System.Threading.Tasks;
-using Microsoft.Bot.Builder.Dialogs;
-using Microsoft.Bot.Connector;
-using WordClassTagger;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Text.RegularExpressions;
+using WordClassTagger;
 
-namespace BotPhrase.Dialogs
+
+namespace BotPhrase
 {
-    [Serializable]
-    public class PhraseDialog : IDialog<object>
+ public class Recognizer
     {
-        public Task StartAsync(IDialogContext context)
+       
+       public static string GetPhraseFromMessage(string inputText)
         {
-            context.Wait(MessageReceivedAsync);
-
-            return Task.CompletedTask;
-        }
-
-        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
-        {
-            var activity = await result;
+            // Объект из BotEngine для получени и выводя информации пользователю.
             // Comment out these lines for activating user input.
-            // await context.SayAsync("Расскажи что ты сегодня сделал для достижения цели");
-            string inputText = activity.Text;
+            //Console.Write("Enter input text: ");
+            // Получение текста из PhraseDialog.
+            
 
             // TODO It would be well to use TestPhrases.txt and create corresponding method in order to cyclically test lines of TestPhrases.txt
 
@@ -37,13 +28,13 @@ namespace BotPhrase.Dialogs
             // Loading and preparing of tokens.
             InputTextManager.LoadInput(inputText);
             List<InputToken> tokens = InputTextManager.GetTokens();
-            /*
+
             // Showing tokens for debugging.
-            await context.SayAsync("Части речи входных слов (отладка):");
+           /* Console.WriteLine("\r\nЧасти речи входных слов (отладка):");
             foreach (var token in tokens)
             {
                 // Only for debugging and showing recognited parts of speech.
-                await context.SayAsync(token.ContentWithKeptCase + token.GetStringTag());
+                Console.WriteLine(token.ContentWithKeptCase + token.GetStringTag());
             }*/
 
             // Getting phrase AMOUNT position by means of using tokens list.
@@ -59,23 +50,19 @@ namespace BotPhrase.Dialogs
             Regex unitsRegex = new Regex(string.Join("|", ConstantValues.Units), RegexOptions.IgnoreCase);
             // Getting action and amount.
 
-            // делаем объект в поля которого будем заносить данные по тексту
+            // Создаём объект описывающий фразу.
             Phrase phrase = new Phrase();
-
-
+             
             string action = "";
             string unit = "";
             string amount = "";
-
             foreach (var token in tokens)
             {
                 // Phrase ACTION retreaving.
                 if ((token.Tag == TagsManager.TagsEnum.V || actionRegex.IsMatch(token.Content)))
                 {
                     action = token.ContentWithKeptCase;
-                    //Заполняем поля объекта фразами 
-                    phrase.YouDid = "Ты сделал — " + action;
-                    //achievement += "Ты сделал — " + token.ContentWithKeptCase + ".\r\n";
+                    phrase.YouDid += "Ты сделал — " + token.ContentWithKeptCase + ".\r\n";
                     // Break the loop if there is only one word, eg. "выспался".
                     if (tokens.Count == 1) break;
                 }
@@ -83,14 +70,12 @@ namespace BotPhrase.Dialogs
                 if ((token.Tag == TagsManager.TagsEnum.NUM || ConstantValues.AmountByWords.Contains(token.Content)))
                 {
                     amount = token.ContentWithKeptCase;
-                    phrase.HowMuch += "Сколько? — " + amount;
-                    //achievement += "Сколько? — " + token.ContentWithKeptCase + ".\r\n";
+                    phrase.HowMuch += "Сколько? — " + token.ContentWithKeptCase + ".\r\n";
                     // Try to get phrase UNIT of measure.
                     if (token.OrderInTextIndex < tokens.Count && unitsRegex.IsMatch(tokens[token.OrderInTextIndex + 1].Content))
                     {
                         unit = tokens[token.OrderInTextIndex + 1].ContentWithKeptCase;
-                        phrase.What += "Чего? — " + unit + ".";
-                        //achievement += "Чего? — " + unit + ".\r\n";
+                        phrase.What += "Чего? — " + unit + ".\r\n";
                     }
                 }
             }
@@ -109,44 +94,34 @@ namespace BotPhrase.Dialogs
             if (inputText != "")
             {
                 phraseObject = inputText;
-                phrase.WhatWhere = "Что?/Кому?/Каким?/Куда? — " + phraseObject + ".";
-                //achievement += "Что?/Кому?/Каким?/Куда? — " + inputText + ".\r\n";
+                phrase.WhatWhere += "Что?/Кому?/Каким?/Куда? — " + inputText + ".\r\n";
             }
 
             date = date.Trim(new Char[] { ' ', ',' });
             time = time.Trim(new Char[] { ' ', ',' });
 
-            if (/*achievement == ""*/ phrase.YouDid == null && phrase.HowMuch == null && phrase.What == null
-                                     && phrase.WhatWhere == null)
-                await context.SayAsync("Некорректный ввод либо не удалось распознать фразу.");
+            if (phrase.YouDid == null && phrase.What == null && phrase.WhatWhere == null)
+                return  "Некорректный ввод либо не удалось распознать фразу.";
             else
             {
                 // In case of time it needs to remove "в" when checking of presence, because the letter might be left alone.
                 if (date != "" && time.Trim(new Char[] { 'в' }) != "")
                     phrase.Data += String.Format("Когда? — Дата: {0}. Время: {1}. DateTime: {2}\r\n", date, time, GetDateTimeFromString(date, time));
-                //achievement += String.Format("Когда? — Дата: {0}. Время: {1}. DateTime: {2}\r\n", date, time, GetDateTimeFromString(date, time));
                 else if (date == "" && time.Trim(new Char[] { 'в' }) != "")
                     phrase.Data += String.Format("Когда? — Дата: не указана, будет считаться, что сегодня. Время: {0}. DateTime: {1}\r\n", time, GetDateTimeFromString(date, time));
-                //achievement += String.Format("Когда? — Дата: не указана, будет считаться, что сегодня. Время: {0}. DateTime: {1}\r\n", time, GetDateTimeFromString(date, time));
                 else if (date != "" && time.Trim(new Char[] { 'в' }) == "")
                     phrase.Data += String.Format("Когда? — Дата: {0}. Время: не указано, будет использовано текущее. DateTime: {1}\r\n", date, GetDateTimeFromString(date, time));
-                //achievement += String.Format("Когда? — Дата: {0}. Время: не указано, будет использовано текущее. DateTime: {1}\r\n", date, GetDateTimeFromString(date, time));
                 else
                     phrase.Data += "Когда? — дата не была указана либо не была распознана, будут использованы текущие дата и время. DateTime: " + GetDateTimeFromString(date, time) + "\r\n";
-                //achievement += "Когда? — дата не была указана либо не была распознана, будут использованы текущие дата и время. DateTime: " + GetDateTimeFromString(date, time) + "\r\n";
-
-                //Вывод
-                await context.SayAsync("Выходные данные:");
-
-                await context.SayAsync(phrase.MoveTo(phrase.YouDid, phrase.HowMuch,
-                                                     phrase.What, phrase.WhatWhere, phrase.Data));
-
+                return  phrase.ToString();
             }
-
+            //Console.ReadLine();
             // NOTE idea - if achievement - reading a book then bot would ask what exactly the book is in order to clarify the achievement.
-
-            context.Wait(MessageReceivedAsync);
         }
+
+        /// <summary>
+        /// Method is aimed for trying to get date and time match from input text message.
+        /// </summary>
         private static void ParseDateAndTime(string inputText, ref string date, ref string time)
         {
             Regex dateRE = new Regex(Tokenizer.CommonDatePattern, RegexOptions.IgnoreCase);
@@ -256,3 +231,5 @@ namespace BotPhrase.Dialogs
         }
     }
 }
+
+

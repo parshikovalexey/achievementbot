@@ -40,10 +40,11 @@ namespace BOTFirst
                                 {
                                     if (newMember.Id != activity.Recipient.Id)
                                     {
-                                        reply.Text = $"Привет, я Чат-бот! Как тебя зовут ? ";
+                                        reply.Text = string.Format("Привет, {0}! Я буду помогать тебе добиваться поставленных целей! Поделись своими последними достижениями!", newMember.Name);
+                                        await client.Conversations.ReplyToActivityAsync(reply);
                                     }
 
-                                    await client.Conversations.ReplyToActivityAsync(reply);
+                                    
                                 }
                             }
                         }

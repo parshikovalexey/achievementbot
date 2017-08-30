@@ -112,8 +112,6 @@
   <ItemGroup>
     <Content Include="default.htm" />
     <Content Include="Global.asax" />
-    <Content Include="modul_rec_phr\TaggedWordsDictionary.txt" />
-    <Content Include="modul_rec_phr\TestPhrases.txt" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -126,15 +124,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="modul_rec_phr\ConstantValues.cs" />
-    <Compile Include="modul_rec_phr\InputTextManager.cs" />
-    <Compile Include="modul_rec_phr\InputToken.cs" />
-    <Compile Include="modul_rec_phr\TaggedWord.cs" />
-    <Compile Include="modul_rec_phr\TaggedWordsDictionary.cs" />
-    <Compile Include="modul_rec_phr\Tagger.cs" />
-    <Compile Include="modul_rec_phr\TagsManager.cs" />
-    <Compile Include="modul_rec_phr\Tokenizer.cs" />
-    <Compile Include="Phrase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -147,6 +136,12 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BotPhrase\PhraseRecognizer.csproj">
+      <Project>{c75ac78a-4018-43c8-8aca-1a15559a7de4}</Project>
+      <Name>PhraseRecognizer</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

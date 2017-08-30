@@ -14,22 +14,19 @@ namespace WordClassTagger
 
         public static void LoadInput(string inputText)
         {
-            // In order to prevent multiple range adding.
-            if (InputTokens == null)
-            {
-                // Dictionary preparing.
-                TaggedWordsDictionary.Load();
+            
+            TaggedWordsDictionary.Load();
+            InputTokens = new List<InputToken>();
+            InputTokens.Clear();
+            InputTokens.AddRange(Tokenizer.GetTokensListFromInputText(inputText));
 
-                InputTokens = new List<InputToken>();
-                InputTokens.AddRange(Tokenizer.GetTokensListFromInputText(inputText));
-
-                // Tagging execution.
-                foreach (var token in InputTokens)
+            // Tagging execution.
+            foreach (var token in InputTokens)
                 {
                     // Execute tagging of the token.
                     Tagger.DefineAndAppendTagToWord(token);
                 }
-            }
+            
         }
     }
 }
