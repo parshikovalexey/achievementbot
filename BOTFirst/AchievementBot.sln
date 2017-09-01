@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotEngine", "BOTFirst\BotEn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityModel", "EntityModel\EntityModel.csproj", "{B358DD38-6126-4BCD-AE0C-7C8CC37C64B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhraseRecognizer", "BotPhrase\PhraseRecognizer.csproj", "{C75AC78A-4018-43C8-8ACA-1A15559A7DE4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhraseRecognizer", "PhraseRecognizer\PhraseRecognizer.csproj", "{C75AC78A-4018-43C8-8ACA-1A15559A7DE4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,8 +19,8 @@ Global
 		{B56C2FF1-B516-4062-A695-A36EC47B6D58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B56C2FF1-B516-4062-A695-A36EC47B6D58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B56C2FF1-B516-4062-A695-A36EC47B6D58}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B358DD38-6126-4BCD-AE0C-7C8CC37C64B8}.Debug|Any CPU.ActiveCfg = Release|Any CPU
-		{B358DD38-6126-4BCD-AE0C-7C8CC37C64B8}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{B358DD38-6126-4BCD-AE0C-7C8CC37C64B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B358DD38-6126-4BCD-AE0C-7C8CC37C64B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B358DD38-6126-4BCD-AE0C-7C8CC37C64B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B358DD38-6126-4BCD-AE0C-7C8CC37C64B8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C75AC78A-4018-43C8-8ACA-1A15559A7DE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

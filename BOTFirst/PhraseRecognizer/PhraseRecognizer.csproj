@@ -7,8 +7,8 @@
     <ProjectGuid>{C75AC78A-4018-43C8-8ACA-1A15559A7DE4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BotPhrase</RootNamespace>
-    <AssemblyName>BotPhrase</AssemblyName>
+    <RootNamespace>PhraseRecognizer</RootNamespace>
+    <AssemblyName>PhraseRecognizer</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

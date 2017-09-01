@@ -20,5 +20,6 @@ namespace BotPhrase
                 Time = (modelPhrase.Date != "") ? "Когда? — Время: " + modelPhrase.Time : "время не было указано",
             };
         }
+
     }
 }

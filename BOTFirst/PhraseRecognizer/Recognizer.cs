@@ -13,11 +13,8 @@ namespace BotPhrase
        
        public static EntityModel.Phrase GetModelPhraseFromMessage(string inputText)
         {
-            // Объект из BotEngine для получени и выводя информации пользователю.
-            // Comment out these lines for activating user input.
-            //Console.Write("Enter input text: ");
-            // Получение текста из PhraseDialog.
-            
+            string originalMessage = inputText;
+
 
             // TODO It would be well to use TestPhrases.txt and create corresponding method in order to cyclically test lines of TestPhrases.txt
 
@@ -106,7 +103,7 @@ namespace BotPhrase
                 //
                 return  new EntityModel.Phrase
                 {
-                    OriginalMessage = inputText,
+                    OriginalMessage = originalMessage,
                     WasRecognized = false,
                     Date = date,
                     Time = time,
@@ -129,7 +126,7 @@ namespace BotPhrase
                 return new EntityModel.Phrase
                 {
                     Action = new EntityModel.Action() { Text = action },
-                    OriginalMessage = inputText,
+                    OriginalMessage = originalMessage,
                     WasRecognized = true,
                     Date = date,
                     Time = time,

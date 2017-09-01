@@ -48,9 +48,7 @@
     <Reference Include="Chronic, Version=0.3.2.0, Culture=neutral, PublicKeyToken=3bd1f1ef638b0d3c, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)\packages\Chronic.Signed.0.3.2\lib\net40\Chronic.dll</HintPath>
     </Reference>
-    <Reference Include="EntityModel">
-      <HintPath>..\EntityModel\bin\Release\EntityModel.dll</HintPath>
-    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
     <Reference Include="Microsoft.Bot.Builder, Version=3.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bot.Builder.3.9.0.0\lib\net46\Microsoft.Bot.Builder.dll</HintPath>
       <Private>True</Private>
@@ -138,9 +136,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BotPhrase\PhraseRecognizer.csproj">
+    <ProjectReference Include="..\PhraseRecognizer\PhraseRecognizer.csproj">
       <Project>{c75ac78a-4018-43c8-8aca-1a15559a7de4}</Project>
       <Name>PhraseRecognizer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EntityModel\EntityModel.csproj">
+      <Project>{b358dd38-6126-4bcd-ae0c-7c8cc37c64b8}</Project>
+      <Name>EntityModel</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

@@ -34,6 +34,20 @@ namespace BotPhrase
             return messsage.ToString();
            
         }
+        //Вот это я добавил пока думал
+        public Phrase PhraseToModul(EntityModel.Phrase modelPhrase)
+        {
+            return new Phrase
+            {
+                YouDid = modelPhrase.Action.Text,
+                HowMuch = modelPhrase.Amount.ToString(),
+                Units = modelPhrase.MeasureUnit.Text,
+                WhatWhere = modelPhrase.AdditionalText.Text,
+                Date = modelPhrase.Date,
+                Time = modelPhrase.Time,
+                phraseDateTime = DateTime.Parse(modelPhrase.Date+ modelPhrase.Time)
+            };
+        }
 
     }
 }
