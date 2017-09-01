@@ -10,14 +10,15 @@ namespace BotPhrase
 {
  public class Recognizer
     {
-       
-       public static EntityModel.Phrase GetModelPhraseFromMessage(string inputText)
+       public static Phrase RecognizePhrase(string inputText)
         {
-            string originalMessage = inputText;
+            // Создаём объект, описывающий фразу.
+            var phrase = new Phrase();
+            phrase.RecognitionResult = "";
+            phrase.OriginalMessage = inputText;
 
-
+            
             // TODO It would be well to use TestPhrases.txt and create corresponding method in order to cyclically test lines of TestPhrases.txt
-
             string date = "";
             string time = "";
             // Try to get date and time match from input.
@@ -27,14 +28,6 @@ namespace BotPhrase
             // Loading and preparing of tokens.
             InputTextManager.LoadInput(inputText);
             List<InputToken> tokens = InputTextManager.GetTokens();
-
-            // Showing tokens for debugging.
-           /* Console.WriteLine("\r\nЧасти речи входных слов (отладка):");
-            foreach (var token in tokens)
-            {
-                // Only for debugging and showing recognited parts of speech.
-                Console.WriteLine(token.ContentWithKeptCase + token.GetStringTag());
-            }*/
 
             // Getting phrase AMOUNT position by means of using tokens list.
             int amountPosition = -1;
@@ -47,96 +40,90 @@ namespace BotPhrase
             // Examples: прочитал, прочитала, прочитали, подтянулся, подтянулись, подтянулась, прочитано, спасено, завершен(о/а), построил, спас, потерял/засеял/посеял, взлетел.
             Regex actionRegex = new Regex(".*((ал(а|и)?)|(лся)|(лись)|(лась)|(ано)|(ено)|(ше|ён(о|а)?)|(ил)|(спас)|(ял)|(ел))$", RegexOptions.IgnoreCase);
             Regex unitsRegex = new Regex(string.Join("|", ConstantValues.Units), RegexOptions.IgnoreCase);
+           
             // Getting action and amount.
-
-            // Создаём объект описывающий фразу.
-            Phrase phrase = new Phrase();
-             
             string action = "";
-            string unit = "";
+            string units = "";
             string amount = "";
+            bool actionIsFound = false;
             foreach (var token in tokens)
             {
                 // Phrase ACTION retreaving.
-                if ((token.Tag == TagsManager.TagsEnum.V || actionRegex.IsMatch(token.Content)))
+                if (!actionIsFound && (token.Tag == TagsManager.TagsEnum.V || actionRegex.IsMatch(token.Content)))
                 {
+                    actionIsFound = true;
                     action = token.ContentWithKeptCase;
-                    phrase.YouDid += "Ты сделал — " + token.ContentWithKeptCase + ".\r\n";
+                    phrase.RecognitionResult += "Ты сделал —  " + token.ContentWithKeptCase + ".\r\n";
                     // Break the loop if there is only one word, eg. "выспался".
                     if (tokens.Count == 1) break;
                 }
                 // Amount.
-                if ((token.Tag == TagsManager.TagsEnum.NUM || ConstantValues.AmountByWords.Contains(token.Content)))
+                if (token.Tag == TagsManager.TagsEnum.NUM || ConstantValues.AmountByWords.Contains(token.Content))
                 {
                     amount = token.ContentWithKeptCase;
-                    phrase.HowMuch += "Сколько? — " + token.ContentWithKeptCase + ".\r\n";
+                    phrase.RecognitionResult += "Сколько? — " + token.ContentWithKeptCase + ".\r\n";
                     // Try to get phrase UNIT of measure.
                     if (token.OrderInTextIndex < tokens.Count && unitsRegex.IsMatch(tokens[token.OrderInTextIndex + 1].Content))
                     {
-                        unit = tokens[token.OrderInTextIndex + 1].ContentWithKeptCase;
-                        phrase.Units += "Чего? — " + unit + ".\r\n";
+                        units = tokens[token.OrderInTextIndex + 1].ContentWithKeptCase;
+                        phrase.RecognitionResult += "Чего? — " + units + ".\r\n";
                     }
                 }
             }
 
             // Filter action, unit and amount out of phrase in order to get phrase OBJECT.
             if (action != "")
+            {
                 inputText = inputText.Replace(action, "");
-            if (unit != "")
-                inputText = inputText.Replace(unit, "");
+                phrase.Action = action;
+            } 
+            if (units != "")
+            {
+                inputText = inputText.Replace(units, "");
+                phrase.Units = units;
+            }
             if (amount != "")
+            {
                 inputText = inputText.Replace(amount, "");
+                phrase.Amount = amount;
+            }
+               
 
             // Getting phrase OBJECT.
             inputText = inputText.Trim(new Char[] { ' ', ',', '-', '—', '–', ';' });
-            string phraseObject = "";
-            if (inputText != "")
+            if (inputText != "" && action != "")
             {
-                phraseObject = inputText;
-                phrase.WhatWhere += "Что?/Кому?/Каким?/Куда? — " + inputText + ".\r\n";
+                phrase.AdditionalText = inputText;
+                phrase.RecognitionResult += "Что?/Кому?/Каким?/Куда? — " + inputText + ".\r\n";
             }
 
             date = date.Trim(new Char[] { ' ', ',' });
+            phrase.Date = date;
             time = time.Trim(new Char[] { ' ', ',' });
+            phrase.Time = time;
 
-            if (phrase.YouDid == null && phrase.Units == null && phrase.WhatWhere == null)
-                //
-                return  new EntityModel.Phrase
-                {
-                    OriginalMessage = originalMessage,
-                    WasRecognized = false,
-                    Date = date,
-                    Time = time,
-                    Amount =decimal.Parse(amount),
-                    MeasureUnit =new EntityModel.MeasureUnit() { Text = unit},
-                    CorrectedMessage = "Коррекция правописания еще не реализована"                  
-                };
+            if (phrase.RecognitionResult == "")
+            {
+                phrase.WasRecognized = false;
+                phrase.RecognitionResult = "Некорректный ввод либо не удалось распознать фразу.";
+                return phrase;
+            }
             else
             {
+                phrase.WasRecognized = true;
                 DateTime dateTime = GetDateTimeFromString(date, time);
+                phrase.PhraseDateTime = dateTime;
                 // In case of time it needs to remove "в" when checking of presence, because the letter might be left alone.
                 if (date != "" && time.Trim(new Char[] { 'в' }) != "")
-                    phrase.Date += String.Format("Когда? — Дата: {0}. Время: {1}. DateTime: {2}\r\n", date, time, dateTime);
+                    phrase.RecognitionResult += String.Format("Когда? — Дата: {0}. Время: {1}. DateTime: {2}\r\n", date, time, dateTime);
                 else if (date == "" && time.Trim(new Char[] { 'в' }) != "")
-                    phrase.Date += String.Format("Когда? — Дата: не указана, будет считаться, что сегодня. Время: {0}. DateTime: {1}\r\n", time, dateTime);
+                    phrase.RecognitionResult += String.Format("Когда? — Дата: не указана, будет считаться, что сегодня. Время: {0}. DateTime: {1}\r\n", time, dateTime);
                 else if (date != "" && time.Trim(new Char[] { 'в' }) == "")
-                    phrase.Date += String.Format("Когда? — Дата: {0}. Время: не указано, будет использовано текущее. DateTime: {1}\r\n", date, dateTime);
+                    phrase.RecognitionResult += String.Format("Когда? — Дата: {0}. Время: не указано, будет использовано текущее. DateTime: {1}\r\n", date, dateTime);
                 else
-                    phrase.Date += "Когда? — дата не была указана либо не была распознана, будут использованы текущие дата и время. DateTime: " + dateTime + "\r\n";
-                return new EntityModel.Phrase
-                {
-                    Action = new EntityModel.Action() { Text = action },
-                    OriginalMessage = originalMessage,
-                    WasRecognized = true,
-                    Date = date,
-                    Time = time,
-                    Amount = decimal.Parse(amount),
-                    MeasureUnit = new EntityModel.MeasureUnit() { Text = unit },
-                    CorrectedMessage = "Коррекция правописания еще не реализована",
-                    AdditionalText = new EntityModel.AdditionalText() { Text = phraseObject }
-                };
+                    phrase.RecognitionResult += "Когда? — дата не была указана либо не была распознана, будут использованы текущие дата и время. DateTime: " + dateTime + "\r\n";
+                return phrase;
             }
-            //Console.ReadLine();
             // NOTE idea - if achievement - reading a book then bot would ask what exactly the book is in order to clarify the achievement.
         }
 

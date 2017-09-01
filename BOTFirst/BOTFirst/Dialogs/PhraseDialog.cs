@@ -21,8 +21,8 @@ namespace BOTFirst.Dialogs
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var activity = await result;
-            var modelPhrase = Recognizer.GetModelPhraseFromMessage(activity.Text);
-            var phrase = PhrasesConverter.ModelPhraseToPhrase(modelPhrase);
+            //var modelPhrase = Recognizer.RecognizePhrase(activity.Text);
+            //var phrase = PhrasesConverter.ModelPhraseToPhrase(modelPhrase);
 
             //Adding data to DB example. It is necessary to implement checking of existence related objects such as actions, measureUnits and additionalTexts.
             /*using (EDModelContainer db = new EDModelContainer()) {
@@ -30,7 +30,7 @@ namespace BOTFirst.Dialogs
                db.SaveChanges();
             }*/
 
-            await context.PostAsync(phrase.ToString());
+            await context.PostAsync(Recognizer.RecognizePhrase(activity.Text).RecognitionResult);
             await context.PostAsync("Отлично! Есть какие-либо другие новые достижения?");
             context.Wait(MessageReceivedAsync);
         }

@@ -9,22 +9,28 @@ namespace BotPhrase
     [Serializable]
     public class Phrase
     {
-        //ты сделал
-        public string YouDid { get; set; }
-        //Сколько
-        public string HowMuch { get; set; }
-        //Чего
+        // Ты сделал.
+        public string Action { get; set; }
+        // Сколько.
+        public string Amount { get; set; }
+        // Чего.
         public string Units { get; set; }
-        //Что?/Кому?/Каким?/Куда?
-        public string WhatWhere { get; set; }
-        //Когда
+        // Что ? Кому ? Каким ? Куда ?
+        public string AdditionalText { get; set; }
+        // Когда, дата.
         public string Date { get; set; }
-
+        // Когда, время.
         public string Time { get; set; }
 
-        DateTime phraseDateTime { get; set; }
+        public DateTime PhraseDateTime { get; set; }
 
-        public override string ToString()
+        public string RecognitionResult { get; set; }
+
+        public Boolean WasRecognized { get; set; }
+
+        public string OriginalMessage { get; set; }
+
+       /* public override string ToString()
         {
             var messsage = new StringBuilder();
             messsage.AppendLine(YouDid + " " + HowMuch + " " + Units);
@@ -33,21 +39,8 @@ namespace BotPhrase
             messsage.AppendLine(Time);
             return messsage.ToString();
            
-        }
-        //Вот это я добавил пока думал
-        public Phrase PhraseToModul(EntityModel.Phrase modelPhrase)
-        {
-            return new Phrase
-            {
-                YouDid = modelPhrase.Action.Text,
-                HowMuch = modelPhrase.Amount.ToString(),
-                Units = modelPhrase.MeasureUnit.Text,
-                WhatWhere = modelPhrase.AdditionalText.Text,
-                Date = modelPhrase.Date,
-                Time = modelPhrase.Time,
-                phraseDateTime = DateTime.Parse(modelPhrase.Date+ modelPhrase.Time)
-            };
-        }
+        }*/
+        
 
     }
 }
