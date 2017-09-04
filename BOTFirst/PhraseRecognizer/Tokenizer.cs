@@ -2,10 +2,8 @@
 using System.Text.RegularExpressions;
 using System;
 
-namespace WordClassTagger
-{
-    public static class Tokenizer
-    {
+namespace WordClassTagger {
+    public static class Tokenizer {
         // ?= is a positive lookahead here.
         const string NonAlphanumericAssertion = @"(?=(\W|$))";
         public const string Number = @"(?<num>-?(?:\d+)(?:[.,/]\d+)*(?!-))";
@@ -55,32 +53,27 @@ namespace WordClassTagger
             Number
         };
 
-        static Tokenizer()
-        {
-            if (TokenRE == null)
-            {
+        static Tokenizer() {
+            if (TokenRE == null) {
                 var s = string.Join("|", TokenPatterns);
                 TokenRE = new Regex(s, TokenREoptions | RegexOptions.Compiled);
             }
         }
 
-        public static Regex GetTokenRE()
-        {
+        public static Regex GetTokenRE() {
             return TokenRE;
         }
 
         /// <summary>
-        /// Method for getting list of tokens
+        /// Method for getting list of tokens.
         /// </summary>
         /// <param name="inputText">String of text to tokenize</param>
-        public static List<InputToken> GetTokensListFromInputText(string inputText)
-        {
+        public static List<InputToken> GetTokensListFromInputText(string inputText) {
             List<InputToken> inputTokens = new List<InputToken>();
             int inputTokenOrderInTextIndex = 0;
 
             int inputTokenOrderInSentenceIndex = 1;
-            for (Match m = TokenRE.Match(inputText); m.Success; m = m.NextMatch())
-            {
+            for (Match m = TokenRE.Match(inputText); m.Success; m = m.NextMatch()) {
                 // Don't capture empty matches.
                 if (m.Value.Length == 0) continue;
                 // Don't capture URLs, emails and tags.

@@ -5,30 +5,24 @@ using Microsoft.Bot.Connector;
 using Microsoft.Bot.Builder.Dialogs.Internals;
 using System.Text;
 
-namespace BOTFirst.Dialogs
-{
+namespace BOTFirst.Dialogs {
     [Serializable]
-    public class RootDialog : IDialog<object>
-    {
-        public Task StartAsync(IDialogContext context)
-        {
-            //передаём управление методу который спрашивает имя
+    public class RootDialog : IDialog<object> {
+        public Task StartAsync(IDialogContext context) {
+            // Передаём управление методу, который спрашивает имя.
             context.Wait(NameFunc);
             //context.Wait(MessageReceivedAsync);
             return Task.CompletedTask;
         }
 
-        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
-        {
+        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result) {
             var activity = await result;
-            if (activity.Text.ToLower().Contains("да"))
-            {
+            if (activity.Text.ToLower().Contains("да")) {
                 await context.PostAsync("Получи пирожок");
                 await context.PostAsync("Еще хочешь? ");
                 context.Wait(MessageReceivedAsync);
             }
-            else
-            {
+            else {
                 await context.PostAsync("Не понял запроса");
                 context.Wait(MessageReceivedAsync);
             }
@@ -42,19 +36,17 @@ namespace BOTFirst.Dialogs
             // if (activity.Text == "Привет, Да")
             // await context.PostAsync(reply);
         }
-        //метод в котором бот будет приветствовать пользователя. 
-        private async Task NameFunc(IDialogContext context, IAwaitable<IMessageActivity> result)
-        {
+        // метод, в котором бот будет приветствовать пользователя. 
+        private async Task NameFunc(IDialogContext context, IAwaitable<IMessageActivity> result) {
             var activity = await result as Activity;
-            if (!string.IsNullOrWhiteSpace(activity.Text))
-            {
+            if (!string.IsNullOrWhiteSpace(activity.Text)) {
                 var text = new StringBuilder();
                 text.AppendLine($"Рад познакомиться, {activity.Text}, Хочешь пироги ?");
-                text.AppendLine("У меня самые вкусные пироги , 😉 Хочешь? Знаю, хочешь!");
+                text.AppendLine("У меня самые вкусные пироги, 😉 Хочешь? Знаю, хочешь!");
                 await context.PostAsync(text.ToString());
-                //передаём управления другому методу
+                // Передаём управление другому методу.
                 context.Wait(MessageReceivedAsync);
             }
         }
-        }
+    }
 }

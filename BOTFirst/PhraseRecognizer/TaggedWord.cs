@@ -1,40 +1,31 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace WordClassTagger
-{
-    public class TaggedWord : IComparable
-    {
+namespace WordClassTagger {
+    public class TaggedWord : IComparable {
         public string Word { get; set; }
         public TagsManager.TagsEnum Tag { get; set; }
 
-        public TaggedWord(string word, TagsManager.TagsEnum tag)
-        {
+        public TaggedWord(string word, TagsManager.TagsEnum tag) {
             this.Word = word;
             this.Tag = tag;
         }
 
-        public TaggedWord(string word)
-        {
+        public TaggedWord(string word) {
             this.Word = word;
         }
 
-        public string GetStringTag()
-        {
+        public string GetStringTag() {
             return TagsManager.EnumTagToStringTag(Tag);
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return Word;
         }
 
-        public override bool Equals(object other)
-        {
+        public override bool Equals(object other) {
             // When comparing with null it must always return false.
             if (other == null)
                 return false;
@@ -45,13 +36,11 @@ namespace WordClassTagger
             else return false;
         }
 
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             return Word.GetHashCode();
         }
 
-        public int CompareTo(object obj)
-        {
+        public int CompareTo(object obj) {
             return Word.CompareTo(obj.ToString());
         }
     }

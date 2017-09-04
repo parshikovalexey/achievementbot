@@ -45,7 +45,6 @@
     <Compile Include="InputTextManager.cs" />
     <Compile Include="InputToken.cs" />
     <Compile Include="Phrase.cs" />
-    <Compile Include="PhrasesConverter.cs" />
     <Compile Include="Recognizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TaggedWord.cs" />

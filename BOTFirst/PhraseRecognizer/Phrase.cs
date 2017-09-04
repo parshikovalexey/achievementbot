@@ -1,21 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Web;
 
-namespace BotPhrase
-{
+namespace BotPhrase {
     [Serializable]
-    public class Phrase
-    {
+    public class Phrase {
         // Ты сделал.
         public string Action { get; set; }
         // Сколько.
         public string Amount { get; set; }
         // Чего.
         public string Units { get; set; }
-        // Что ? Кому ? Каким ? Куда ?
+        // Что? Кому? Каким? Куда?
         public string AdditionalText { get; set; }
         // Когда, дата.
         public string Date { get; set; }
@@ -30,7 +25,7 @@ namespace BotPhrase
 
         public string OriginalMessage { get; set; }
 
-       /* public override string ToString()
+        /*public override string ToString()
         {
             var messsage = new StringBuilder();
             messsage.AppendLine(YouDid + " " + HowMuch + " " + Units);
@@ -38,9 +33,6 @@ namespace BotPhrase
             messsage.AppendLine(Date);
             messsage.AppendLine(Time);
             return messsage.ToString();
-           
         }*/
-        
-
     }
 }

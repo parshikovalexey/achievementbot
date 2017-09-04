@@ -1,17 +1,12 @@
 ﻿using System;
 
-namespace WordClassTagger
-{
-
-    public static class TagsManager
-    {
+namespace WordClassTagger {
+    public static class TagsManager {
         private static TagsEnum res;
-
-        public enum TagsEnum
-        {
+        public enum TagsEnum {
             A, ADV, ADVPRO, ANUM, APRO, COM, CONJ, INTJ, NUM, PART, PR, S, SPRO, V, UNDEFINED, UNRECOGNIZED
         }
-        
+
         /* A - ПРИЛАГАТЕЛЬНОЕ
          * ADV - НАРЕЧИЕ
          * ADVPRO - МЕСТОИМЕННОЕ НАРЕЧИЕ (ГДЕ-ТО, ДОСЕЛЕ, ЗАЧЕМ-ТО, КОЕ-КАК)
@@ -27,15 +22,12 @@ namespace WordClassTagger
          * SPRO - МЕСТОИМЕНИЕ-СУЩЕСТВИТЕЛЬНОЕ
          * V - ГЛАГОЛ */
 
-        public static TagsEnum StringTagToEnumTag(string tag)
-        {
-
+        public static TagsEnum StringTagToEnumTag(string tag) {
             Enum.TryParse<TagsEnum>(tag.Substring(1, tag.Length - 2), out res);
             return res;
         }
 
-        public static string EnumTagToStringTag(TagsManager.TagsEnum tag)
-        {
+        public static string EnumTagToStringTag(TagsManager.TagsEnum tag) {
             return "<" + Enum.GetName(typeof(TagsEnum), tag) + ">";
         }
     }
