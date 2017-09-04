@@ -29,5 +29,11 @@ namespace EntityModel
         public virtual DbSet<MeasureUnit> MeasureUnits { get; set; }
         public virtual DbSet<Action> Actions { get; set; }
         public virtual DbSet<AdditionalText> AdditionalTexts { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Messenger> Messangers { get; set; }
+        public virtual DbSet<UserMessenger> UserMessengers { get; set; }
+        public virtual DbSet<UserAchievement> UserAchievements { get; set; }
+        public virtual DbSet<Achievement> Achievements { get; set; }
+        public virtual DbSet<AchievementForm> AchievementForms { get; set; }
     }
 }

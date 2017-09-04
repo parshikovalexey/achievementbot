@@ -29,21 +29,21 @@ namespace BotPhrase {
             using (EDModelContainer db = new EDModelContainer()) {
                 Debug.Indent();
                 if (db.Actions.Any() && db.Actions.Where((t) => t.Text == phrase.Action).Count() > 0) {
-                    modelPhrase.ActionFId = db.Actions.Where((t) => t.Text == phrase.Action).First().Id;
+                    modelPhrase.ActionId = db.Actions.Where((t) => t.Text == phrase.Action).First().Id;
                     Debug.WriteLine("there already is such action.");
                 }
                 else
                     modelPhrase.Action = (phrase.Action != null) ? new EntityModel.Action() { Text = phrase.Action } : null;
 
                 if (db.MeasureUnits.Any() && db.MeasureUnits.Where((t) => t.Text == phrase.Units).Count() > 0) {
-                    modelPhrase.MeasureUnitFId = db.MeasureUnits.Where((t) => t.Text == phrase.Units).First().Id;
+                    modelPhrase.MeasureUnitId = db.MeasureUnits.Where((t) => t.Text == phrase.Units).First().Id;
                     Debug.WriteLine("there already is such MeasureUnit.");
                 }
                 else
                     modelPhrase.MeasureUnit = (phrase.Units != null) ? new EntityModel.MeasureUnit() { Text = phrase.Units } : null;
 
                 if (db.AdditionalTexts.Any() && db.AdditionalTexts.Where((t) => t.Text == phrase.AdditionalText).Count() > 0) {
-                    modelPhrase.AdditionalTextFId = db.AdditionalTexts.Where((t) => t.Text == phrase.AdditionalText).First().Id;
+                    modelPhrase.AdditionalTextId = db.AdditionalTexts.Where((t) => t.Text == phrase.AdditionalText).First().Id;
                     Debug.WriteLine("there already is such AdditionalText.");
                 }
                 else

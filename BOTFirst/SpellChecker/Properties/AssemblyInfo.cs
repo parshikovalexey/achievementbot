@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // Общие сведения об этой сборке предоставляются следующим набором
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
-[assembly: AssemblyTitle("phraseRecognPrototype")]
+[assembly: AssemblyTitle("Spell_checker")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("phraseRecognPrototype")]
+[assembly: AssemblyProduct("Spell_checker")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Следующий GUID служит для идентификации библиотеки типов, если этот проект будет видимым для COM
-[assembly: Guid("a25dcaaa-47a5-41d5-a37a-877ef3adc279")]
+[assembly: Guid("db25092d-efe7-4bab-b93f-87b8bd12d7c3")]
 
 // Сведения о версии сборки состоят из следующих четырех значений:
 //

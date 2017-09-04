@@ -14,19 +14,27 @@ namespace EntityModel
     
     public partial class Phrase
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Phrase()
+        {
+            this.Achievement = new HashSet<UserAchievement>();
+        }
+    
         public int Id { get; set; }
         public string OriginalMessage { get; set; }
         public string CorrectedMessage { get; set; }
         public Nullable<decimal> Amount { get; set; }
         public bool WasRecognized { get; set; }
-        public Nullable<int> MeasureUnitFId { get; set; }
-        public Nullable<int> ActionFId { get; set; }
-        public Nullable<int> AdditionalTextFId { get; set; }
         public string Date { get; set; }
         public string Time { get; set; }
+        public Nullable<int> MeasureUnitId { get; set; }
+        public Nullable<int> ActionId { get; set; }
+        public Nullable<int> AdditionalTextId { get; set; }
     
         public virtual MeasureUnit MeasureUnit { get; set; }
         public virtual Action Action { get; set; }
         public virtual AdditionalText AdditionalText { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserAchievement> Achievement { get; set; }
     }
 }
