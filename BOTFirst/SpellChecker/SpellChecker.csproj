@@ -57,5 +57,11 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PhraseRecognizer\PhraseRecognizer.csproj">
+      <Project>{c75ac78a-4018-43c8-8aca-1a15559a7de4}</Project>
+      <Name>PhraseRecognizer</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
