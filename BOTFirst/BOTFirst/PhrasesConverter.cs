@@ -30,21 +30,21 @@ namespace BotPhrase {
                 Debug.Indent();
                 if (db.Actions.Any() && db.Actions.Where((t) => t.Text == phrase.Action).Count() > 0) {
                     modelPhrase.ActionId = db.Actions.Where((t) => t.Text == phrase.Action).First().Id;
-                    Debug.WriteLine("there already is such action.");
+                    Debug.WriteLine("there already is such action in DB.");
                 }
                 else
                     modelPhrase.Action = (phrase.Action != null) ? new EntityModel.Action() { Text = phrase.Action } : null;
 
                 if (db.MeasureUnits.Any() && db.MeasureUnits.Where((t) => t.Text == phrase.Units).Count() > 0) {
                     modelPhrase.MeasureUnitId = db.MeasureUnits.Where((t) => t.Text == phrase.Units).First().Id;
-                    Debug.WriteLine("there already is such MeasureUnit.");
+                    Debug.WriteLine("there already is such MeasureUnit in DB.");
                 }
                 else
                     modelPhrase.MeasureUnit = (phrase.Units != null) ? new EntityModel.MeasureUnit() { Text = phrase.Units } : null;
 
                 if (db.AdditionalTexts.Any() && db.AdditionalTexts.Where((t) => t.Text == phrase.AdditionalText).Count() > 0) {
                     modelPhrase.AdditionalTextId = db.AdditionalTexts.Where((t) => t.Text == phrase.AdditionalText).First().Id;
-                    Debug.WriteLine("there already is such AdditionalText.");
+                    Debug.WriteLine("there already is such AdditionalText in DB.");
                 }
                 else
                     modelPhrase.AdditionalText = (phrase.AdditionalText != null) ? new EntityModel.AdditionalText() { Text = phrase.AdditionalText } : null;

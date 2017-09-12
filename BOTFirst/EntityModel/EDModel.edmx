@@ -11,7 +11,7 @@
     <EntitySet Name="Actions" EntityType="EDModel.Store.Actions" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="AdditionalTexts" EntityType="EDModel.Store.AdditionalTexts" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Users" EntityType="EDModel.Store.Users" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="Messangers" EntityType="EDModel.Store.Messangers" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Messengers" EntityType="EDModel.Store.Messengers" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="UserMessengers" EntityType="EDModel.Store.UserMessengers" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="UserAchievements" EntityType="EDModel.Store.UserAchievements" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Achievements" EntityType="EDModel.Store.Achievements" store:Type="Tables" Schema="dbo" />
@@ -49,7 +49,7 @@
       <End Role="UserAchievement" EntitySet="UserAchievements" />
     </AssociationSet>
     <AssociationSet Name="OneMessengerCanMatchManyUserMessengers" Association="EDModel.Store.OneMessengerCanMatchManyUserMessengers">
-      <End Role="Messenger" EntitySet="Messangers" />
+      <End Role="Messenger" EntitySet="Messengers" />
       <End Role="UserMessenger" EntitySet="UserMessengers" />
     </AssociationSet>
   </EntityContainer>
@@ -94,10 +94,10 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="PhoneNumber" Type="nchar" Nullable="false" MaxLength="11" />
+    <Property Name="PhoneNumber" Type="nchar" Nullable="true" MaxLength="11" />
     <Property Name="Name" Type="nchar" Nullable="false" MaxLength="40" />
   </EntityType>
-  <EntityType Name="Messangers">
+  <EntityType Name="Messengers">
     <Key>
       <PropertyRef Name="Id" />
     </Key>
@@ -235,7 +235,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="OneMessengerCanMatchManyUserMessengers">
-    <End Role="Messenger" Type="EDModel.Store.Messangers" Multiplicity="1" />
+    <End Role="Messenger" Type="EDModel.Store.Messengers" Multiplicity="1" />
     <End Role="UserMessenger" Type="EDModel.Store.UserMessengers" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Messenger">
@@ -268,7 +268,7 @@
             <End Role="AdditionalText" EntitySet="AdditionalTexts" />
           </AssociationSet>
           <EntitySet Name="Users" EntityType="EDModel.User" />
-          <EntitySet Name="Messangers" EntityType="EDModel.Messenger" />
+          <EntitySet Name="Messengers" EntityType="EDModel.Messenger" />
           <EntitySet Name="UserMessengers" EntityType="EDModel.UserMessenger" />
           <EntitySet Name="UserAchievements" EntityType="EDModel.UserAchievement" />
           <AssociationSet Name="AchievementContainsOnePhrase" Association="EDModel.AchievementContainsOnePhrase">
@@ -294,7 +294,7 @@
             <End Role="UserAchievement" EntitySet="UserAchievements" />
           </AssociationSet>
           <AssociationSet Name="OneMessengerCanMatchManyUserMessengers" Association="EDModel.OneMessengerCanMatchManyUserMessengers">
-            <End Role="Messenger" EntitySet="Messangers" />
+            <End Role="Messenger" EntitySet="Messengers" />
             <End Role="UserMessenger" EntitySet="UserMessengers" />
           </AssociationSet>
         </EntityContainer>
@@ -382,7 +382,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="PhoneNumber" Type="String" Nullable="false" MaxLength="11" FixedLength="true" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="11" FixedLength="true" Nullable="true" />
           <Property Name="Name" Type="String" Nullable="false" FixedLength="true" MaxLength="40" />
           <NavigationProperty Name="UserAchievement" Relationship="EDModel.AchievementBelongsToUser" FromRole="User" ToRole="UserAchievement" />
           <NavigationProperty Name="UserMessenger" Relationship="EDModel.UserCanHaveOneOrManyMessangers" FromRole="User" ToRole="UserMessenger" />
@@ -564,9 +564,9 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="Messangers">
+    <EntitySetMapping Name="Messengers">
       <EntityTypeMapping TypeName="IsTypeOf(EDModel.Messenger)">
-        <MappingFragment StoreEntitySet="Messangers">
+        <MappingFragment StoreEntitySet="Messengers">
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Name" ColumnName="Name" />
         </MappingFragment>

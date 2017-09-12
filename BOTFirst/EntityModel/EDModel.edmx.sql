@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 08/25/2017 12:51:19
+-- Date Created: 09/12/2017 20:45:09
 -- Generated from EDMX file: C:\!Files\!APF\!ProgrammingAndDevelopment\1Студенческий проект achievementbot\achievementbot\BOTFirst\EntityModel\EDModel.edmx
 -- --------------------------------------------------
 
@@ -32,17 +32,17 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_AchievementBelongsToUser]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[UserAchievements] DROP CONSTRAINT [FK_AchievementBelongsToUser];
 GO
-IF OBJECT_ID(N'[dbo].[FK_InfoAboutUserInSomeOneMessenger]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[MessengerAndUserInfo] DROP CONSTRAINT [FK_InfoAboutUserInSomeOneMessenger];
-GO
 IF OBJECT_ID(N'[dbo].[FK_UserCanHaveOneOrManyMessangers]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[MessengerAndUserInfo] DROP CONSTRAINT [FK_UserCanHaveOneOrManyMessangers];
+    ALTER TABLE [dbo].[UserMessengers] DROP CONSTRAINT [FK_UserCanHaveOneOrManyMessangers];
 GO
 IF OBJECT_ID(N'[dbo].[FK_AchievementCanHaveForms]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[AchievementForms] DROP CONSTRAINT [FK_AchievementCanHaveForms];
 GO
 IF OBJECT_ID(N'[dbo].[FK_UserAchievementContainsAchievement]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[UserAchievements] DROP CONSTRAINT [FK_UserAchievementContainsAchievement];
+GO
+IF OBJECT_ID(N'[dbo].[FK_OneMessengerCanMatchManyUserMessengers]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[UserMessengers] DROP CONSTRAINT [FK_OneMessengerCanMatchManyUserMessengers];
 GO
 
 -- --------------------------------------------------
@@ -64,11 +64,11 @@ GO
 IF OBJECT_ID(N'[dbo].[Users]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Users];
 GO
-IF OBJECT_ID(N'[dbo].[Messangers]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Messangers];
+IF OBJECT_ID(N'[dbo].[Messengers]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Messengers];
 GO
-IF OBJECT_ID(N'[dbo].[MessengerAndUserInfo]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[MessengerAndUserInfo];
+IF OBJECT_ID(N'[dbo].[UserMessengers]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[UserMessengers];
 GO
 IF OBJECT_ID(N'[dbo].[UserAchievements]', 'U') IS NOT NULL
     DROP TABLE [dbo].[UserAchievements];
@@ -123,13 +123,13 @@ GO
 -- Creating table 'Users'
 CREATE TABLE [dbo].[Users] (
     [Id] int IDENTITY(1,1) NOT NULL,
-    [PhoneNumber] nchar(11)  NOT NULL,
+    [PhoneNumber] nchar(11)  NULL,
     [Name] nchar(40)  NOT NULL
 );
 GO
 
--- Creating table 'Messangers'
-CREATE TABLE [dbo].[Messangers] (
+-- Creating table 'Messengers'
+CREATE TABLE [dbo].[Messengers] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [Name] nchar(15)  NOT NULL
 );
@@ -203,9 +203,9 @@ ADD CONSTRAINT [PK_Users]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
--- Creating primary key on [Id] in table 'Messangers'
-ALTER TABLE [dbo].[Messangers]
-ADD CONSTRAINT [PK_Messangers]
+-- Creating primary key on [Id] in table 'Messengers'
+ALTER TABLE [dbo].[Messengers]
+ADD CONSTRAINT [PK_Messengers]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
@@ -361,7 +361,7 @@ GO
 ALTER TABLE [dbo].[UserMessengers]
 ADD CONSTRAINT [FK_OneMessengerCanMatchManyUserMessengers]
     FOREIGN KEY ([MessengerId])
-    REFERENCES [dbo].[Messangers]
+    REFERENCES [dbo].[Messengers]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
 GO
