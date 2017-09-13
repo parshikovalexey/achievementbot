@@ -26,7 +26,7 @@ namespace BOTFirst
                 switch (activity.GetActivityType())
                 {
                     case ActivityTypes.Message:
-                        await Conversation.SendAsync(activity, () => new Dialogs.RootDialog());
+                        await Conversation.SendAsync(activity, () => new Dialogs.PhraseDialog());
                         break;
                     case ActivityTypes.ConversationUpdate:
                         IConversationUpdateActivity update = activity;
@@ -40,10 +40,11 @@ namespace BOTFirst
                                 {
                                     if (newMember.Id != activity.Recipient.Id)
                                     {
-                                        reply.Text = $"Привет, я Чат-бот! Как тебя зовут ? ";
+                                        reply.Text = string.Format("Привет, {0}! Я буду помогать тебе добиваться поставленных целей! Поделись своими последними достижениями!", newMember.Name);
+                                        await client.Conversations.ReplyToActivityAsync(reply);
                                     }
 
-                                    await client.Conversations.ReplyToActivityAsync(reply);
+                                    
                                 }
                             }
                         }
