@@ -15,7 +15,7 @@ namespace EntityModel
     public partial class UserAchievement
     {
         public int Id { get; set; }
-        public string DateTime { get; set; }
+        public System.DateTime DateAndTime { get; set; }
         public int PhraseId { get; set; }
         public int UserId { get; set; }
         public int AchievementId { get; set; }

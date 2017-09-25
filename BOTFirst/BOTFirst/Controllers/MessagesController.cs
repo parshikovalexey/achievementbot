@@ -9,13 +9,14 @@ using Microsoft.Bot.Builder.Dialogs.Internals;
 using System.Linq;
 using Autofac;
 using EntityModel;
+using BOTFirst.Factories;
 
 namespace BOTFirst {
     [BotAuthentication]
     public class MessagesController : ApiController {
         /// <summary>
-        /// POST: api/Messages
-        /// Receive a message from a user and reply to it
+        /// POST: api/Messages.
+        /// Receive a message from a user and reply to it.
         /// </summary>
         public async Task<HttpResponseMessage> Post([FromBody]Activity activity) {
             if (activity != null) {
@@ -31,27 +32,12 @@ namespace BOTFirst {
                                 var reply = activity.CreateReply();
                                 foreach (var newMember in update.MembersAdded) {
                                     if (newMember.Id != activity.Recipient.Id) {
-                                        reply.Text = string.Format("Привет, {0}! Я буду помогать тебе добиваться поставленных целей! Поделись своими последними достижениями!", newMember.Name);
+                                        reply.Text = string.Format("Привет, {0}! Я буду помогать тебе добиваться поставленных целей! Поделись своими последними достижениями!  \n", newMember.Name);
                                         bool userIsNew;
                                         User user = UsersFactory.CreateOrRetrieveUser(newMember.Name, newMember.Id, activity.ChannelId, out userIsNew);
-
-                                        #region Debug
-                                        // Testing. Maybe it should be moved to a new method of UsersFactory class (or to some new class).
-                                        Messenger currentMessenger = null;
-                                        UserMessenger currentUserMessenger = null;
-                                        using (EDModelContainer db = new EDModelContainer()) {
-                                            if (db.Messengers.Where((m) => m.Name == activity.ChannelId).Count() > 0) {
-                                                currentMessenger = db.Messengers.Where((m) => m.Name == activity.ChannelId).First();
-                                            if (db.UserMessengers.Where((um) => um.UserId == user.Id && um.MessengerId == currentMessenger.Id).Count() > 0)
-                                                currentUserMessenger = db.UserMessengers.Where((um) => um.UserId == user.Id && um.MessengerId == currentMessenger.Id).First();
-                                            }
-                                        }
-                                        if (userIsNew)
-                                            reply.Text += string.Format("  \nDebug info: добавлен новый пользователь: имя - {0}, мессенджер - {1}, id пользователя в данном мессенджере - {2}", user.Name, currentMessenger.Name, currentUserMessenger.MessengerUserIdentifier);
-                                        else
-                                            reply.Text += string.Format("  \nDebug info: такой пользователь уже есть, поэтому используются уже существующие в БД записи: имя - {0}, мессенджер - {1}, id пользователя в данном мессенджере - {2}", user.Name, currentMessenger.Name, currentUserMessenger.MessengerUserIdentifier);
-                                        #endregion
-
+                                        #if DEBUG
+                                        reply.Text += UsersFactory.UserAddingDebug(activity.ChannelId, userIsNew, user);
+                                        #endif
                                         await client.Conversations.ReplyToActivityAsync(reply);
                                     }
                                 }
@@ -59,8 +45,16 @@ namespace BOTFirst {
                         }
                         break;
                     case ActivityTypes.ContactRelationUpdate:
+                        // Your bot should call this method when it receives an activity of type deleteUserData
+                        // or an activity of type contactRelationUpdate that indicates the bot has been removed
+                        // from the user's contact list (https://docs.microsoft.com/en-us/bot-framework/dotnet/bot-builder-dotnet-state).
+                        activity.GetStateClient().BotState.DeleteStateForUser(activity.ChannelId, activity.From.Id);
+                        break;
                     case ActivityTypes.Typing:
                     case ActivityTypes.DeleteUserData:
+                        // See comment for ActivityTypes.ContactRelationUpdate case.
+                        activity.GetStateClient().BotState.DeleteStateForUser(activity.ChannelId, activity.From.Id);
+                        break;
                     case ActivityTypes.Ping:
                     default:
                         Trace.TraceError($"Unknown activity type ignored: { activity.GetActivityType()}");

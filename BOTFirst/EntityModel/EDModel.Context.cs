@@ -18,6 +18,7 @@ namespace EntityModel
         public EDModelContainer()
             : base("name=EDModelContainer")
         {
+            this.Configuration.LazyLoadingEnabled = false;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -34,6 +35,5 @@ namespace EntityModel
         public virtual DbSet<UserMessenger> UserMessengers { get; set; }
         public virtual DbSet<UserAchievement> UserAchievements { get; set; }
         public virtual DbSet<Achievement> Achievements { get; set; }
-        public virtual DbSet<AchievementForm> AchievementForms { get; set; }
     }
 }

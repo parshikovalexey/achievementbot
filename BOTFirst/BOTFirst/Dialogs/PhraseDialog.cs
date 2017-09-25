@@ -2,24 +2,67 @@
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
-using BotPhrase;
-using EntityModel;
-using System.Diagnostics;
-using System.Data.Entity.Validation;
+using BOTFirst.Factories;
 
 namespace BOTFirst.Dialogs {
     [Serializable]
     public class PhraseDialog : IDialog<object> {
         public Task StartAsync(IDialogContext context) {
-            context.Wait(MessageReceivedAsync);
+            // This variable is used nowhere(.
+            bool userIsNew;
+            EntityModel.User currentUser = UsersFactory.CreateOrRetrieveUser(context.Activity.From.Name, context.Activity.From.Id, context.Activity.ChannelId, out userIsNew);
+            // Maybe this logic works too slowly. Need to create method only for getting an existing User from DB.
+            // I'm not sure whether it works!
+            context.UserData.SetValue("currentModelUserId", currentUser.Id);
+
+            context.Wait(AchivementsAddingAsync);
             return Task.CompletedTask;
         }
 
-        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result) {
+        private async Task AchivementsAddingAsync(IDialogContext context, IAwaitable<IMessageActivity> result) {
+            // Wait for user to write a new achievement here.
             var activity = await result;
-            await context.PostAsync("Результаты разбора вашей фразы:  \n" + PhrasesFactory.CreateOrRetreavePhrase(activity.Text).RecognitionResult);
-            await context.PostAsync("Отлично! Есть какие-либо другие новые достижения?");
-            context.Wait(MessageReceivedAsync);
+            var modelPhrase = new EntityModel.Phrase();
+
+            BotPhrase.Phrase newNotModelPhrase = PhrasesFactory.CreateOrRetreavePhrase(activity.Text, out modelPhrase);
+            await context.PostAsync("Результаты разбора вашей фразы:  \n" + newNotModelPhrase.RecognitionResult);
+
+            // Create new UserAchievement, Achievement, AchievementForm if the phrase was recognized.
+            if (newNotModelPhrase.WasRecognized) {
+                context.UserData.SetValue("currentPhraseId", modelPhrase.Id);
+                context.UserData.SetValue("currentPhraseDateTime", newNotModelPhrase.PhraseDateTime);
+
+                EntityModel.Phrase addedPhrase = PhrasesFactory.GetExistingPhraseById(modelPhrase.Id);
+                if (!AchievementsFactory.SuchInputActionAchievementExists(PhrasesFactory.GetActionOfExistingPhraseById(addedPhrase.Id))) {
+                    // NOTE If we would not show "Результаты разбора вашей фразы" info, then it is worth to add "Я вас понял" before "пожалуйста, введите..." here.
+                    await context.PostAsync("Пожалуйста, введите соответствующее достижению существительное (пример: прочитал(а) - чтение), которое будет служить наименованием достижения:");
+                    // Getting achievement from user input.
+                    context.Wait(UserEntersNotExistingAchievement);
+                }
+                else {
+                    context.UserData.SetValue("currentPhraseId", modelPhrase.Id);
+                    // Getting achievement that already exists in DB by means of phrase action.
+                    var achievement = AchievementsFactory.GetAchievementThroughAction(PhrasesFactory.GetActionOfExistingPhraseById(addedPhrase.Id));
+                    EntityModel.User currentUser = UsersFactory.GetExistingUserById(context.UserData.GetValue<int>("currentModelUserId"));
+                    AchievementsFactory.CreateOrRetreaveUserAchievement(addedPhrase, newNotModelPhrase.PhraseDateTime, currentUser, achievement.Name, true);
+                    await context.PostAsync("Отлично! Ваше достижение добавлено в систему, можете ввести следующее достижение:");
+                }
+            }
+            else {
+                await context.PostAsync("Не могу распознать фразу, пожалуйста, перефразируйте свое достижение:");
+                context.Wait(AchivementsAddingAsync);
+            }
+        }
+
+        private async Task UserEntersNotExistingAchievement(IDialogContext context, IAwaitable<IMessageActivity> result) {
+            var activity = await result;
+            // Maybe does some user input check need here?
+            string achievement = activity.Text;
+            EntityModel.User currentUser = UsersFactory.GetExistingUserById(context.UserData.GetValue<int>("currentModelUserId"));
+            EntityModel.Phrase addedPhrase = PhrasesFactory.GetExistingPhraseById(context.UserData.GetValue<int>("currentPhraseId"));
+            AchievementsFactory.CreateOrRetreaveUserAchievement(addedPhrase, context.UserData.GetValue<DateTime>("currentPhraseDateTime"), currentUser, achievement, false);
+            await context.PostAsync("Отлично! Ваше достижение добавлено в систему, можете ввести следующее достижение:");
+            context.Wait(AchivementsAddingAsync);
         }
     }
 }

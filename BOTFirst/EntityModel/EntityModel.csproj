@@ -54,9 +54,6 @@
     <Compile Include="Achievement.cs">
       <DependentUpon>EDModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="AchievementForm.cs">
-      <DependentUpon>EDModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Action.cs">
       <DependentUpon>EDModel.tt</DependentUpon>
     </Compile>
@@ -78,6 +75,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>EDModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="EntitiesErrorsCatcher.cs" />
     <Compile Include="MeasureUnit.cs">
       <DependentUpon>EDModel.tt</DependentUpon>
     </Compile>
@@ -108,7 +106,9 @@
     <None Include="EDModel.edmx.diagram">
       <DependentUpon>EDModel.edmx</DependentUpon>
     </None>
-    <None Include="App.Config" />
+    <None Include="App.Config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
