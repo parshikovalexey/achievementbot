@@ -11,10 +11,7 @@ namespace BOTFirst.Dialogs {
             // This variable is used nowhere(.
             bool userIsNew;
             EntityModel.User currentUser = UsersFactory.CreateOrRetrieveUser(context.Activity.From.Name, context.Activity.From.Id, context.Activity.ChannelId, out userIsNew);
-            // Maybe this logic works too slowly. Need to create method only for getting an existing User from DB.
-            // I'm not sure whether it works!
             context.UserData.SetValue("currentModelUserId", currentUser.Id);
-
             context.Wait(AchivementsAddingAsync);
             return Task.CompletedTask;
         }
@@ -35,9 +32,9 @@ namespace BOTFirst.Dialogs {
                 EntityModel.Phrase addedPhrase = PhrasesFactory.GetExistingPhraseById(modelPhrase.Id);
                 if (!AchievementsFactory.SuchInputActionAchievementExists(PhrasesFactory.GetActionOfExistingPhraseById(addedPhrase.Id))) {
                     // NOTE If we would not show "Результаты разбора вашей фразы" info, then it is worth to add "Я вас понял" before "пожалуйста, введите..." here.
-                    await context.PostAsync("Пожалуйста, введите соответствующее достижению существительное (пример: прочитал(а) - чтение), которое будет служить наименованием достижения:");
+                    await context.PostAsync("Пожалуйста, введите соответствующее достижению существительное (пример: прочитал(а) – чтение), которое будет служить наименованием достижения. Если не получается подобрать существительное, то используйте несколько слов, отражающих только действие (например – «Поправил(ся/лась) на 10 кг – набор веса»:");
                     // Getting achievement from user input.
-                    context.Wait(UserEntersNotExistingAchievement);
+                    context.Wait(UserEntersAchievement);
                 }
                 else {
                     context.UserData.SetValue("currentPhraseId", modelPhrase.Id);
@@ -54,7 +51,7 @@ namespace BOTFirst.Dialogs {
             }
         }
 
-        private async Task UserEntersNotExistingAchievement(IDialogContext context, IAwaitable<IMessageActivity> result) {
+        private async Task UserEntersAchievement(IDialogContext context, IAwaitable<IMessageActivity> result) {
             var activity = await result;
             // Maybe does some user input check need here?
             string achievement = activity.Text;

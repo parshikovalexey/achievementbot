@@ -28,25 +28,26 @@ namespace BotPhrase {
             };
             using (EDModelContainer db = new EDModelContainer()) {
                 Debug.Indent();
-                if (db.Actions.Any(t => t.Text == phrase.Action)) {
-                    var existingActionId = db.Actions.Where(a => a.Text == phrase.Action).Select(a => a.Id).First();
-                    modelPhrase.ActionId = existingActionId;
+                var action = db.Actions.Where(a => a.Text == phrase.Action).FirstOrDefault();
+                if (action != null) {
+                    modelPhrase.ActionId = action.Id;
                     Debug.WriteLine("there already is such action in DB.");
                 }
                 else
                     modelPhrase.Action = (phrase.Action != null) ? new EntityModel.Action() { Text = phrase.Action } : null;
 
-                if (db.MeasureUnits.Any(t => t.Text == phrase.Units)) {
-                    var existingMeasureUnitId = db.MeasureUnits.Where(mu => mu.Text == phrase.Units).Select(mu => mu.Id).First();
-                    modelPhrase.MeasureUnitId = existingMeasureUnitId;
+                var measureUnit = db.MeasureUnits.Where(mu => mu.Text == phrase.Units).FirstOrDefault();
+                if (measureUnit != null) {
+                    modelPhrase.MeasureUnitId = measureUnit.Id;
                     Debug.WriteLine("there already is such MeasureUnit in DB.");
                 }
                 else
                     modelPhrase.MeasureUnit = (phrase.Units != null) ? new EntityModel.MeasureUnit() { Text = phrase.Units } : null;
 
-                if (db.AdditionalTexts.Any(t => t.Text == phrase.AdditionalText)) {
-                    var existingAdditionalTextId = db.AdditionalTexts.Where(at => at.Text == phrase.AdditionalText).Select(at => at.Id).First();
-                    modelPhrase.AdditionalTextId = existingAdditionalTextId;
+
+                var additionalText = db.AdditionalTexts.Where(at => at.Text == phrase.AdditionalText).FirstOrDefault();
+                if (additionalText != null) {
+                    modelPhrase.AdditionalTextId = additionalText.Id;
                     Debug.WriteLine("there already is such AdditionalText in DB.");
                 }
                 else
@@ -63,6 +64,7 @@ namespace BotPhrase {
                 return modelPhrase;
             }
         }
+
         public static EntityModel.Phrase ShowingErrorPhraseToModelPhrase(Phrase phrase) {
             var modelPhrase = new EntityModel.Phrase {
                 WasRecognized = phrase.WasRecognized,
@@ -73,35 +75,38 @@ namespace BotPhrase {
             };
             using (EDModelContainer db = new EDModelContainer()) {
                 Debug.Indent();
-                if (db.Actions.Any(t => t.Text == phrase.Action)) {
-                    var existingAction = db.Actions.Where(a => a.Text == phrase.Action).First();
+
+                // Maybe such approach will solve problems when working with navigation properties.
+                //var action = (from a in db.Actions where a.Text == phrase.Action select a).Single();
+                var action = db.Actions.Where(a => a.Text == phrase.Action).FirstOrDefault();
+                if (action != null) {
                     // We assign a navigation property here.
                     // But correspond Id is not defined and furthermore the property will be null after getting this record from DB.
                     // Also a duplicate action will be created. This happens when we assign an object that already exists in DB.
                     // Maybe the thing about this is that I assign navigation property improperly.
-                    modelPhrase.Action = existingAction;
+                    modelPhrase.Action = action;
                     Debug.WriteLine("there already is such action in DB.");
                 }
                 else
                     modelPhrase.Action = (phrase.Action != null) ? new EntityModel.Action() { Text = phrase.Action } : null;
 
-                if (db.MeasureUnits.Any(t => t.Text == phrase.Units)) {
+                var measureUnit = db.MeasureUnits.Where(mu => mu.Text == phrase.Units).FirstOrDefault();
+                if (measureUnit != null) {
                     // We assign a navigation property here.
                     // But correspond Id is not defined and furthermore the property will be null after getting this record from DB.
                     // Also a duplicate MeasureUnit will be created.
-                    var existingMeasureUnit = db.MeasureUnits.Where(mu => mu.Text == phrase.Units).First();
-                    modelPhrase.MeasureUnit = existingMeasureUnit;
+                    modelPhrase.MeasureUnit = measureUnit;
                     Debug.WriteLine("there already is such MeasureUnit in DB.");
                 }
                 else
                     modelPhrase.MeasureUnit = (phrase.Units != null) ? new EntityModel.MeasureUnit() { Text = phrase.Units } : null;
 
-                if (db.AdditionalTexts.Any(t => t.Text == phrase.AdditionalText)) {
-                    var existingAdditionalText = db.AdditionalTexts.Where(at => at.Text == phrase.AdditionalText).First();
+                var additionalText = db.AdditionalTexts.Where(at => at.Text == phrase.AdditionalText).FirstOrDefault();
+                if (additionalText != null) {
                     // We assign a navigation property here.
                     // But correspond Id is not defined and furthermore the property will be null after getting this record from DB.
                     // Also a duplicate AdditionalText will be created.
-                    modelPhrase.AdditionalText = existingAdditionalText;
+                    modelPhrase.AdditionalText = additionalText;
                     Debug.WriteLine("there already is such AdditionalText in DB.");
                 }
                 else
@@ -120,4 +125,3 @@ namespace BotPhrase {
         }
     }
 }
-

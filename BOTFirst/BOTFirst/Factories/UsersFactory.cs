@@ -30,17 +30,12 @@ namespace BOTFirst.Factories {
                         thisUserIsNew = false;
                     }
                     // Temporary variables.
-                    Messenger messenger = null;
+                    Messenger messenger = db.Messengers.Where(m => m.Name == inputMessengerName).FirstOrDefault();
                     UserMessenger userMessenger = null;
                     // If there is such messenger in DB.
-                    if (db.Messengers.Any() && db.Messengers.Any(m => m.Name == inputMessengerName)) {
-                        messenger = db.Messengers.Where(m => m.Name == inputMessengerName).First();
-                        // There is such userMessenger in DB.
-                        if (db.UserMessengers.Any() && db.UserMessengers.Any((um) => um.MessengerId == messenger.Id && um.UserId == returningUser.Id)) {
-                            userMessenger = db.UserMessengers.Where((um) => um.MessengerId == messenger.Id && um.UserId == returningUser.Id).First();
-                        }
-                        // There is no such userMessenger in DB.
-                        else {
+                    if (messenger != null) {
+                        userMessenger = db.UserMessengers.Where(um => um.MessengerId == messenger.Id && um.UserId == returningUser.Id).FirstOrDefault();
+                        if (userMessenger == null) {
                             userMessenger = new UserMessenger() {
                                 MessengerUserIdentifier = messengerUserIdentifier,
                                 MessengerId = messenger.Id,
@@ -94,9 +89,10 @@ namespace BOTFirst.Factories {
             Messenger currentMessenger = null;
             UserMessenger currentUserMessenger = null;
             using (EDModelContainer db = new EDModelContainer()) {
-                if (db.Messengers.Any((m) => m.Name == channelId)) {
-                    currentMessenger = db.Messengers.Where((m) => m.Name == channelId).First();
-                    if (db.UserMessengers.Any((um) => um.UserId == user.Id && um.MessengerId == currentMessenger.Id))
+                currentMessenger = db.Messengers.Where(m => m.Name == channelId).FirstOrDefault();
+                if (currentMessenger != null) {
+                    currentUserMessenger = db.UserMessengers.Where(um => um.UserId == user.Id && um.MessengerId == currentMessenger.Id).FirstOrDefault();
+                    if (currentUserMessenger != null)
                         currentUserMessenger = db.UserMessengers.Where((um) => um.UserId == user.Id && um.MessengerId == currentMessenger.Id).First();
                 }
             }

@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 09/26/2017 04:35:50
+-- Date Created: 09/26/2017 23:26:14
 -- Generated from EDMX file: C:\!Files\!APF\!ProgrammingAndDevelopment\1Студенческий проект achievementbot\achievementbot\BOTFirst\EntityModel\EDModel.edmx
 -- --------------------------------------------------
 
@@ -41,8 +41,8 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_OneMessengerCanMatchManyUserMessengers]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[UserMessengers] DROP CONSTRAINT [FK_OneMessengerCanMatchManyUserMessengers];
 GO
-IF OBJECT_ID(N'[dbo].[FK_ActionCanBeAchievementForm]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Actions] DROP CONSTRAINT [FK_ActionCanBeAchievementForm];
+IF OBJECT_ID(N'[dbo].[FK_AchievementAction]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Actions] DROP CONSTRAINT [FK_AchievementAction];
 GO
 
 -- --------------------------------------------------
@@ -146,9 +146,8 @@ GO
 CREATE TABLE [dbo].[UserAchievements] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [DateAndTime] datetime  NOT NULL,
-    [PhraseId] int  NOT NULL,
     [UserId] int  NOT NULL,
-    [AchievementId] int  NOT NULL
+    [PhraseId] int  NOT NULL
 );
 GO
 
@@ -266,21 +265,6 @@ ON [dbo].[Phrases]
     ([AdditionalTextId]);
 GO
 
--- Creating foreign key on [PhraseId] in table 'UserAchievements'
-ALTER TABLE [dbo].[UserAchievements]
-ADD CONSTRAINT [FK_AchievementContainsOnePhrase]
-    FOREIGN KEY ([PhraseId])
-    REFERENCES [dbo].[Phrases]
-        ([Id])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
-
--- Creating non-clustered index for FOREIGN KEY 'FK_AchievementContainsOnePhrase'
-CREATE INDEX [IX_FK_AchievementContainsOnePhrase]
-ON [dbo].[UserAchievements]
-    ([PhraseId]);
-GO
-
 -- Creating foreign key on [UserId] in table 'UserAchievements'
 ALTER TABLE [dbo].[UserAchievements]
 ADD CONSTRAINT [FK_AchievementBelongsToUser]
@@ -311,21 +295,6 @@ ON [dbo].[UserMessengers]
     ([UserId]);
 GO
 
--- Creating foreign key on [AchievementId] in table 'UserAchievements'
-ALTER TABLE [dbo].[UserAchievements]
-ADD CONSTRAINT [FK_UserAchievementContainsAchievement]
-    FOREIGN KEY ([AchievementId])
-    REFERENCES [dbo].[Achievements]
-        ([Id])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
-
--- Creating non-clustered index for FOREIGN KEY 'FK_UserAchievementContainsAchievement'
-CREATE INDEX [IX_FK_UserAchievementContainsAchievement]
-ON [dbo].[UserAchievements]
-    ([AchievementId]);
-GO
-
 -- Creating foreign key on [MessengerId] in table 'UserMessengers'
 ALTER TABLE [dbo].[UserMessengers]
 ADD CONSTRAINT [FK_OneMessengerCanMatchManyUserMessengers]
@@ -354,6 +323,21 @@ GO
 CREATE INDEX [IX_FK_AchievementAction]
 ON [dbo].[Actions]
     ([AchievementId]);
+GO
+
+-- Creating foreign key on [PhraseId] in table 'UserAchievements'
+ALTER TABLE [dbo].[UserAchievements]
+ADD CONSTRAINT [FK_AchievementContainsOnePhrase]
+    FOREIGN KEY ([PhraseId])
+    REFERENCES [dbo].[Phrases]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_AchievementContainsOnePhrase'
+CREATE INDEX [IX_FK_AchievementContainsOnePhrase]
+ON [dbo].[UserAchievements]
+    ([PhraseId]);
 GO
 
 -- --------------------------------------------------

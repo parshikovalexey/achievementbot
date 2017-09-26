@@ -17,7 +17,7 @@ namespace EntityModel
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Phrase()
         {
-            this.Achievement = new HashSet<UserAchievement>();
+            this.UserAchievement = new HashSet<UserAchievement>();
         }
     
         public int Id { get; set; }
@@ -35,6 +35,6 @@ namespace EntityModel
         public virtual Action Action { get; set; }
         public virtual AdditionalText AdditionalText { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserAchievement> Achievement { get; set; }
+        public virtual ICollection<UserAchievement> UserAchievement { get; set; }
     }
 }

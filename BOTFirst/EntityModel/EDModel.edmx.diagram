@@ -16,13 +16,12 @@
         <EntityTypeShape EntityType="EDModel.Messenger" Width="2" PointX="10.375" PointY="3.625" FillColor="SeaGreen" />
         <EntityTypeShape EntityType="EDModel.UserMessenger" Width="2" PointX="10.375" PointY="1" FillColor="SeaGreen" />
         <EntityTypeShape EntityType="EDModel.UserAchievement" Width="1.75" PointX="8.25" PointY="3.5" FillColor="DarkMagenta" />
-        <AssociationConnector Association="EDModel.AchievementContainsOnePhrase" />
         <EntityTypeShape EntityType="EDModel.Achievement" Width="2" PointX="5.625" PointY="5.25" FillColor="DarkMagenta" />
         <AssociationConnector Association="EDModel.AchievementBelongsToUser" />
         <AssociationConnector Association="EDModel.UserCanHaveOneOrManyMessangers" />
-        <AssociationConnector Association="EDModel.UserAchievementContainsAchievement" />
         <AssociationConnector Association="EDModel.OneMessengerCanMatchManyUserMessengers" />
         <AssociationConnector Association="EDModel.AchievementAction" />
+        <AssociationConnector Association="EDModel.AchievementContainsOnePhrase" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
