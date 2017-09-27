@@ -1,9 +1,7 @@
 ﻿using EntityModel;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 
 namespace BotPhrase {
     public static class PhrasesConverter {
@@ -44,7 +42,6 @@ namespace BotPhrase {
                 else
                     modelPhrase.MeasureUnit = (phrase.Units != null) ? new EntityModel.MeasureUnit() { Text = phrase.Units } : null;
 
-
                 var additionalText = db.AdditionalTexts.Where(at => at.Text == phrase.AdditionalText).FirstOrDefault();
                 if (additionalText != null) {
                     modelPhrase.AdditionalTextId = additionalText.Id;
@@ -75,9 +72,6 @@ namespace BotPhrase {
             };
             using (EDModelContainer db = new EDModelContainer()) {
                 Debug.Indent();
-
-                // Maybe such approach will solve problems when working with navigation properties.
-                //var action = (from a in db.Actions where a.Text == phrase.Action select a).Single();
                 var action = db.Actions.Where(a => a.Text == phrase.Action).FirstOrDefault();
                 if (action != null) {
                     // We assign a navigation property here.

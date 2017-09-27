@@ -37,8 +37,6 @@ namespace BOTFirst.Factories {
 
                     // Define achievement foreign key for action.
                     achievement = db.Achievements.Where(a => a.Name == inputUserAchievement).First();
-                    // NOTE Maybe similar manner should be used when working with navigation properties to solve problems that are mentioned at PhrasesFactory.GetActionOfExistingPhraseById method,
-                    // because changing action AchievementId through db.Actions.Where(...) does not work and AchievementId is not being changing.
                     (from a in db.Actions where a.Id == phrase.ActionId select a).Single().AchievementId = achievement.Id;
                     db.SaveChanges();
                     return userAchievement;
@@ -53,7 +51,9 @@ namespace BOTFirst.Factories {
 
         public static bool SuchInputActionAchievementExists(EntityModel.Action action) {
             using (EDModelContainer db = new EDModelContainer()) {
-                if (db.Achievements.Any(a => a.Id == action.Id))
+                // Alternative condition.
+                //if (db.Achievements.Any(a => a.Id == action.AchievementId))
+                if (action.AchievementId != null)
                     return true;
                 else
                     return false;

@@ -97,9 +97,9 @@ namespace BOTFirst.Factories {
                 }
             }
             if (userIsNew)
-                return string.Format("Debug info: добавлен новый пользователь: имя - {0}, мессенджер - {1}, id пользователя в данном мессенджере - {2}", user.Name, currentMessenger.Name, currentUserMessenger.MessengerUserIdentifier);
+                return string.Format("Debug info: добавлен новый пользователь: имя – {0}, мессенджер – {1}, id пользователя в данном мессенджере – {2}", user.Name, currentMessenger.Name, currentUserMessenger.MessengerUserIdentifier);
             else
-                return string.Format("Debug info: такой пользователь уже есть, поэтому используются уже существующие в БД записи: имя - {0}, мессенджер - {1}, id пользователя в данном мессенджере - {2}", user.Name, currentMessenger.Name, currentUserMessenger.MessengerUserIdentifier);
+                return string.Format("Debug info: такой пользователь уже есть, поэтому используются уже существующие в БД записи: имя – {0}, мессенджер – {1}, id пользователя в данном мессенджере – {2}", user.Name, currentMessenger.Name, currentUserMessenger.MessengerUserIdentifier);
         }
     }
 }
