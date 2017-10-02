@@ -11,8 +11,13 @@ namespace Spell_checker
         static SpellCheckerLT spellchkr;
         static void Main(string[] args)
         {
-            DemonstrateAsync();
+            //DemonstrateAsync();
             //DemonstrateNonAsync();
+            var text = "Пробижал пять килметров вчера";
+            spellchkr = new SpellCheckerLT();
+            var mistakes = spellchkr.CheckText("ru-RU",text);
+            var result = spellchkr.CorrectMistakes(text, mistakes);
+            Console.WriteLine(result);
             Console.ReadKey();
         }
 

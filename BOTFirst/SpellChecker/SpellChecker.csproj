@@ -32,6 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="lemmatizator_fx, Version=8.10.5731.30694, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Users\Kostya\Desktop\lemmatizator\lemmatizator_fx.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -55,7 +59,19 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Lemmatizator\lemmatizator.lib" />
+    <None Include="Lemmatizator\lemmatizer.db" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PhraseRecognizer\PhraseRecognizer.csproj">
+      <Project>{c75ac78a-4018-43c8-8aca-1a15559a7de4}</Project>
+      <Name>PhraseRecognizer</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Lemmatizator\lemmatizator.dll" />
+    <Content Include="Lemmatizator\lemmatizator_fx.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
