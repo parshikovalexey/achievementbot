@@ -13,7 +13,7 @@ namespace Spell_checker
         {
             //DemonstrateAsync();
             //DemonstrateNonAsync();
-            var text = Console.ReadLine();
+            var text = "Пробижал пять килметров вчера";
             spellchkr = new SpellCheckerLT();
             var mistakes = spellchkr.CheckText("ru-RU",text);
             var result = spellchkr.CorrectMistakes(text, mistakes);

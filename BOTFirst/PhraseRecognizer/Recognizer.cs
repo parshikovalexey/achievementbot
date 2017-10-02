@@ -5,6 +5,7 @@ using WordClassTagger;
 
 namespace BotPhrase {
     public class Recognizer {
+      
         public static Phrase RecognizePhrase(string inputText) {
             // Создаём объект, описывающий фразу.
             var phrase = new Phrase();
@@ -20,15 +21,15 @@ namespace BotPhrase {
             inputText = RemoveDateAndTimeFromMessage(inputText, date, time);
 
             // Loading and preparing of tokens.
-            InputTextManager.LoadInput(inputText);
-            List<InputToken> tokens = InputTextManager.GetTokens();
+            //InputTextManager.LoadInput(inputText);
+            //List<InputToken> tokens = InputTextManager.GetTokens();
 
             // Getting phrase AMOUNT position by means of using tokens list.
-            int amountPosition = -1;
-            foreach (var token in tokens) {
-                if (token.Tag == TagsManager.TagsEnum.NUM)
-                    amountPosition = token.OrderInTextIndex;
-            }
+            //int amountPosition = -1;
+            //foreach (var token in tokens) {
+            //    if (token.Tag == TagsManager.TagsEnum.NUM)
+            //        amountPosition = token.OrderInTextIndex;
+            //}
 
             // Examples: прочитал, прочитала, прочитали, подтянулся, подтянулись, подтянулась, прочитано, спасено, завершен(о/а), построил, спас, потерял/засеял/посеял, взлетел.
             Regex actionRegex = new Regex(".*((ал(а|и)?)|(лся)|(лись)|(лась)|(ано)|(ено)|(ше|ён(о|а)?)|(ил)|(спас)|(ял)|(ел))$", RegexOptions.IgnoreCase);
@@ -39,26 +40,26 @@ namespace BotPhrase {
             string units = "";
             string amount = "";
             bool actionIsFound = false;
-            foreach (var token in tokens) {
-                // Phrase ACTION retreaving.
-                if (!actionIsFound && (token.Tag == TagsManager.TagsEnum.V || actionRegex.IsMatch(token.Content))) {
-                    actionIsFound = true;
-                    action = token.ContentWithKeptCase;
-                    phrase.RecognitionResult += "Ты сделал —  " + token.ContentWithKeptCase + "." + ConstantValues.NewLine;
-                    // Break the loop if there is only one word, eg. "выспался".
-                    if (tokens.Count == 1) break;
-                }
-                // Amount.
-                if (token.Tag == TagsManager.TagsEnum.NUM || ConstantValues.AmountByWords.Contains(token.Content)) {
-                    amount = token.ContentWithKeptCase;
-                    phrase.RecognitionResult += "Сколько? — " + token.ContentWithKeptCase + "." + ConstantValues.NewLine;
-                    // Try to get phrase UNIT of measure.
-                    if (token.OrderInTextIndex < tokens.Count && unitsRegex.IsMatch(tokens[token.OrderInTextIndex + 1].Content)) {
-                        units = tokens[token.OrderInTextIndex + 1].ContentWithKeptCase;
-                        phrase.RecognitionResult += "Чего? — " + units + "." + ConstantValues.NewLine;
-                    }
-                }
-            }
+            //foreach (var token in tokens) {
+            //    // Phrase ACTION retreaving.
+            //    if (!actionIsFound && (token.Tag == TagsManager.TagsEnum.V || actionRegex.IsMatch(token.Content))) {
+            //        actionIsFound = true;
+            //        action = token.ContentWithKeptCase;
+            //        phrase.RecognitionResult += "Ты сделал —  " + token.ContentWithKeptCase + "." + ConstantValues.NewLine;
+            //        // Break the loop if there is only one word, eg. "выспался".
+            //        if (tokens.Count == 1) break;
+            //    }
+            //    // Amount.
+            //    if (token.Tag == TagsManager.TagsEnum.NUM || ConstantValues.AmountByWords.Contains(token.Content)) {
+            //        amount = token.ContentWithKeptCase;
+            //        phrase.RecognitionResult += "Сколько? — " + token.ContentWithKeptCase + "." + ConstantValues.NewLine;
+            //        // Try to get phrase UNIT of measure.
+            //        if (token.OrderInTextIndex < tokens.Count && unitsRegex.IsMatch(tokens[token.OrderInTextIndex + 1].Content)) {
+            //            units = tokens[token.OrderInTextIndex + 1].ContentWithKeptCase;
+            //            phrase.RecognitionResult += "Чего? — " + units + "." + ConstantValues.NewLine;
+            //        }
+            //    }
+            //}
 
             // Filter action, unit and amount out of phrase in order to get phrase OBJECT.
             if (action != "") {

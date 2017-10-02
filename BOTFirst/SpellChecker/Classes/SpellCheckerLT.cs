@@ -5,8 +5,8 @@ using System.Text;
 using System.Net;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
-using BotPhrase;
-using WordClassTagger;
+using SolarixLemmatizatorEngineNET;
+
 namespace BOTFirst.Spellchecker
 {
 
@@ -17,6 +17,7 @@ namespace BOTFirst.Spellchecker
         private readonly string checkUrl;
         // URL для получения списка доступных языков.
         private readonly string getLanguagesUrl;
+        private readonly string getSemanticSimularityUrl = "http://rusvectores.org/web/{0}__{1}/api/similarity/";
         // Дублирующее поле для хранения ошибки полученной при выполнении методов, любое исключение полученное в ходе выполнения метода окажется здесь.
         private Exception error;
         #endregion
@@ -76,6 +77,18 @@ namespace BOTFirst.Spellchecker
             }
             return languages;
         }
+        private List<string> GetLemmasFromPtr(IntPtr pointer)
+        {
+            var countLemmas = LemmatizatorEngine.sol_CountLemmas(pointer);
+            var stringBuilder = new StringBuilder();
+            var result = new List<string>();
+            for (int i = 0; i < countLemmas; i++)
+            {
+                LemmatizatorEngine.sol_GetLemmaStringW(pointer, i, stringBuilder, 30);
+                result.Add(stringBuilder.ToString());
+            }
+            return result;
+        }
         #endregion
         #region Свойства
         /// <summary> 
@@ -114,7 +127,7 @@ namespace BOTFirst.Spellchecker
                     wc.Encoding = Encoding.UTF8;
                     // Обращаемся к API методом POST и получаем результат.
                     var checkResult = wc.UploadString(checkUrl, "text=" + text + "&language=" + language +
-                        "&enabledCategories = TYPOS & enabledOnly = true");
+                        "&enabledCategories=TYPOS&enabledOnly=true");
                     mistakes = ParseCheckResult(checkResult);
                 }
             }
@@ -148,38 +161,48 @@ namespace BOTFirst.Spellchecker
         }
         public string CorrectMistakes(string originalText, List<Mistake> mistakes)
         {
-
             mistakes.Reverse();
+            var wordsWithoutMistakes = originalText;
             foreach (var mistake in mistakes)
             {
-                var phrase = Recognizer.RecognizePhrase(originalText);
-                var recognvector = new bool[4]
+                wordsWithoutMistakes = wordsWithoutMistakes.Remove(mistake.Position.Begin, mistake.Position.Length + 1);
+            }
+            var lemmatizator = LemmatizatorEngine.sol_LoadLemmatizatorW(Environment.CurrentDirectory+"\\lemmatizer.db", LemmatizatorEngine.LEME_DEFAULT);
+            var lemmasInTextPtr = LemmatizatorEngine.sol_LemmatizePhraseW(lemmatizator, wordsWithoutMistakes, 0, ' ');
+            var lemmasInText = GetLemmasFromPtr(lemmasInTextPtr);
+            var originalTextStringBuilder = new StringBuilder(originalText);
+            foreach (var mistake in mistakes)
+            {
+                var lemmasInReplacesPtr = LemmatizatorEngine.sol_LemmatizePhraseW(
+                    lemmatizator, 
+                    mistake.Replacements.Count > 1 ? String.Join("*",mistake.Replacements) : mistake.Replacements[0],
+                    0, '*');
+                var lemmasInReplaces = GetLemmasFromPtr(lemmasInReplacesPtr);
+                var maxSimularity = -1.0;
+                var bestReplace = mistake.Replacements[0];
+                foreach (var lemmaReplace in lemmasInReplaces)
                 {
-                    phrase.Action == null ? false : true,
-                    phrase.Amount == null ? false : true,
-                    phrase.Units == null ? false : true,
-                    phrase.Date == null ? false : true
-                };
-                foreach (var replace in mistake.Replacements)
-                {
-                    var replacebuilder = new StringBuilder(originalText);
-                    replacebuilder.Replace(mistake.Original, replace, mistake.Position.Begin, mistake.Position.Length);
-                    phrase = Recognizer.RecognizePhrase(replacebuilder.ToString());
-                    var replacerecognvector = new bool[4]
+                    var simularitySum = 0.0;
+                    using (WebClient wc = new WebClient())
                     {
-                        phrase.Action == null ? false : true,
-                        phrase.Amount == null ? false : true,
-                        phrase.Units == null ? false : true,
-                        phrase.Date == null ? false : true
-                    };
-                    if (replacerecognvector.Count(b => b == true) > recognvector.Count(b => b == true))
+                        foreach (var lemmaInText in lemmasInText)
+                        {
+                            var requestResult = wc.DownloadString(String.Format(getSemanticSimularityUrl, lemmaReplace,lemmaInText));
+                            if (requestResult != "Unknown")
+                            {
+                                simularitySum += Double.Parse(requestResult.Split('\t')[0].Replace('.', ','));
+                            }
+                        }
+                    }
+                    if (simularitySum > maxSimularity)
                     {
-                        originalText = replacebuilder.ToString();
-                        break;
+                        maxSimularity = simularitySum;
+                        bestReplace = mistake.Replacements[lemmasInReplaces.IndexOf(lemmaReplace)];
                     }
                 }
+                originalTextStringBuilder = originalTextStringBuilder.Replace(mistake.Original, bestReplace, mistake.Position.Begin, mistake.Position.Length);
             }
-            return originalText;
+            return originalTextStringBuilder.ToString();
         }
         /// <summary>
         /// Метод проверяет текст на наличие ошибок. 
@@ -195,7 +218,7 @@ namespace BOTFirst.Spellchecker
             {
                 wc.Encoding = Encoding.UTF8;
                 var checkResult = wc.UploadStringTaskAsync(new Uri(checkUrl), "text=" + text + "&language=" + language +
-                    "&enabledCategories = TYPOS & enabledOnly = true");
+                    "&enabledCategories=TYPOS&enabledOnly=true");
                 return await Task.FromResult(ParseCheckResult(checkResult.Result));
             }
         }
