@@ -35,9 +35,9 @@ namespace BOTFirst {
                                         reply.Text = string.Format("Привет, {0}! Я буду помогать тебе добиваться поставленных целей! Поделись своими последними достижениями!  \n", newMember.Name);
                                         bool userIsNew;
                                         User user = UsersFactory.CreateOrRetrieveUser(newMember.Name, newMember.Id, activity.ChannelId, out userIsNew);
-#if DEBUG
-                                        reply.Text += UsersFactory.UserAddingDebug(activity.ChannelId, userIsNew, user);
-#endif
+//#if DEBUG
+//                                        reply.Text += UsersFactory.UserAddingDebug(activity.ChannelId, userIsNew, user);
+//#endif
                                         await client.Conversations.ReplyToActivityAsync(reply);
                                     }
                                 }

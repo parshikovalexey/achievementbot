@@ -12,9 +12,9 @@ namespace BOTFirst.Dialogs {
             bool userIsNew;
             EntityModel.User currentUser = UsersFactory.CreateOrRetrieveUser(context.Activity.From.Name, context.Activity.From.Id, context.Activity.ChannelId, out userIsNew);
             context.UserData.SetValue("currentModelUserId", currentUser.Id);
-#if DEBUG
-            context.UserData.SetValue("userIsNew", userIsNew);
-#endif
+//#if DEBUG
+//            context.UserData.SetValue("userIsNew", userIsNew);
+//#endif
             context.Wait(AchivementsAddingAsync);
             return Task.CompletedTask;
         }
@@ -26,10 +26,10 @@ namespace BOTFirst.Dialogs {
 
             BotPhrase.Phrase newNotModelPhrase = PhrasesFactory.CreateOrRetreavePhrase(activity.Text, out modelPhrase);
             await context.PostAsync("Результаты разбора твоей фразы:  \n" + newNotModelPhrase.RecognitionResult);
-#if DEBUG
-            EntityModel.User currentUserForDebug = UsersFactory.GetExistingUserById(context.UserData.GetValue<int>("currentModelUserId"));
-            await context.PostAsync(UsersFactory.UserAddingDebug(activity.ChannelId, context.UserData.GetValue<bool>("userIsNew"), currentUserForDebug));
-#endif
+//#if DEBUG
+//            EntityModel.User currentUserForDebug = UsersFactory.GetExistingUserById(context.UserData.GetValue<int>("currentModelUserId"));
+//            await context.PostAsync(UsersFactory.UserAddingDebug(activity.ChannelId, context.UserData.GetValue<bool>("userIsNew"), currentUserForDebug));
+//#endif
             // Create new UserAchievement, Achievement, AchievementForm if the phrase was recognized.
             if (newNotModelPhrase.WasRecognized) {
                 context.UserData.SetValue("currentPhraseId", modelPhrase.Id);
