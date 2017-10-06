@@ -13,55 +13,58 @@ namespace BOTFirst.Factories {
         /// <param name="inputMessengerName">Name of using messenger (channel).</param>
         /// <param name="thisUserIsNew">Output flag indicating about if new user was created.</param>
         public static User CreateOrRetrieveUser(string userName, string messengerUserIdentifier, string inputMessengerName, out bool thisUserIsNew) {
-            using (EDModelContainer db = new EDModelContainer()) {
-                try {
-                    User returningUser;
-                    // There is no such user yet.
-                    if (!db.Users.Any() && !db.Users.Any(user => user.Name == userName)) {
-                        // Then we create and add the user.
-                        // TODO Implement getting user phone number.
-                        returningUser = new User() { Name = userName };
-                        db.Users.Add(returningUser);
-                        db.SaveChanges();
-                        thisUserIsNew = true;
-                    }
-                    else {
-                        returningUser = db.Users.Where(u => u.Name == userName).First();
-                        thisUserIsNew = false;
-                    }
-                    // Temporary variables.
-                    Messenger messenger = db.Messengers.Where(m => m.Name == inputMessengerName).FirstOrDefault();
-                    UserMessenger userMessenger = null;
-                    // If there is such messenger in DB.
-                    if (messenger != null) {
-                        userMessenger = db.UserMessengers.Where(um => um.MessengerId == messenger.Id && um.UserId == returningUser.Id).FirstOrDefault();
-                        if (userMessenger == null) {
+            try {
+                using (EDModelContainer db = new EDModelContainer()) {
+                    try {
+                        User returningUser;
+                        // There is no such user yet.
+                        if (!db.Users.Any() && !db.Users.Any(user => user.Name == userName)) {
+                            // Then we create and add the user.
+                            // TODO Implement getting user phone number.
+                            returningUser = new User() { Name = userName };
+                            db.Users.Add(returningUser);
+                            db.SaveChanges();
+                            thisUserIsNew = true;
+                        } else {
+                            returningUser = db.Users.Where(u => u.Name == userName).First();
+                            thisUserIsNew = false;
+                        }
+                        // Temporary variables.
+                        Messenger messenger = db.Messengers.Where(m => m.Name == inputMessengerName).FirstOrDefault();
+                        UserMessenger userMessenger = null;
+                        // If there is such messenger in DB.
+                        if (messenger != null) {
+                            userMessenger = db.UserMessengers.Where(um => um.MessengerId == messenger.Id && um.UserId == returningUser.Id).FirstOrDefault();
+                            if (userMessenger == null) {
+                                userMessenger = new UserMessenger() {
+                                    MessengerUserIdentifier = messengerUserIdentifier,
+                                    MessengerId = messenger.Id,
+                                    UserId = returningUser.Id
+                                };
+                                db.UserMessengers.Add(userMessenger);
+                                db.SaveChanges();
+                            }
+                        } else {
+                            // Since we created and add new messenger, so there is no userMessenger entries yet.
                             userMessenger = new UserMessenger() {
                                 MessengerUserIdentifier = messengerUserIdentifier,
-                                MessengerId = messenger.Id,
+                                Messenger = new Messenger() { Name = inputMessengerName },
                                 UserId = returningUser.Id
                             };
                             db.UserMessengers.Add(userMessenger);
                             db.SaveChanges();
                         }
+                        return returningUser;
                     }
-                    else {
-                        // Since we created and add new messenger, so there is no userMessenger entries yet.
-                        userMessenger = new UserMessenger() {
-                            MessengerUserIdentifier = messengerUserIdentifier,
-                            Messenger = new Messenger() { Name = inputMessengerName },
-                            UserId = returningUser.Id
-                        };
-                        db.UserMessengers.Add(userMessenger);
-                        db.SaveChanges();
+                    // Debugging.
+                    catch (DbEntityValidationException e) {
+                        EntityModel.EntitiesErrorsCatcher.CatchError(e);
+                        throw;
                     }
-                    return returningUser;
                 }
-                // Debugging.
-                catch (DbEntityValidationException e) {
-                    EntityModel.EntitiesErrorsCatcher.CatchError(e);
-                    throw;
-                }
+            } catch (Exception) {
+                thisUserIsNew = false;
+                return null;
             }
         }
         public static User GetExistingUserById(int modelUserId) {
