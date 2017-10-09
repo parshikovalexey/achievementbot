@@ -36,8 +36,11 @@ namespace BOTFirst {
                                         if (newMember.Id != activity.Recipient.Id) {
                                             reply.Text = string.Format("Привет, {0}! Я буду помогать тебе добиваться поставленных целей! Поделись своими последними достижениями!  \n", newMember.Name);
                                             bool userIsNew;
-
-                                            User user = UsersFactory.CreateOrRetrieveUser(newMember.Name, newMember.Id, activity.ChannelId, out userIsNew);
+                                            string errors;
+                                            User user = UsersFactory.CreateOrRetrieveUser(newMember.Name, newMember.Id, activity.ChannelId, out userIsNew, out errors);
+                                            if (user == null) {
+                                                reply.Text = "Пользователь не создан c ошибкой: " + errors;
+                                            }
                                             //#if DEBUG 
                                             //                                        reply.Text += UsersFactory.UserAddingDebug(activity.ChannelId, userIsNew, user);
                                             //#endif
