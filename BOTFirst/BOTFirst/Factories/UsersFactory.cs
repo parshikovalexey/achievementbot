@@ -22,7 +22,7 @@ namespace BOTFirst.Factories {
                             // Then we create and add the user.
                             // TODO Implement getting user phone number.
                             returningUser = new User() { Name = userName };
-                            db.Users.Add(returningUser);
+                            returningUser = db.Users.Add(returningUser);
                             db.SaveChanges();
                             thisUserIsNew = true;
                         } else {
