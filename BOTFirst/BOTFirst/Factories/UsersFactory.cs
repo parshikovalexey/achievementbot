@@ -79,6 +79,20 @@ namespace BOTFirst.Factories {
                 }
             }
         }
+
+        public static User GetUserByName(string userName) {
+            using (EDModelContainer db = new EDModelContainer()) {
+                try {
+                    return db.Users.Where(u => u.Name == userName).FirstOrDefault();
+                }
+                // Debugging.
+                catch (DbEntityValidationException e) {
+                    EntityModel.EntitiesErrorsCatcher.CatchError(e);
+                    throw;
+                }
+            }
+        }
+
         /// <summary>
         /// Method for checking if a user has been added to DB and showing some debug info about messenger name and userId in the messenger.
         /// This method should be called after a call of <see cref="UsersFactory.CreateOrRetrieveUser"/> method.
