@@ -12,11 +12,12 @@ namespace BOTFirst.Dialogs {
             bool userIsNew;
             try {
                 EntityModel.User currentUser = UsersFactory.CreateOrRetrieveUser(context.Activity.From.Name, context.Activity.From.Id, context.Activity.ChannelId, out userIsNew);
-                context.UserData.SetValue("currentModelUserId", currentUser.Id);
+                //context.UserData.SetValue("currentModelUserId", currentUser.Id);
                 //#if DEBUG
                 //            context.UserData.SetValue("userIsNew", userIsNew);
                 //#endif
-            } catch (Exception) {
+            } catch (Exception ex) {
+                context.PostAsync("StartAsync exception: " + ex.Message);
             }
 
             context.Wait(AchivementsAddingAsync);
