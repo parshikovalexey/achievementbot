@@ -11,9 +11,10 @@ namespace BOTFirst.Dialogs {
             // This variable is used nowhere(.
             bool userIsNew;
             try {
-                EntityModel.User currentUser = UsersFactory.CreateOrRetrieveUser(context.Activity.From.Name, context.Activity.From.Id, context.Activity.ChannelId, out userIsNew);
+                string errors = "";
+                EntityModel.User currentUser = UsersFactory.CreateOrRetrieveUser(context.Activity.From.Name, context.Activity.From.Id, context.Activity.ChannelId, out userIsNew, out errors);
                 if (currentUser == null) {
-                    context.PostAsync("Пользователь не создан: " + context.Activity.From.Name + " пользователь мессенджера: " + context.Activity.From.Id + " Канал: " + context.Activity.ChannelId);
+                    context.PostAsync("Пользователь не создан: " + context.Activity.From.Name + " пользователь мессенджера: " + context.Activity.From.Id + " Канал: " + context.Activity.ChannelId + " Ошибки: " + errors);
                 } else
                     context.PostAsync("Пользователь создан успешно: "+ currentUser.Id + ", " + context.Activity.From.Name + " пользователь мессенджера: " + context.Activity.From.Id + " Канал: " + context.Activity.ChannelId);
                 //context.UserData.SetValue("currentModelUserId", currentUser.Id);

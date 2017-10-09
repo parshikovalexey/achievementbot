@@ -12,7 +12,8 @@ namespace BOTFirst.Factories {
         /// <param name="messengerUserIdentifier">User id, that was defined by some messenger (channel).</param>
         /// <param name="inputMessengerName">Name of using messenger (channel).</param>
         /// <param name="thisUserIsNew">Output flag indicating about if new user was created.</param>
-        public static User CreateOrRetrieveUser(string userName, string messengerUserIdentifier, string inputMessengerName, out bool thisUserIsNew) {
+        /// <param name="errors">Errors in the user creation step</param>
+        public static User CreateOrRetrieveUser(string userName, string messengerUserIdentifier, string inputMessengerName, out bool thisUserIsNew, out string errors) {
             try {
                 using (EDModelContainer db = new EDModelContainer()) {
                     try {
@@ -54,6 +55,7 @@ namespace BOTFirst.Factories {
                             db.UserMessengers.Add(userMessenger);
                             db.SaveChanges();
                         }
+                        errors = "";
                         return returningUser;
                     }
                     // Debugging.
@@ -62,8 +64,9 @@ namespace BOTFirst.Factories {
                         throw;
                     }
                 }
-            } catch (Exception) {
+            } catch (Exception ex) {
                 thisUserIsNew = false;
+                errors = ex.Message;
                 return null;
             }
         }
