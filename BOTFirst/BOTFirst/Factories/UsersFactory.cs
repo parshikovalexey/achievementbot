@@ -19,7 +19,7 @@ namespace BOTFirst.Factories {
                     try {
                         User returningUser;
                         // There is no such user yet.
-                        if (!db.Users.Any() && !db.Users.Any(user => user.Name == userName)) {
+                        if (!db.Users.Any(user => user.Name == userName)) {
                             // Then we create and add the user.
                             // TODO Implement getting user phone number.
                             returningUser = new User() { Name = userName };
