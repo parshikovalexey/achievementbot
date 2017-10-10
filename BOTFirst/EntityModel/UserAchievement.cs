@@ -15,13 +15,11 @@ namespace EntityModel
     public partial class UserAchievement
     {
         public int Id { get; set; }
-        public string DateTime { get; set; }
-        public int PhraseId { get; set; }
+        public System.DateTime DateAndTime { get; set; }
         public int UserId { get; set; }
-        public int AchievementId { get; set; }
+        public int PhraseId { get; set; }
     
-        public virtual Phrase Phrase { get; set; }
         public virtual User User { get; set; }
-        public virtual Achievement Achievement { get; set; }
+        public virtual Phrase Phrase { get; set; }
     }
 }

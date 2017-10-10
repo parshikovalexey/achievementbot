@@ -1,9 +1,7 @@
 ﻿using EntityModel;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 
 namespace BotPhrase {
     public static class PhrasesConverter {
@@ -28,23 +26,26 @@ namespace BotPhrase {
             };
             using (EDModelContainer db = new EDModelContainer()) {
                 Debug.Indent();
-                if (db.Actions.Any() && db.Actions.Where((t) => t.Text == phrase.Action).Count() > 0) {
-                    modelPhrase.ActionId = db.Actions.Where((t) => t.Text == phrase.Action).First().Id;
-                    Debug.WriteLine("there already is such action.");
+                var action = db.Actions.Where(a => a.Text == phrase.Action).FirstOrDefault();
+                if (action != null) {
+                    modelPhrase.ActionId = action.Id;
+                    Debug.WriteLine("there already is such action in DB.");
                 }
                 else
                     modelPhrase.Action = (phrase.Action != null) ? new EntityModel.Action() { Text = phrase.Action } : null;
 
-                if (db.MeasureUnits.Any() && db.MeasureUnits.Where((t) => t.Text == phrase.Units).Count() > 0) {
-                    modelPhrase.MeasureUnitId = db.MeasureUnits.Where((t) => t.Text == phrase.Units).First().Id;
-                    Debug.WriteLine("there already is such MeasureUnit.");
+                var measureUnit = db.MeasureUnits.Where(mu => mu.Text == phrase.Units).FirstOrDefault();
+                if (measureUnit != null) {
+                    modelPhrase.MeasureUnitId = measureUnit.Id;
+                    Debug.WriteLine("there already is such MeasureUnit in DB.");
                 }
                 else
                     modelPhrase.MeasureUnit = (phrase.Units != null) ? new EntityModel.MeasureUnit() { Text = phrase.Units } : null;
 
-                if (db.AdditionalTexts.Any() && db.AdditionalTexts.Where((t) => t.Text == phrase.AdditionalText).Count() > 0) {
-                    modelPhrase.AdditionalTextId = db.AdditionalTexts.Where((t) => t.Text == phrase.AdditionalText).First().Id;
-                    Debug.WriteLine("there already is such AdditionalText.");
+                var additionalText = db.AdditionalTexts.Where(at => at.Text == phrase.AdditionalText).FirstOrDefault();
+                if (additionalText != null) {
+                    modelPhrase.AdditionalTextId = additionalText.Id;
+                    Debug.WriteLine("there already is such AdditionalText in DB.");
                 }
                 else
                     modelPhrase.AdditionalText = (phrase.AdditionalText != null) ? new EntityModel.AdditionalText() { Text = phrase.AdditionalText } : null;
@@ -52,7 +53,63 @@ namespace BotPhrase {
 
                 if (phrase.Amount != null)
                     try {
-                        decimal.Parse(phrase.Amount);
+                        modelPhrase.Amount = decimal.Parse(phrase.Amount);
+                    }
+                    catch (Exception) {
+                        throw;
+                    }
+                return modelPhrase;
+            }
+        }
+
+        public static EntityModel.Phrase ShowingErrorPhraseToModelPhrase(Phrase phrase) {
+            var modelPhrase = new EntityModel.Phrase {
+                WasRecognized = phrase.WasRecognized,
+                OriginalMessage = phrase.OriginalMessage,
+                Date = phrase.Date,
+                Time = phrase.Time,
+                CorrectedMessage = "Коррекция правописания еще не реализована",
+            };
+            using (EDModelContainer db = new EDModelContainer()) {
+                Debug.Indent();
+                var action = db.Actions.Where(a => a.Text == phrase.Action).FirstOrDefault();
+                if (action != null) {
+                    // We assign a navigation property here.
+                    // But correspond Id is not defined and furthermore the property will be null after getting this record from DB.
+                    // Also a duplicate action will be created. This happens when we assign an object that already exists in DB.
+                    // Maybe the thing about this is that I assign navigation property improperly.
+                    modelPhrase.Action = action;
+                    Debug.WriteLine("there already is such action in DB.");
+                }
+                else
+                    modelPhrase.Action = (phrase.Action != null) ? new EntityModel.Action() { Text = phrase.Action } : null;
+
+                var measureUnit = db.MeasureUnits.Where(mu => mu.Text == phrase.Units).FirstOrDefault();
+                if (measureUnit != null) {
+                    // We assign a navigation property here.
+                    // But correspond Id is not defined and furthermore the property will be null after getting this record from DB.
+                    // Also a duplicate MeasureUnit will be created.
+                    modelPhrase.MeasureUnit = measureUnit;
+                    Debug.WriteLine("there already is such MeasureUnit in DB.");
+                }
+                else
+                    modelPhrase.MeasureUnit = (phrase.Units != null) ? new EntityModel.MeasureUnit() { Text = phrase.Units } : null;
+
+                var additionalText = db.AdditionalTexts.Where(at => at.Text == phrase.AdditionalText).FirstOrDefault();
+                if (additionalText != null) {
+                    // We assign a navigation property here.
+                    // But correspond Id is not defined and furthermore the property will be null after getting this record from DB.
+                    // Also a duplicate AdditionalText will be created.
+                    modelPhrase.AdditionalText = additionalText;
+                    Debug.WriteLine("there already is such AdditionalText in DB.");
+                }
+                else
+                    modelPhrase.AdditionalText = (phrase.AdditionalText != null) ? new EntityModel.AdditionalText() { Text = phrase.AdditionalText } : null;
+                Debug.Unindent();
+
+                if (phrase.Amount != "")
+                    try {
+                        modelPhrase.Amount = decimal.Parse(phrase.Amount);
                     }
                     catch (Exception) {
                         throw;
@@ -62,4 +119,3 @@ namespace BotPhrase {
         }
     }
 }
-

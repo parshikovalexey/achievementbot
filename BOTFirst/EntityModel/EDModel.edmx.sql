@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 08/25/2017 12:51:19
+-- Date Created: 09/26/2017 23:26:14
 -- Generated from EDMX file: C:\!Files\!APF\!ProgrammingAndDevelopment\1Студенческий проект achievementbot\achievementbot\BOTFirst\EntityModel\EDModel.edmx
 -- --------------------------------------------------
 
@@ -32,17 +32,17 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_AchievementBelongsToUser]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[UserAchievements] DROP CONSTRAINT [FK_AchievementBelongsToUser];
 GO
-IF OBJECT_ID(N'[dbo].[FK_InfoAboutUserInSomeOneMessenger]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[MessengerAndUserInfo] DROP CONSTRAINT [FK_InfoAboutUserInSomeOneMessenger];
-GO
 IF OBJECT_ID(N'[dbo].[FK_UserCanHaveOneOrManyMessangers]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[MessengerAndUserInfo] DROP CONSTRAINT [FK_UserCanHaveOneOrManyMessangers];
-GO
-IF OBJECT_ID(N'[dbo].[FK_AchievementCanHaveForms]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[AchievementForms] DROP CONSTRAINT [FK_AchievementCanHaveForms];
+    ALTER TABLE [dbo].[UserMessengers] DROP CONSTRAINT [FK_UserCanHaveOneOrManyMessangers];
 GO
 IF OBJECT_ID(N'[dbo].[FK_UserAchievementContainsAchievement]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[UserAchievements] DROP CONSTRAINT [FK_UserAchievementContainsAchievement];
+GO
+IF OBJECT_ID(N'[dbo].[FK_OneMessengerCanMatchManyUserMessengers]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[UserMessengers] DROP CONSTRAINT [FK_OneMessengerCanMatchManyUserMessengers];
+GO
+IF OBJECT_ID(N'[dbo].[FK_AchievementAction]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Actions] DROP CONSTRAINT [FK_AchievementAction];
 GO
 
 -- --------------------------------------------------
@@ -64,20 +64,17 @@ GO
 IF OBJECT_ID(N'[dbo].[Users]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Users];
 GO
-IF OBJECT_ID(N'[dbo].[Messangers]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Messangers];
+IF OBJECT_ID(N'[dbo].[Messengers]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Messengers];
 GO
-IF OBJECT_ID(N'[dbo].[MessengerAndUserInfo]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[MessengerAndUserInfo];
+IF OBJECT_ID(N'[dbo].[UserMessengers]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[UserMessengers];
 GO
 IF OBJECT_ID(N'[dbo].[UserAchievements]', 'U') IS NOT NULL
     DROP TABLE [dbo].[UserAchievements];
 GO
 IF OBJECT_ID(N'[dbo].[Achievements]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Achievements];
-GO
-IF OBJECT_ID(N'[dbo].[AchievementForms]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[AchievementForms];
 GO
 
 -- --------------------------------------------------
@@ -109,7 +106,8 @@ GO
 -- Creating table 'Actions'
 CREATE TABLE [dbo].[Actions] (
     [Id] int IDENTITY(1,1) NOT NULL,
-    [Text] nchar(30)  NOT NULL
+    [Text] nchar(30)  NOT NULL,
+    [AchievementId] int  NULL
 );
 GO
 
@@ -123,13 +121,13 @@ GO
 -- Creating table 'Users'
 CREATE TABLE [dbo].[Users] (
     [Id] int IDENTITY(1,1) NOT NULL,
-    [PhoneNumber] nchar(11)  NOT NULL,
+    [PhoneNumber] nchar(11)  NULL,
     [Name] nchar(40)  NOT NULL
 );
 GO
 
--- Creating table 'Messangers'
-CREATE TABLE [dbo].[Messangers] (
+-- Creating table 'Messengers'
+CREATE TABLE [dbo].[Messengers] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [Name] nchar(15)  NOT NULL
 );
@@ -147,10 +145,9 @@ GO
 -- Creating table 'UserAchievements'
 CREATE TABLE [dbo].[UserAchievements] (
     [Id] int IDENTITY(1,1) NOT NULL,
-    [DateTime] nvarchar(max)  NOT NULL,
-    [PhraseId] int  NOT NULL,
+    [DateAndTime] datetime  NOT NULL,
     [UserId] int  NOT NULL,
-    [AchievementId] int  NOT NULL
+    [PhraseId] int  NOT NULL
 );
 GO
 
@@ -158,14 +155,6 @@ GO
 CREATE TABLE [dbo].[Achievements] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [Name] nchar(120)  NOT NULL
-);
-GO
-
--- Creating table 'AchievementForms'
-CREATE TABLE [dbo].[AchievementForms] (
-    [Id] int IDENTITY(1,1) NOT NULL,
-    [Form] nchar(60)  NOT NULL,
-    [AchievementId] int  NOT NULL
 );
 GO
 
@@ -203,9 +192,9 @@ ADD CONSTRAINT [PK_Users]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
--- Creating primary key on [Id] in table 'Messangers'
-ALTER TABLE [dbo].[Messangers]
-ADD CONSTRAINT [PK_Messangers]
+-- Creating primary key on [Id] in table 'Messengers'
+ALTER TABLE [dbo].[Messengers]
+ADD CONSTRAINT [PK_Messengers]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
@@ -224,12 +213,6 @@ GO
 -- Creating primary key on [Id] in table 'Achievements'
 ALTER TABLE [dbo].[Achievements]
 ADD CONSTRAINT [PK_Achievements]
-    PRIMARY KEY CLUSTERED ([Id] ASC);
-GO
-
--- Creating primary key on [Id] in table 'AchievementForms'
-ALTER TABLE [dbo].[AchievementForms]
-ADD CONSTRAINT [PK_AchievementForms]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
@@ -282,21 +265,6 @@ ON [dbo].[Phrases]
     ([AdditionalTextId]);
 GO
 
--- Creating foreign key on [PhraseId] in table 'UserAchievements'
-ALTER TABLE [dbo].[UserAchievements]
-ADD CONSTRAINT [FK_AchievementContainsOnePhrase]
-    FOREIGN KEY ([PhraseId])
-    REFERENCES [dbo].[Phrases]
-        ([Id])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
-
--- Creating non-clustered index for FOREIGN KEY 'FK_AchievementContainsOnePhrase'
-CREATE INDEX [IX_FK_AchievementContainsOnePhrase]
-ON [dbo].[UserAchievements]
-    ([PhraseId]);
-GO
-
 -- Creating foreign key on [UserId] in table 'UserAchievements'
 ALTER TABLE [dbo].[UserAchievements]
 ADD CONSTRAINT [FK_AchievementBelongsToUser]
@@ -327,41 +295,11 @@ ON [dbo].[UserMessengers]
     ([UserId]);
 GO
 
--- Creating foreign key on [AchievementId] in table 'AchievementForms'
-ALTER TABLE [dbo].[AchievementForms]
-ADD CONSTRAINT [FK_AchievementCanHaveForms]
-    FOREIGN KEY ([AchievementId])
-    REFERENCES [dbo].[Achievements]
-        ([Id])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
-
--- Creating non-clustered index for FOREIGN KEY 'FK_AchievementCanHaveForms'
-CREATE INDEX [IX_FK_AchievementCanHaveForms]
-ON [dbo].[AchievementForms]
-    ([AchievementId]);
-GO
-
--- Creating foreign key on [AchievementId] in table 'UserAchievements'
-ALTER TABLE [dbo].[UserAchievements]
-ADD CONSTRAINT [FK_UserAchievementContainsAchievement]
-    FOREIGN KEY ([AchievementId])
-    REFERENCES [dbo].[Achievements]
-        ([Id])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
-
--- Creating non-clustered index for FOREIGN KEY 'FK_UserAchievementContainsAchievement'
-CREATE INDEX [IX_FK_UserAchievementContainsAchievement]
-ON [dbo].[UserAchievements]
-    ([AchievementId]);
-GO
-
 -- Creating foreign key on [MessengerId] in table 'UserMessengers'
 ALTER TABLE [dbo].[UserMessengers]
 ADD CONSTRAINT [FK_OneMessengerCanMatchManyUserMessengers]
     FOREIGN KEY ([MessengerId])
-    REFERENCES [dbo].[Messangers]
+    REFERENCES [dbo].[Messengers]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
 GO
@@ -370,6 +308,36 @@ GO
 CREATE INDEX [IX_FK_OneMessengerCanMatchManyUserMessengers]
 ON [dbo].[UserMessengers]
     ([MessengerId]);
+GO
+
+-- Creating foreign key on [AchievementId] in table 'Actions'
+ALTER TABLE [dbo].[Actions]
+ADD CONSTRAINT [FK_AchievementAction]
+    FOREIGN KEY ([AchievementId])
+    REFERENCES [dbo].[Achievements]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_AchievementAction'
+CREATE INDEX [IX_FK_AchievementAction]
+ON [dbo].[Actions]
+    ([AchievementId]);
+GO
+
+-- Creating foreign key on [PhraseId] in table 'UserAchievements'
+ALTER TABLE [dbo].[UserAchievements]
+ADD CONSTRAINT [FK_AchievementContainsOnePhrase]
+    FOREIGN KEY ([PhraseId])
+    REFERENCES [dbo].[Phrases]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_AchievementContainsOnePhrase'
+CREATE INDEX [IX_FK_AchievementContainsOnePhrase]
+ON [dbo].[UserAchievements]
+    ([PhraseId]);
 GO
 
 -- --------------------------------------------------
