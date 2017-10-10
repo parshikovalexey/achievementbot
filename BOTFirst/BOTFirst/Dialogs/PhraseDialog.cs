@@ -56,7 +56,7 @@ namespace BOTFirst.Dialogs {
                         context.UserData.SetValue("currentPhraseId", modelPhrase.Id);
                         // Getting achievement that already exists in DB by means of phrase action.
                         var achievement = AchievementsFactory.GetAchievementThroughAction(PhrasesFactory.GetActionOfExistingPhraseById(addedPhrase.Id));
-                        var currentUser = UsersFactory.GetUserByName(context.Activity.From.Name);
+                        var currentUser = UsersFactory.GetUserByName(GetUserNameFromContext(context));
                         if (currentUser != null) {
                             AchievementsFactory.CreateOrRetreaveUserAchievement(addedPhrase, newNotModelPhrase.PhraseDateTime, currentUser, achievement.Name, true);
                             await context.PostAsync("Отлично! Твое достижение добавлено в систему, теперь можно ввести следующее достижение");
@@ -72,12 +72,19 @@ namespace BOTFirst.Dialogs {
             }
         }
 
+        private string GetUserNameFromContext(IDialogContext context) {
+            var userName = context.Activity.From.Name;
+            if (string.IsNullOrEmpty(userName))
+                userName = context.Activity.From.Id;
+            return userName;
+        }
+
         private async Task UserEntersAchievement(IDialogContext context, IAwaitable<IMessageActivity> result) {
             try {
                 var activity = await result;
                 // NOTE Maybe does some user input check need here?
                 string achievement = activity.Text;
-                var currentUser = UsersFactory.GetUserByName(context.Activity.From.Name);
+                var currentUser = UsersFactory.GetUserByName(GetUserNameFromContext(context));
                 if (currentUser != null) {
                     EntityModel.Phrase addedPhrase = PhrasesFactory.GetExistingPhraseById(context.UserData.GetValue<int>("currentPhraseId"));
                     AchievementsFactory.CreateOrRetreaveUserAchievement(addedPhrase, context.UserData.GetValue<DateTime>("currentPhraseDateTime"), currentUser, achievement, false);
